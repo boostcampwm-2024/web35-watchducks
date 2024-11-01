@@ -98,16 +98,6 @@
 
 [🔗 피그마 디자인](https://www.figma.com/design/aflR1xSHiExKgSY12PtW9T/WatchDucks?node-id=0-1&node-type=canvas&t=NWanvk9n4LiJzaVM-0)
 
-## 커밋 템플릿, 이슈 템플릿 : 개발 작업을 위한 공통 자료
-
-- 커밋 템플릿
-    ```txt
-    ```
-    
-- 이슈 템플릿
-    ```txt
-    ```
-
 ## 회의록/이슈/위키 연결 : 협업과 개발 과정의 문서 자료
 
 [🔗 프로젝트 위키](https://github.com/boostcampwm-2024/web35-WatchDucks/wiki)
