@@ -87,7 +87,6 @@
   b. 프로젝트 주인 의식 가지기
   c. 프론트엔드 거리낌 없이 일감 나누기
 ```
-<hr/>
 
 ## 🖌️ 기획/디자인 링크
 
@@ -97,19 +96,17 @@
 
 <span>디자인</span>
 
-<hr/>
+
 
 ## 커밋 템플릿, 이슈 템플릿 : 개발 작업을 위한 공통 자료
 
-<hr/>
+
 
 
 ## 회의록/이슈/위키 연결 : 협업과 개발 과정의 문서 자료
 
-<hr/>
-
+[프로젝트 위키](https://github.com/boostcampwm-2024/web35-WatchDucks/wiki)
+[팀 노션](https://excellent-way-4c6.notion.site/WatchDucks-12889a02523e8000b0b3e0ab606de1d0?pvs=74)
 
 ## 배포 링크가 있을 경우 해당 링크도 기술
 
-## 노션 링크
-https://excellent-way-4c6.notion.site/WatchDucks-12889a02523e8000b0b3e0ab606de1d0?pvs=74
