@@ -90,23 +90,25 @@
 
 ## 🖌️ 기획/디자인 링크
 
-<span>기획</span>
+[🔗 루시드차트 기획 설계](https://excalidraw.com/#room=f9402ddd7abfb42a31cf,9xkdZUMKlgDwSf998tjtUg)
 
-[설계]([https://excalidraw.com/#room=f9402ddd7abfb42a31cf,9xkdZUMKlgDwSf998tjtUg)
-
-<span>디자인</span>
-
-
+[🔗 피그마 디자인](https://www.figma.com/design/aflR1xSHiExKgSY12PtW9T/WatchDucks?node-id=0-1&node-type=canvas&t=NWanvk9n4LiJzaVM-0)
 
 ## 커밋 템플릿, 이슈 템플릿 : 개발 작업을 위한 공통 자료
 
-
-
+- 커밋 템플릿
+    ```txt
+    ```
+    
+- 이슈 템플릿
+    ```txt
+    ```
 
 ## 회의록/이슈/위키 연결 : 협업과 개발 과정의 문서 자료
 
-[프로젝트 위키](https://github.com/boostcampwm-2024/web35-WatchDucks/wiki)
-[팀 노션](https://excellent-way-4c6.notion.site/WatchDucks-12889a02523e8000b0b3e0ab606de1d0?pvs=74)
+[🔗 프로젝트 위키](https://github.com/boostcampwm-2024/web35-WatchDucks/wiki)
+
+[🔗 팀 노션](https://excellent-way-4c6.notion.site/WatchDucks-12889a02523e8000b0b3e0ab606de1d0?pvs=74)
 
 ## 배포 링크가 있을 경우 해당 링크도 기술
 
