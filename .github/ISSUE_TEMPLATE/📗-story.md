@@ -37,10 +37,11 @@ assignees: ''
 - Story Points: 
 - 예상 소요 시간:
 
-## 🔗 Epic
+## 🔗 연관관계
+### 📦 Epic
 - Epic: #이슈번호
 
-### 🔄 하위 태스크 목록
+## 🚀 하위 태스크 목록
 - [ ] #issue
 - [ ] #issue
 - [ ] #issue
