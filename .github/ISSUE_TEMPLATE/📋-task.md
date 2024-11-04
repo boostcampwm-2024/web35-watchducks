@@ -1,3 +1,12 @@
+---
+name: "\U0001F4D7 Task"
+about: 테스크 이슈 생성
+title: "[TASK]"
+labels: task
+assignees: ''
+
+---
+
 # 태스크: [#101] 소셜 로그인 UI 구현
 
 ## 📋 태스크 정보
@@ -13,10 +22,6 @@
 
 ## 🛠 기술 요구사항
 - React 18 사용
-
-## 🎨 디자인 가이드
-- Figma 컴포넌트: [링크]
-- 스타일 가이드: [링크]
 
 ## ✅ Definition of Done
 - [ ] 단위 테스트 작성
