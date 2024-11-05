@@ -6,8 +6,10 @@
     "esModuleInterop": true,
     "strict": true,
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "./",
+    "types": ["jest"], // Jest 타입 정의 추가
+    "allowSyntheticDefaultImports": true // Babel 사용 시 필요
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "test/**/*"], // 테스트 디렉토리 포함
   "exclude": ["node_modules"]
 }
