@@ -51,7 +51,7 @@ export class NameServer {
         }
     }
 
-    private parseQuery(query: DecodedPacket) {
+    private parseQuery(query: DecodedPacket): Question {
         if (!PacketValidator.validatePacket(query)) {
             throw new Error('Invalid DNS query packet structure');
         }
