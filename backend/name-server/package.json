@@ -7,6 +7,7 @@
     "dev": "tsx watch src/app.ts",
     "start": "tsx src/app.ts",
     "build": "tsx build src/app.ts",
+    "tmp" : "tsx src/app.ts",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "format": "prettier --write src/**/*.ts"
