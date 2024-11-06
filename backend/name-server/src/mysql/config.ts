@@ -18,8 +18,8 @@ export const tunnelConfig = {
 export const forwardConfig: ForwardOptions = {
     srcAddr: 'localhost',
     srcPort: Number(process.env.LOCAL_PORT),
-    dstAddr: process.env.REMOTE_HOST,
-    dstPort: Number(process.env.REMOTE_PORT),
+    dstAddr: process.env.DB_HOST,
+    dstPort: Number(process.env.DB_PORT),
 };
 
 export const serverConfig = {};
