@@ -18,15 +18,18 @@ export const tunnelConfig = {
 export const forwardConfig: ForwardOptions = {
     srcAddr: process.env.LOCAL_HOST,
     srcPort: Number(process.env.LOCAL_PORT),
-    dstAddr: process.env.LOCAL_HOST,
+    dstAddr: process.env.SSH_HOST,
     dstPort: Number(process.env.DB_PORT),
 };
 
-export const serverConfig = {};
+export const serverConfig = {
+    host: process.env.LOCAL_HOST,
+    port: Number(process.env.LOCAL_PORT),
+};
 
 export const poolConfig: PoolOptions = {
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
+    host: process.env.LOCAL_HOST,
+    port: Number(process.env.LOCAL_PORT),
     user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
