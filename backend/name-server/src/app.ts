@@ -2,6 +2,7 @@ import { config } from 'dotenv';
 import { ConsoleLogger } from './utils/logger/console.logger';
 import { ConfigurationValidator } from './utils/validator/configuration.validator';
 import { NameServer } from './server/name-server';
+import { dbPool } from './mysql/mysql';
 
 config();
 
@@ -19,3 +20,5 @@ async function initializeServer(): Promise<NameServer> {
 
 const server = await initializeServer();
 server.start();
+const pool = await dbPool.getPool();
+console.log(await pool.query('select now()'));
