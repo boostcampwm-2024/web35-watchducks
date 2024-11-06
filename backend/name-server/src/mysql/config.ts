@@ -16,7 +16,7 @@ export const tunnelConfig = {
 };
 
 export const forwardConfig: ForwardOptions = {
-    srcAddr: '127.0.0.1',
+    srcAddr: process.env.LOCAL_HOST,
     srcPort: Number(process.env.LOCAL_PORT),
     dstAddr: process.env.REMOTE_HOST,
     dstPort: Number(process.env.REMOTE_PORT),
