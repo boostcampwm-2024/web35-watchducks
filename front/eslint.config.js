@@ -1,4 +1,5 @@
 import pluginJs from '@eslint/js';
+import tanstackQuery from '@tanstack/eslint-plugin-query';
 import pluginImport from 'eslint-plugin-import';
 import pluginReact from 'eslint-plugin-react';
 import globals from 'globals';
@@ -24,12 +25,23 @@ export default [
   pluginReact.configs.flat.recommended,
   {
     files: ['**/*.{js,ts,jsx,tsx}'],
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+      import: pluginImport,
+      react: pluginReact,
+      '@tanstack/query': tanstackQuery
+    },
     rules: {
-      '@tanstack/query/exhaustive-deps': 'error',
-      '@tanstack/query/prefer-query-object-syntax': 'error',
-      '@tanstack/query/stable-query-client': 'error',
+      '@tanstack/query/exhaustive-deps': 'warn',
       'react/react-in-jsx-scope': 'off',
       'react/jsx-uses-react': 'off',
+      'react/function-component-definition': [
+        'error',
+        {
+          namedComponents: ['function-declaration', 'function-expression'],
+          unnamedComponents: 'function-expression'
+        }
+      ],
       'import/order': [
         'error',
         {
@@ -57,13 +69,6 @@ export default [
           }
         }
       ]
-    }
-  },
-  {
-    plugins: {
-      '@typescript-eslint': tseslint.plugin,
-      import: pluginImport,
-      react: pluginReact
     },
     settings: {
       react: {

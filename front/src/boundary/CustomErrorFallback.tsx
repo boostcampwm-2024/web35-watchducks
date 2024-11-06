@@ -1,5 +1,6 @@
-import { FallbackProps } from 'react-error-boundary';
 import { useQueryErrorResetBoundary } from '@tanstack/react-query';
+import { FallbackProps } from 'react-error-boundary';
+
 import { getErrorByCode } from './toastError';
 
 export default function CustomErrorFallBack({ error, resetErrorBoundary }: FallbackProps) {

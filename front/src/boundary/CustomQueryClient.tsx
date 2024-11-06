@@ -1,7 +1,9 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { toast } from 'react-toastify';
-import { getErrorByCode } from './toastError';
 import axios from 'axios';
+import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
+
+import { getErrorByCode } from './toastError';
 
 export default function CustomQueryClientProvider({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient({
@@ -11,8 +13,8 @@ export default function CustomQueryClientProvider({ children }: { children: Reac
         throwOnError: true
       },
       mutations: {
-        onError: (error: any) => {
-          const errorData = getErrorByCode(error);
+        onError: (error: unknown) => {
+          const errorData = getErrorByCode(error as AxiosError<{ code: number; message: string }>);
           toast.error(`[${errorData.code}] ${errorData.message}`);
         }
       }
