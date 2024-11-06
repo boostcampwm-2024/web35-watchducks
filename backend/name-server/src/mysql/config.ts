@@ -16,16 +16,16 @@ export const tunnelConfig = {
 };
 
 export const forwardConfig: ForwardOptions = {
-    srcAddr: 'localhost',
+    srcAddr: process.env.LOCAL_HOST,
     srcPort: Number(process.env.LOCAL_PORT),
-    dstAddr: process.env.DB_HOST,
+    dstAddr: process.env.LOCAL_HOST,
     dstPort: Number(process.env.DB_PORT),
 };
 
 export const serverConfig = {};
 
 export const poolConfig: PoolOptions = {
-    host: process.env.LOCAL_HOST,
+    host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
     user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
