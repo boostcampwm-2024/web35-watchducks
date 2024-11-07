@@ -18,7 +18,7 @@ class ProjectQuery {
         return ProjectQuery.instance;
     }
 
-    async findByDomain(name: string): boolean {
+    async findByDomain(name: string): Promise<boolean> {
         const sql = `SELECT EXISTS(SELECT 1
                                    FROM project
                                    WHERE domain = ?) as exists_flag`;
