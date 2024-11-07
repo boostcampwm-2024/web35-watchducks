@@ -95,7 +95,7 @@ export class NameServer {
     private async handleQueryError(error: Error, remoteInfo: RemoteInfo): Promise<void> {
         const errorMessage = `Failed to process DNS query from ${remoteInfo.address}:${remoteInfo.port}`;
         const response = new DNSResponseBuilder(this.config)
-            .addAnswer(ResponseCode.NOERROR)
+            .addAnswer(ResponseCode.NXDOMAIN)
             .build();
 
         const responseMsg = encode(response);
