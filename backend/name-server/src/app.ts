@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 import { ConsoleLogger } from './utils/logger/console.logger';
 import { ConfigurationValidator } from './utils/validator/configuration.validator';
 import { NameServer } from './server/name-server';
-import { db } from './mysql/mysql-database';
+import { db } from './database/mysql/mysql-database';
 
 config();
 

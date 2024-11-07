@@ -6,7 +6,8 @@ import { decode, encode } from 'dns-packet';
 import type { ServerConfig } from '../utils/validator/configuration.validator';
 import { PacketValidator } from '../utils/validator/packet.validator';
 import { DNSResponseBuilder } from './utils/dns-response-builder';
-import { db } from '../mysql/mysql-database';
+import { db } from '../database/mysql/mysql-database';
+import { projectQuery } from '../database/query/project.query';
 
 export enum DNSFlags {
     AUTHORITATIVE_ANSWER = 0x0400, // 권한 있는 응답 (네임서버가 해당 도메인의 공식 서버일 때)
@@ -41,6 +42,10 @@ export class NameServer {
             const query = decode(msg);
             const question = this.parseQuery(query);
 
+            if (projectQuery.findByDomain(question.name)) {
+                console.log('true');
+            }
+
             await this.validateRequest(question.name);
             await this.logger.logQuery(question.name, remoteInfo);
 
@@ -54,10 +59,6 @@ export class NameServer {
     }
 
     private async validateRequest(name: string): Promise<void> {
-        const sql = `SELECT EXISTS(SELECT 1
-                                   FROM project
-                                   WHERE domain = ?) as exists_flag`;
-
         const result = await db.query(sql, [name.toLowerCase()]);
         console.log(result);
     }

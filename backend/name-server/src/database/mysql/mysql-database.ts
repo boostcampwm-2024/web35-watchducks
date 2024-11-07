@@ -1,4 +1,4 @@
-import type { FieldPacket, Pool, QueryResult } from 'mysql2/promise';
+import type { Pool, QueryResult } from 'mysql2/promise';
 import mysql from 'mysql2/promise';
 import { poolConfig } from './config';
 import type { Server } from 'node:net';
@@ -30,11 +30,11 @@ class MysqlDatabase {
         }
     }
 
-    public async query(sql: string, params: string[]): Promise<[QueryResult, FieldPacket[]]> {
+    public async query(sql: string, params: string[]): Promise<QueryResult> {
         const pool = await this.getPool();
+        const [result] = await pool.query(sql, params);
 
-        console.log(sql, params); // TODO: DELETE
-        return pool.query(sql, params);
+        return result;
     }
 
     private async getPool(): Promise<Pool> {
