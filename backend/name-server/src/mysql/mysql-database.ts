@@ -33,6 +33,7 @@ class MysqlDatabase {
     public async query(sql: string, params: string[]): Promise<[QueryResult, FieldPacket[]]> {
         const pool = await this.getPool();
 
+        console.log(sql, params); // TODO: DELETE
         return pool.query(sql, params);
     }
 
