@@ -1,4 +1,4 @@
-import type { Pool } from 'mysql2/promise';
+import type { FieldPacket, Pool, QueryResult } from 'mysql2/promise';
 import mysql from 'mysql2/promise';
 import { poolConfig } from './config';
 import type { Server } from 'node:net';
@@ -17,20 +17,26 @@ class MysqlDatabase {
         return MysqlDatabase.instance;
     }
 
-    private async connect(): Promise<void> {
+    public async connect(): Promise<void> {
         try {
             this.pool = mysql.createPool(poolConfig);
 
             await this.pool.query('SELECT 1');
             console.log('Database pool initialized successfully');
         } catch (error) {
-            console.error('Failed to setup tunnel or create pool:', error);
+            console.error('Failed to initialize connection pool:', error);
             await this.cleanup();
-            throw error;
+            throw new Error('Mysql connection failed');
         }
     }
 
-    public async getPool(): Promise<Pool> {
+    public async query(sql: string, params: string[]): Promise<[QueryResult, FieldPacket[]]> {
+        const pool = await this.getPool();
+
+        return pool.query(sql, params);
+    }
+
+    private async getPool(): Promise<Pool> {
         if (!this.pool) {
             await this.connect();
 
@@ -55,25 +61,4 @@ class MysqlDatabase {
     }
 }
 
-export async function initializeDatabase(): Promise<Pool> {
-    try {
-        const dbPool = MysqlDatabase.getInstance();
-        return await dbPool.getPool();
-    } catch (error) {
-        console.error('Failed to initialize database:', error);
-        throw error;
-    }
-}
-
-process.on('SIGINT', async () => {
-    try {
-        await MysqlDatabase.getInstance().end();
-        console.log('Database connections cleaned up');
-        process.exit(0);
-    } catch (error) {
-        console.error('Error during cleanup:', error);
-        process.exit(1);
-    }
-});
-
-export const dbPool = MysqlDatabase.getInstance();
+export const db = MysqlDatabase.getInstance();

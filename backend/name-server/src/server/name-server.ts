@@ -42,6 +42,8 @@ export class NameServer {
 
             await this.logger.logQuery(question.name, remoteInfo);
 
+            console.log(question);
+
             const response = new DNSResponseBuilder(query, this.config).addAnswer(question).build();
             const responseMsg = encode(response);
 
