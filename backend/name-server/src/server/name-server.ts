@@ -42,10 +42,6 @@ export class NameServer {
             const query = decode(msg);
             const question = this.parseQuery(query);
 
-            if (projectQuery.findByDomain(question.name)) {
-                console.log('true');
-            }
-
             await this.validateRequest(question.name);
             await this.logger.logQuery(question.name, remoteInfo);
 
@@ -59,8 +55,9 @@ export class NameServer {
     }
 
     private async validateRequest(name: string): Promise<void> {
-        const result = await db.query(sql, [name.toLowerCase()]);
-        console.log(result);
+        if (projectQuery.findByDomain(name)) {
+            console.log('true');
+        }
     }
 
     private parseQuery(query: DecodedPacket): Question {
