@@ -57,7 +57,7 @@ export class NameServer {
 
             await this.sendResponse(responseMsg, remoteInfo);
         } catch (error) {
-            await this.handleQueryError(error as Error, remoteInfo);
+            await this.handleQueryError(error as Error, msg, remoteInfo);
         }
     }
 
@@ -92,9 +92,15 @@ export class NameServer {
         });
     }
 
-    private async handleQueryError(error: Error, remoteInfo: RemoteInfo): Promise<void> {
+    private async handleQueryError(
+        error: Error,
+        msg: Buffer,
+        remoteInfo: RemoteInfo,
+    ): Promise<void> {
+        const query = decode(msg);
+
         const errorMessage = `Failed to process DNS query from ${remoteInfo.address}:${remoteInfo.port}`;
-        const response = new DNSResponseBuilder(this.config)
+        const response = new DNSResponseBuilder(this.config, query)
             .addAnswer(ResponseCode.NXDOMAIN)
             .build();
 

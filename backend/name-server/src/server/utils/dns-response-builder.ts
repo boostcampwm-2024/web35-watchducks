@@ -19,13 +19,13 @@ export class DNSResponseBuilder {
 
     constructor(
         private config: ServerConfig,
-        query?: Packet,
+        query: Packet,
     ) {
         this.response = {
-            id: query ? query.id : 0,
+            id: query.id,
             type: 'response',
-            flags: query ? this.createFlags(query) : DNSFlags.AUTHORITATIVE_ANSWER,
-            questions: query ? query.questions : [],
+            flags: this.createFlags(query),
+            questions: query.questions,
         };
     }
 
