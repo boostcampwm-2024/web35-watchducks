@@ -1,6 +1,7 @@
 import type { Packet, Question, RecordClass } from 'dns-packet';
 import type { ServerConfig } from '../../utils/validator/configuration.validator';
 import { PacketValidator } from '../../utils/validator/packet.validator';
+import type { ResponseCode } from '../name-server';
 import { DNSFlags } from '../name-server';
 
 export interface DNSResponse extends Packet {
@@ -10,6 +11,7 @@ export interface DNSResponse extends Packet {
         class: RecordClass;
         ttl: number;
         data: string;
+        rcode: number;
     }>;
 }
 
@@ -38,7 +40,7 @@ export class DNSResponseBuilder {
         return flags;
     }
 
-    addAnswer(question: Question): this {
+    addAnswer(question: Question, rcode: ResponseCode): this {
         this.response.answers = [
             {
                 name: question.name,
@@ -46,6 +48,7 @@ export class DNSResponseBuilder {
                 class: 'IN',
                 ttl: 300,
                 data: this.config.proxyServerIp,
+                rcode,
             },
         ];
         return this;

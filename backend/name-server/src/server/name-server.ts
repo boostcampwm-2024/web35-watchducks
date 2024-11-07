@@ -17,6 +17,12 @@ export enum DNSFlags {
     CHECKING_DISABLED = 0x0010, // DNSSEC 검증 비활성화
 }
 
+export enum ResponseCode {
+    NOERROR = 0, // 정상 응답
+    NXDOMAIN = 3, // 도메인이 존재하지 않음
+    SERVFAIL = 2, // 서버 에러
+}
+
 export class NameServer {
     private server: Socket;
     private logger: Logger;
@@ -41,11 +47,16 @@ export class NameServer {
             const query = decode(msg);
             const question = this.parseQuery(query);
 
-            await this.validateRequest(question.name);
             await this.logger.logQuery(question.name, remoteInfo);
+            const response = new DNSResponseBuilder(query, this.config);
 
-            const response = new DNSResponseBuilder(query, this.config).addAnswer(question).build();
-            const responseMsg = encode(response);
+            if (await this.validateRequest(question.name)) {
+                response.addAnswer(question, ResponseCode.NOERROR);
+            } else {
+                response.addAnswer(question, ResponseCode.NXDOMAIN);
+            }
+
+            const responseMsg = encode(response.build());
 
             await this.sendResponse(responseMsg, remoteInfo);
         } catch (error) {
@@ -53,11 +64,13 @@ export class NameServer {
         }
     }
 
-    private async validateRequest(name: string): Promise<void> {
+    private async validateRequest(name: string): Promise<boolean> {
         if (await projectQuery.existsByDomain(name)) {
-            return;
+            return true;
         }
-        throw new Error(`Not valid domain name: ${name}`);
+        await this.logger.error('not found domain name', new Error('not found domain name'));
+
+        return false;
     }
 
     private parseQuery(query: DecodedPacket): Question {
