@@ -55,6 +55,7 @@ export class ProxyServerStream {
         return new Promise(async (resolve, reject) => {
             const filteredHeaders = this.filterHeaders(headers);
             const ip = await projectQuery.findIpByDomain(host);
+            console.log(ip, host);
 
             const [hostname, port] = ip.split(':');
 
