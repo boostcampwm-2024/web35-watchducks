@@ -24,7 +24,7 @@ class ProjectQuery {
                                    FROM project
                                    WHERE domain = ?) as exists_flag`;
         const params = [name];
-        const rows = await db.query<ProjectExists[]>(sql, params);
+        const rows = await this.db.query<ProjectExists[]>(sql, params);
 
         return rows[0].exists_flag === this.EXIST;
     }
