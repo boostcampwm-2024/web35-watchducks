@@ -7,7 +7,12 @@
     "paths": {
       "@/*": ["./src/*"],
       "@component/*": ["./src/component/*"],
-      "@boundary/*": ["./src/boundary/*"]
+      "@boundary/*": ["./src/boundary/*"],
+      "@hook/*": ["./src/hook/*"],
+      "@type/*": ["./src/type/*"],
+      "@util/*": ["./src/util/*"],
+      "@api/*": ["./src/api/*"],
+      "@asset/*": ["./asset/*"]
     }
   }
 }
