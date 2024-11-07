@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectModule } from './project/project.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { getTypeOrmConfig } from './config/typeorm.config';
 
 @Module({
   imports: [
@@ -13,16 +14,7 @@ import { AppService } from './app.service';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'mysql',
-        host: configService.get('DB_HOST'),
-        port: Number(configService.get<number>('DB_PORT')),
-        username: configService.get('DB_USERNAME'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_NAME'),
-        autoLoadEntities: true,
-        synchronize: true,
-      }),
+      useFactory: getTypeOrmConfig,
     }),
     ProjectModule,
   ],
