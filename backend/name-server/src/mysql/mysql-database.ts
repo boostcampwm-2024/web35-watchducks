@@ -1,30 +1,24 @@
-import { createTunnel } from 'tunnel-ssh';
 import type { Pool } from 'mysql2/promise';
 import mysql from 'mysql2/promise';
-import { forwardConfig, poolConfig, sshConfig, tunnelConfig, serverConfig } from './config';
+import { poolConfig } from './config';
 import type { Server } from 'node:net';
 
-class DatabasePool {
-    private static instance: DatabasePool;
+class MysqlDatabase {
+    private static instance: MysqlDatabase;
     private pool: Pool | null = null;
     private server: Server | null = null;
 
     private constructor() {}
 
-    public static getInstance(): DatabasePool {
-        if (!DatabasePool.instance) {
-            DatabasePool.instance = new DatabasePool();
+    public static getInstance(): MysqlDatabase {
+        if (!MysqlDatabase.instance) {
+            MysqlDatabase.instance = new MysqlDatabase();
         }
-        return DatabasePool.instance;
+        return MysqlDatabase.instance;
     }
 
-    private async setupTunnel(): Promise<void> {
+    private async connect(): Promise<void> {
         try {
-            this.server = (
-                await createTunnel(tunnelConfig, serverConfig, sshConfig, forwardConfig)
-            )[0];
-            console.log('SSH 터널링 성공!');
-
             this.pool = mysql.createPool(poolConfig);
 
             await this.pool.query('SELECT 1');
@@ -38,7 +32,9 @@ class DatabasePool {
 
     public async getPool(): Promise<Pool> {
         if (!this.pool) {
-            await this.setupTunnel();
+            await this.connect();
+
+            return this.getPool();
         }
         return this.pool as Pool;
     }
@@ -57,21 +53,11 @@ class DatabasePool {
     public async end(): Promise<void> {
         await this.cleanup();
     }
-
-    public async isConnected(): Promise<boolean> {
-        try {
-            if (!this.pool) return false;
-            await this.pool.query('SELECT 1');
-            return true;
-        } catch {
-            return false;
-        }
-    }
 }
 
 export async function initializeDatabase(): Promise<Pool> {
     try {
-        const dbPool = DatabasePool.getInstance();
+        const dbPool = MysqlDatabase.getInstance();
         return await dbPool.getPool();
     } catch (error) {
         console.error('Failed to initialize database:', error);
@@ -81,7 +67,7 @@ export async function initializeDatabase(): Promise<Pool> {
 
 process.on('SIGINT', async () => {
     try {
-        await DatabasePool.getInstance().end();
+        await MysqlDatabase.getInstance().end();
         console.log('Database connections cleaned up');
         process.exit(0);
     } catch (error) {
@@ -90,4 +76,4 @@ process.on('SIGINT', async () => {
     }
 });
 
-export const dbPool = DatabasePool.getInstance();
+export const dbPool = MysqlDatabase.getInstance();
