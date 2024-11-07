@@ -1,12 +1,8 @@
-import { Entity } from 'typeorm';
-import {
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, Unique } from 'typeorm';
+import { Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('projects')
+@Unique(['domain'])
 export class Project {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
@@ -17,7 +13,7 @@ export class Project {
   @Column({ type: 'varchar', length: 255 })
   ip: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, unique: true })
   domain: string;
 
   @Column({ type: 'varchar', length: 255 })

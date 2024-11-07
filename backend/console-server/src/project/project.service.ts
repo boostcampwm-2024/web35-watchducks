@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { Repository } from 'typeorm';
@@ -11,6 +11,15 @@ export class ProjectService {
   ) {}
 
   async create(projectData: Partial<Project>) {
-    return this.projectRepository.create(projectData);
+    try {
+      const result = await this.projectRepository.insert(projectData);
+      return result.identifiers;
+    } catch (error) {
+      if (error.code === 'ER_DUP_ENTRY')
+        throw new ConflictException(
+          'Project with the same domain or ID already exists.',
+        );
+      throw error;
+    }
   }
 }
