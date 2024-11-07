@@ -6,7 +6,6 @@ import { decode, encode } from 'dns-packet';
 import type { ServerConfig } from '../utils/validator/configuration.validator';
 import { PacketValidator } from '../utils/validator/packet.validator';
 import { DNSResponseBuilder } from './utils/dns-response-builder';
-import { db } from '../database/mysql/mysql-database';
 import { projectQuery } from '../database/query/project.query';
 
 export enum DNSFlags {

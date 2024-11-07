@@ -1,4 +1,9 @@
 import { db } from '../mysql/mysql-database';
+import type { RowDataPacket } from 'mysql2/promise';
+
+interface ProjectExists extends RowDataPacket {
+    exists_flag: number;
+}
 
 class ProjectQuery {
     private static instance: ProjectQuery;
@@ -18,8 +23,9 @@ class ProjectQuery {
                                    FROM project
                                    WHERE domain = ?) as exists_flag`;
         const params = [name];
-        const result = await db.query(sql, params);
-        console.log(result);
+        const rows = await db.query<ProjectExists[]>(sql, params);
+
+        console.log(rows);
 
         return true;
         // return result[0]['exists_flag'] === 1;

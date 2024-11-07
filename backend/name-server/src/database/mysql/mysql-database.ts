@@ -1,7 +1,9 @@
-import type { Pool, QueryResult } from 'mysql2/promise';
+import type { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import mysql from 'mysql2/promise';
 import { poolConfig } from './config';
 import type { Server } from 'node:net';
+
+type QueryResult = RowDataPacket[] | RowDataPacket[][] | ResultSetHeader;
 
 class MysqlDatabase {
     private static instance: MysqlDatabase;
@@ -30,11 +32,11 @@ class MysqlDatabase {
         }
     }
 
-    public async query(sql: string, params: string[]): Promise<QueryResult> {
+    public async query<T extends QueryResult>(sql: string, params: string[]): Promise<T> {
         const pool = await this.getPool();
-        const [result] = await pool.query(sql, params);
+        const [rows] = await pool.query<T>(sql, params);
 
-        return result;
+        return rows;
     }
 
     private async getPool(): Promise<Pool> {
