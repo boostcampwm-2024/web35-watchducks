@@ -48,15 +48,12 @@ export class NameServer {
             const question = this.parseQuery(query);
 
             await this.logger.logQuery(question.name, remoteInfo);
-            const response = new DNSResponseBuilder(query, this.config);
+            await this.validateRequest(question.name);
 
-            if (await this.validateRequest(question.name)) {
-                response.addAnswer(question, ResponseCode.NOERROR);
-            } else {
-                response.addAnswer(question, ResponseCode.NXDOMAIN);
-            }
-
-            const responseMsg = encode(response.build());
+            const response = new DNSResponseBuilder(this.config, query)
+                .addAnswer(ResponseCode.NOERROR, question)
+                .build();
+            const responseMsg = encode(response);
 
             await this.sendResponse(responseMsg, remoteInfo);
         } catch (error) {
@@ -64,13 +61,11 @@ export class NameServer {
         }
     }
 
-    private async validateRequest(name: string): Promise<boolean> {
+    private async validateRequest(name: string): Promise<void> {
         if (await projectQuery.existsByDomain(name)) {
-            return true;
+            return;
         }
-        await this.logger.error('not found domain name', new Error('not found domain name'));
-
-        return false;
+        throw new Error('Not found domain name');
     }
 
     private parseQuery(query: DecodedPacket): Question {
@@ -99,7 +94,13 @@ export class NameServer {
 
     private async handleQueryError(error: Error, remoteInfo: RemoteInfo): Promise<void> {
         const errorMessage = `Failed to process DNS query from ${remoteInfo.address}:${remoteInfo.port}`;
+        const response = new DNSResponseBuilder(this.config)
+            .addAnswer(ResponseCode.NOERROR)
+            .build();
 
+        const responseMsg = encode(response);
+
+        await this.sendResponse(responseMsg, remoteInfo);
         await this.logger.error(errorMessage, error);
     }
 

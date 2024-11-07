@@ -1,8 +1,7 @@
 import type { Packet, Question, RecordClass } from 'dns-packet';
 import type { ServerConfig } from '../../utils/validator/configuration.validator';
 import { PacketValidator } from '../../utils/validator/packet.validator';
-import type { ResponseCode } from '../name-server';
-import { DNSFlags } from '../name-server';
+import { DNSFlags, ResponseCode } from '../name-server';
 
 export interface DNSResponse extends Packet {
     answers: Array<{
@@ -19,14 +18,14 @@ export class DNSResponseBuilder {
     private readonly response: Partial<DNSResponse>;
 
     constructor(
-        query: Packet,
         private config: ServerConfig,
+        query?: Packet,
     ) {
         this.response = {
-            id: query.id,
+            id: query ? query.id : 0,
             type: 'response',
-            flags: this.createFlags(query),
-            questions: query.questions,
+            flags: query ? this.createFlags(query) : DNSFlags.AUTHORITATIVE_ANSWER,
+            questions: query ? query.questions : [],
         };
     }
 
@@ -40,17 +39,21 @@ export class DNSResponseBuilder {
         return flags;
     }
 
-    addAnswer(question: Question, rcode: ResponseCode): this {
-        this.response.answers = [
-            {
-                name: question.name,
-                type: 'A',
-                class: 'IN',
-                ttl: 300,
-                data: this.config.proxyServerIp,
-                rcode,
-            },
-        ];
+    addAnswer(rcode: ResponseCode, question?: Question): this {
+        if (rcode === ResponseCode.NOERROR && question) {
+            this.response.answers = [
+                {
+                    name: question.name,
+                    type: 'A',
+                    class: 'IN',
+                    ttl: 300,
+                    data: this.config.proxyServerIp,
+                    rcode,
+                },
+            ];
+            return this;
+        }
+        this.response.answers = [];
         return this;
     }
 
