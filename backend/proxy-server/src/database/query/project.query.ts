@@ -20,11 +20,13 @@ class ProjectQuery {
     }
 
     async findIpByDomain(domain: string): Promise<string> {
-        const sql = `SELECT EXISTS(SELECT ip 
+        const sql = `SELECT EXISTS(SELECT ip
                                    FROM project
                                    WHERE domain = ?)`;
         const params = [domain];
         const rows = await this.db.query<ProjectIp[]>(sql, params);
+
+        console.log('rows: ', rows);
 
         return rows[0].ip;
     }
