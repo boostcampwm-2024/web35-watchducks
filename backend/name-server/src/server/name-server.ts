@@ -58,7 +58,7 @@ export class NameServer {
                                    FROM project
                                    WHERE name = ?) as exists_flag`;
 
-        const result = await db.query(sql, [name]);
+        const result = await db.query(sql, [name.toLowerCase()]);
         console.log(result);
     }
 
