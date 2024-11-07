@@ -7,7 +7,12 @@ export default defineConfig({
     alias: [
       { find: '@', replacement: '/src' },
       { find: '@component', replacement: '/src/component' },
-      { find: '@boundary', replacement: '/src/boundary' }
+      { find: '@boundary', replacement: '/src/boundary' },
+      { find: '@hook', replacement: '/src/hook' },
+      { find: '@type', replacement: '/src/type' },
+      { find: '@util', replacement: '/src/util' },
+      { find: '@api', replacement: '/src/api' },
+      { find: '@asset', replacement: '/asset' }
     ]
   },
   server: {

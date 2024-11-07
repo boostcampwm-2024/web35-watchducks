@@ -27,9 +27,20 @@
     "paths": {
       "@/*": ["./src/*"],
       "@component/*": ["./src/component/*"],
-      "@boundary/*": ["./src/boundary/*"]
+      "@boundary/*": ["./src/boundary/*"],
+      "@hook/*": ["./src/hook/*"],
+      "@type/*": ["./src/type/*"],
+      "@util/*": ["./src/util/*"],
+      "@api/*": ["./src/api/*"],
+      "@asset/*": ["./asset/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.jsx"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "src/util/Navigate.tsx"
+  ],
   "exclude": ["src/**/__tests__/*"]
 }
