@@ -56,7 +56,7 @@ export class NameServer {
     private async validateRequest(name: string): Promise<void> {
         const sql = `SELECT EXISTS(SELECT 1
                                    FROM project
-                                   WHERE name = ?) as exists_flag`;
+                                   WHERE domain = ?) as exists_flag`;
 
         const result = await db.query(sql, [name.toLowerCase()]);
         console.log(result);
