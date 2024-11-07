@@ -5,7 +5,11 @@ import { toast } from 'react-toastify';
 
 import { getErrorByCode } from './toastError';
 
-export default function CustomQueryClientProvider({ children }: { children: React.ReactNode }) {
+type Props = {
+  children: React.ReactNode;
+};
+
+export default function CustomQueryClientProvider({ children }: Props) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
