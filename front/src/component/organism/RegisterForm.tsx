@@ -50,7 +50,7 @@ export default function RegisterForm({ showAlert }: Props) {
         type='text'
         value={formData.ip}
         onChange={handleChange('ip')}
-        placeholder='아이피 (ex. 192.0.0.1)'
+        placeholder='아이피 (ex. 192.0.0.1:3000)'
         isValid={validation.isValidIp}
       />
 
