@@ -8,6 +8,7 @@ interface ProjectExists extends RowDataPacket {
 class ProjectQuery {
     private static instance: ProjectQuery;
     private readonly db = db;
+    private readonly EXIST = 1;
 
     private constructor() {}
 
@@ -18,17 +19,14 @@ class ProjectQuery {
         return ProjectQuery.instance;
     }
 
-    async findByDomain(name: string): Promise<boolean> {
+    async existsByDomain(name: string): Promise<boolean> {
         const sql = `SELECT EXISTS(SELECT 1
                                    FROM project
                                    WHERE domain = ?) as exists_flag`;
         const params = [name];
         const rows = await db.query<ProjectExists[]>(sql, params);
 
-        console.log(rows);
-
-        return true;
-        // return result[0]['exists_flag'] === 1;
+        return rows[0].exists_flag === this.EXIST;
     }
 }
 

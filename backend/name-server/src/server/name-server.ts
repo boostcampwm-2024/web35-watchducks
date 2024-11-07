@@ -54,9 +54,10 @@ export class NameServer {
     }
 
     private async validateRequest(name: string): Promise<void> {
-        if (projectQuery.findByDomain(name)) {
-            console.log('true');
+        if (await projectQuery.existsByDomain(name)) {
+            return;
         }
+        throw new Error(`Not valid domain name: ${name}`);
     }
 
     private parseQuery(query: DecodedPacket): Question {
