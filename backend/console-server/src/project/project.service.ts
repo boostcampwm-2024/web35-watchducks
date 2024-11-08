@@ -2,17 +2,24 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { QueryFailedError, Repository } from 'typeorm';
+import { MailService } from '../mail/mail.service';
+import { CreateProjectDto } from './dto/create-project.dto';
 
 @Injectable()
 export class ProjectService {
   constructor(
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
+    private readonly mailService: MailService,
   ) {}
 
-  async create(projectData: Partial<Project>) {
+  async create(createProjectDto: CreateProjectDto) {
     try {
-      const result = await this.projectRepository.insert(projectData);
+      const result = await this.projectRepository.insert(createProjectDto);
+      await this.mailService.sendNameServerInfo(
+        createProjectDto.email,
+        createProjectDto.name,
+      );
       return result.identifiers;
     } catch (error) {
       if (
