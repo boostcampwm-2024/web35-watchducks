@@ -4,7 +4,7 @@ import { Column, PrimaryGeneratedColumn } from 'typeorm';
 @Entity('projects')
 @Unique(['domain'])
 export class Project {
-  @PrimaryGeneratedColumn({ type: 'bigint' })
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: 'varchar', length: 255 })
