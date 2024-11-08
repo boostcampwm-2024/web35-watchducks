@@ -36,6 +36,6 @@ export class ProjectService {
 }
 
 function isUniqueConstraintViolation(error: any): boolean {
-  const uniqueViolationCodes = ['ER_DUP_ENTRY', '23505'];
+  const uniqueViolationCodes = ['ER_DUP_ENTRY', '23505', 'SQLITE_CONSTRAINT'];
   return uniqueViolationCodes.includes(error.code);
 }
