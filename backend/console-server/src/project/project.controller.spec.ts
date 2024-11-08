@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectController } from './project.controller';
 import { ProjectService } from './project.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { getTypeOrmConfig } from '../config/typeorm.config';
+import typeOrmConfig from '../config/typeorm.config';
 import { Project } from './entities/project.entity';
 
 describe('ProjectController', () => {
@@ -15,11 +15,7 @@ describe('ProjectController', () => {
         await ConfigModule.forRoot({
           isGlobal: true,
         }),
-        TypeOrmModule.forRootAsync({
-          imports: [ConfigModule],
-          inject: [ConfigService],
-          useFactory: getTypeOrmConfig,
-        }),
+        TypeOrmModule.forRootAsync(typeOrmConfig.asProvider()),
         TypeOrmModule.forFeature([Project]),
       ],
       controllers: [ProjectController],
