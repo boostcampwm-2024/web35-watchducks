@@ -1,4 +1,5 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import fastify from 'fastify';
 import replyFrom from '@fastify/reply-from';
 import { ProxyError } from '../error/core/proxy.error';
 import type { ProxyService } from './proxy-service';
@@ -10,7 +11,7 @@ export class ProxyServerFastify {
     private readonly server: FastifyInstance;
 
     constructor(private readonly proxyService: ProxyService) {
-        this.server = fastifyConfig;
+        this.server = fastify(fastifyConfig);
 
         this.initializePlugins();
         this.initializeRoutes();
