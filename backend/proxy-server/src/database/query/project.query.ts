@@ -25,8 +25,6 @@ class ProjectQuery {
         const params = [domain];
         const rows = await this.db.query<ProjectIp[]>(sql, params);
 
-        console.log('rows: ', rows);
-
         return rows[0].ip;
     }
 }

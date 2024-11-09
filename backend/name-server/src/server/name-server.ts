@@ -111,7 +111,7 @@ export class NameServer {
     }
 
     private handleError(error: Error): void {
-        this.logger.error('Server error', error);
+        this.logger.error('Server type', error);
         this.stop();
     }
 

@@ -1,11 +1,6 @@
-import { ProxyServerFetch } from './proxy-server-fetch';
-import { ProxyServerStream } from './proxy-server-stream';
-import { ProxyServerFastify } from './proxy-server-fastify';
+import { ProxyServerFastify } from './proxy/proxy-server-fastify';
+import { ProxyService } from './proxy/proxy-service';
 
-const proxyServerFetch = new ProxyServerFetch({ port: 3100 });
-const proxyServerFastify = new ProxyServerFastify({ port: 3200 });
-const proxyServerStream = new ProxyServerStream({ port: 3300 });
+const proxyServerFastify = new ProxyServerFastify(new ProxyService());
 
-proxyServerFetch.start();
-proxyServerStream.start();
 proxyServerFastify.start();

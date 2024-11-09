@@ -1,6 +1,6 @@
 import type { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import mysql from 'mysql2/promise';
-import { poolConfig } from './config';
+import { poolConfig } from './config/pool.config';
 import type { Server } from 'node:net';
 
 type QueryResult = RowDataPacket[] | RowDataPacket[][] | ResultSetHeader;
