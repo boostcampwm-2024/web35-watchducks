@@ -70,7 +70,7 @@ export class ProxyServerFastify {
             await reply.from(targetUrl, {
                 onResponse: (request, reply, res) => {
                     // 응답 헤더 복사
-                    Object.entries(res.getHeaders).forEach(([key, value]) => {
+                    Object.entries(res.getHeaders()).forEach(([key, value]) => {
                         if (value) reply.header(key, value);
                     });
                 },
