@@ -14,6 +14,7 @@ export class ProxyServerFastify {
         this.server = fastify(fastifyConfig);
 
         this.initializePlugins();
+        this.initializeHooks();
         this.initializeRoutes();
         this.initializeErrorHandler();
     }
@@ -30,6 +31,19 @@ export class ProxyServerFastify {
 
     private initializeRoutes(): void {
         this.server.all('*', this.handleProxyRequest.bind(this));
+    }
+
+    private initializeHooks(): void {
+        this.server.addHook('onResponse', (request, reply, done) => {
+            this.server.log.info({
+                message: 'Response completed',
+                method: request.method,
+                url: request.url,
+                statusCode: reply.statusCode,
+                responseTime: reply.elapsedTime,
+            });
+            done();
+        });
     }
 
     private initializeErrorHandler(): void {
@@ -68,12 +82,6 @@ export class ProxyServerFastify {
             this.server.log.info(`Proxying request to: ${targetUrl}`);
 
             return reply.from(targetUrl, {
-                onResponse: (request, reply, res) => {
-                    reply.code(res.statusCode);
-                    Object.entries(res.headers).forEach(([key, value]) => {
-                        if (value) reply.header(key, value);
-                    });
-                },
                 onError: (reply, error) => {
                     this.server.log.error('Proxy error occurred', error);
                     throw new ProxyError(

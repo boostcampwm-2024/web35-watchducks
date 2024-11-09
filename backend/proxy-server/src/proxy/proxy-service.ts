@@ -9,9 +9,6 @@ export class ProxyService {
 
     public async resolveDomain(host: string): Promise<string> {
         try {
-            if (host === 'watchducks-test.shop') {
-                return '175.106.99.193:3000';
-            }
             const ip = await projectQuery.findIpByDomain(host);
 
             this.validateIp(ip, host);
