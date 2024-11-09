@@ -1,4 +1,4 @@
-import type { FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import fastify from 'fastify';
 import replyFrom from '@fastify/reply-from';
 import type { ProxyConfig } from '../config';
@@ -39,8 +39,9 @@ export class ProxyServerFastify {
             console.log('url target : ', targetUrl);
 
             return reply.from(targetUrl, {
-                onError: (error) => {
+                onError: (reply, error) => {
                     console.error('프록시 요청 중 에러 발생:', error);
+                    reply.status(500).send('요청 중 에러가 발생했습니다.');
                 },
             });
         });
