@@ -33,9 +33,8 @@ export class ProxyServerFastify {
             }
             const ip = await projectQuery.findIpByDomain(host);
 
-            const targetPort = '3000';
             const requestPath = request.url || '/';
-            const targetUrl = `http://${ip}:${targetPort}${requestPath}`;
+            const targetUrl = `http://${ip}${requestPath}`;
 
             console.log('url target : ', targetUrl);
 
