@@ -79,17 +79,18 @@ export class ProxyServerFastify {
             const ip = await this.proxyService.resolveDomain(host);
             const targetUrl = this.proxyService.buildTargetUrl(ip, request.url);
 
-            this.server.log.info(`Proxying request to: ${targetUrl}`);
-
-            return reply.from(targetUrl, {
-                onError: (reply, error) => {
-                    this.server.log.error('Proxy error occurred', error);
-                    throw new ProxyError(
-                        '프록시 요청 처리 중 오류가 발생했습니다.',
-                        502,
-                        error.error,
-                    );
-                },
+            await new Promise<void>((resolve, reject) => {
+                reply.from(targetUrl, {
+                    onError: (reply, error) => {
+                        reject(
+                            new ProxyError(
+                                '프록시 요청 처리 중 오류가 발생했습니다.',
+                                502,
+                                error.error,
+                            ),
+                        );
+                    },
+                });
             });
         } catch (error) {
             throw error instanceof ProxyError
