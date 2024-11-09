@@ -8,7 +8,6 @@ interface ProjectIp extends RowDataPacket {
 class ProjectQuery {
     private static instance: ProjectQuery;
     private readonly db = db;
-    private readonly EXIST = 1;
 
     private constructor() {}
 
