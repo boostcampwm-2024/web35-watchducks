@@ -67,14 +67,15 @@ export class ProxyServerFastify {
 
             this.server.log.info(`Proxying request to: ${targetUrl}`);
 
-            await reply.from(targetUrl, {
+            return reply.from(targetUrl, {
                 onResponse: (request, reply, res) => {
-                    // 응답 헤더 복사
-                    Object.entries(res.getHeaders()).forEach(([key, value]) => {
+                    reply.code(res.statusCode);
+                    Object.entries(res.headers).forEach(([key, value]) => {
                         if (value) reply.header(key, value);
                     });
                 },
                 onError: (reply, error) => {
+                    this.server.log.error('Proxy error occurred', error);
                     throw new ProxyError(
                         '프록시 요청 처리 중 오류가 발생했습니다.',
                         502,
