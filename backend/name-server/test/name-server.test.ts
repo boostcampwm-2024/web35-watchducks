@@ -1,21 +1,21 @@
-import { NameServer } from '../src/server/name-server';
+import { Server } from '../src/server/server';
 import { createSocket } from 'dgram';
 import type { Socket, RemoteInfo } from 'dgram';
-import type { Logger } from '../src/utils/logger/logger';
+import type { Logger } from '../src/common/utils/logger/logger';
 import { DNSResponseBuilder } from '../src/server/utils/dns-response-builder';
 import { decode, encode } from 'dns-packet';
-import { PacketValidator } from '../src/utils/validator/packet.validator';
+import { PacketValidator } from '../src/server/utils/packet.validator';
 import { NORMAL_PACKET } from './constant/packet';
 
 jest.mock('dgram');
 jest.mock('dns-packet');
 jest.mock('../src/server/utils/dns-response-builder');
-jest.mock('../src/utils/logger/logger');
+jest.mock('../src/common/utils/logger/logger');
 
 describe('NameServer의', () => {
     let mockServer: Socket;
     let mockLogger: jest.Mocked<Logger>;
-    let nameServer: NameServer;
+    let nameServer: Server;
     const mockConfig = {
         nameServerPort: 5353,
         proxyServerIp: '127.0.0.1',
@@ -38,7 +38,7 @@ describe('NameServer의', () => {
             info: jest.fn(),
         } as unknown as jest.Mocked<Logger>;
 
-        nameServer = new NameServer(mockConfig, mockLogger);
+        nameServer = new Server(mockConfig, mockLogger);
     });
 
     afterEach(() => {

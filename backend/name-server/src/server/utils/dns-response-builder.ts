@@ -1,9 +1,10 @@
 import type { Packet, Question, RecordClass } from 'dns-packet';
-import type { ServerConfig } from '../../utils/validator/configuration.validator';
-import { PacketValidator } from '../../utils/validator/packet.validator';
-import { DNSFlags, ResponseCode } from '../name-server';
+import type { ServerConfig } from '../../common/utils/validator/configuration.validator';
+import { PacketValidator } from './packet.validator';
+import type { ResponseCodeType } from '../constant/dns-packet.constant';
+import { DNSFlags, ResponseCode } from '../constant/dns-packet.constant';
 
-export interface DNSResponse extends Packet {
+interface DNSResponse extends Packet {
     answers: Array<{
         name: string;
         type: 'A';
@@ -30,16 +31,16 @@ export class DNSResponseBuilder {
     }
 
     private createFlags(query: Packet): number {
-        let flags = DNSFlags.AUTHORITATIVE_ANSWER;
+        const flags = DNSFlags.AUTHORITATIVE_ANSWER;
 
         if (PacketValidator.hasFlags(query) && query.flags & DNSFlags.RECURSION_DESIRED) {
-            flags |= DNSFlags.RECURSION_DESIRED;
+            return flags | DNSFlags.RECURSION_DESIRED;
         }
 
         return flags;
     }
 
-    addAnswer(rcode: ResponseCode, question?: Question): this {
+    addAnswer(rcode: ResponseCodeType, question?: Question): this {
         if (rcode === ResponseCode.NOERROR && question) {
             this.response.answers = [
                 {

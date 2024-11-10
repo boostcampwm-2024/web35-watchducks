@@ -1,7 +1,7 @@
 import { DNSResponseBuilder } from '../src/server/utils/dns-response-builder';
 import type { Packet } from 'dns-packet';
-import { DNSFlags } from '../src/server/name-server';
-import { PacketValidator } from '../src/utils/validator/packet.validator';
+import { DNSFlags } from '../src/server/server';
+import { PacketValidator } from '../src/server/utils/packet.validator';
 
 describe('DNSResponseBuilder의', () => {
     const mockConfig = {

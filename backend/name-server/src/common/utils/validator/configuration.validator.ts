@@ -1,3 +1,5 @@
+import { ConfigurationError } from '../../error/configuration.error';
+
 export interface ServerConfig {
     proxyServerIp: string;
     nameServerPort: number;
@@ -8,7 +10,7 @@ export class ConfigurationValidator {
         const { PROXY_SERVER_IP, NAME_SERVER_PORT } = process.env;
 
         if (!PROXY_SERVER_IP || !NAME_SERVER_PORT) {
-            throw new Error('Missing required environment variables');
+            throw new ConfigurationError('Missing required environment variables');
         }
 
         return {
