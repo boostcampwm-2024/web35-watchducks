@@ -18,6 +18,9 @@ on:
       key_secret:
         required: true
         type: string
+      port_secret:
+        required: true
+        type: string
       env_secret:
         required: true
         type: string
