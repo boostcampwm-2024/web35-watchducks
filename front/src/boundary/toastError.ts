@@ -14,7 +14,9 @@ const ERROR_CODE: ErrorCodeType = {
 
   ECONNABORTED: { code: '요청 시간 초과', message: '요청 시간을 초과했습니다.' },
 
-  400: { code: '400', message: '잘못된 요청.' }
+  400: { code: '400', message: '잘못된 요청.' },
+  404: { code: '404', message: '요청한 리소스를 찾을 수 없습니다.' },
+  409: { code: '409', message: '중복된 도메인입니다!' },
 } as const;
 
 export const getErrorByCode = (error: AxiosError<{ code: number; message: string }>) => {
