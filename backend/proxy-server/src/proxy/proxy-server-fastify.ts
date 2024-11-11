@@ -8,16 +8,19 @@ import { HOST_HEADER } from '../common/constant/http.constant';
 import type { RequestLog, ResponseLog } from '../common/interface/log.interface';
 import { ProxyErrorHandler } from '../error/core/proxy-error.handler';
 import { FastifyLogger } from '../common/logger/fastify.logger';
+import { LogService } from '../service/log.service';
 
 export class ProxyServerFastify {
     private readonly server: FastifyInstance;
     private readonly errorHandler: ProxyErrorHandler;
     private readonly logger: FastifyLogger;
+    private readonly logService: LogService;
 
     constructor(private readonly proxyService: ProxyService) {
         this.server = fastify(fastifyConfig);
         this.logger = new FastifyLogger(this.server);
         this.errorHandler = new ProxyErrorHandler({ logger: this.logger });
+        this.logService = new LogService();
 
         this.initializePlugins();
         this.initializeHooks();
@@ -51,31 +54,28 @@ export class ProxyServerFastify {
         });
     }
 
-    private logRequest(request: FastifyRequest): void {
+    private async logRequest(request: FastifyRequest): Promise<void> {
         const requestLog: RequestLog = {
-            message: 'Request received',
             method: request.method,
-            hostname: request.hostname,
-            url: request.url,
+            host: request.host,
             path: request.raw.url,
         };
 
         this.logger.info(requestLog);
+        await this.logService.saveRequestLog(requestLog);
     }
 
-    private logResponse(request: FastifyRequest, reply: FastifyReply): void {
+    private async logResponse(request: FastifyRequest, reply: FastifyReply): Promise<void> {
         const responseLog: ResponseLog = {
-            message: 'Response completed',
             method: request.method,
-            hostname: request.hostname,
-            url: request.url,
+            host: request.host,
             path: request.raw.url,
             statusCode: reply.statusCode,
-            statusMessage: reply.raw.statusMessage,
             responseTime: reply.elapsedTime,
         };
 
         this.logger.info(responseLog);
+        await this.logService.saveResponseLog(responseLog);
     }
 
     private initializeErrorHandler(): void {
