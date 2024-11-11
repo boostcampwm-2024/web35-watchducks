@@ -2,20 +2,20 @@ import type { Socket } from 'dgram';
 import { createSocket, type RemoteInfo } from 'dgram';
 import { decode, encode } from 'dns-packet';
 import type { DecodedPacket, Question } from 'dns-packet';
-import type { ProjectQuery } from '../database/query/project.query';
 import type { ServerConfig } from '../common/utils/validator/configuration.validator';
 import { PacketValidator } from './utils/packet.validator';
 import { DNSResponseBuilder } from './utils/dns-response-builder';
 import { ResponseCode } from './constant/dns-packet.constant';
 import { logger } from '../common/utils/logger/console.logger';
 import { ServerError } from './error/server.error';
+import { ProjectQueryInterface } from '../database/query/project.query.interface';
 
 export class Server {
     private server: Socket;
 
     constructor(
         private readonly config: ServerConfig,
-        private readonly projectQuery: ProjectQuery,
+        private readonly projectQuery: ProjectQueryInterface,
     ) {
         this.server = createSocket('udp4');
         this.initializeServer();
@@ -91,7 +91,7 @@ export class Server {
         const responseMsg = encode(response);
 
         await this.sendResponse(responseMsg, remoteInfo);
-        await logger.error(errorMessage, error);
+        logger.error(errorMessage, error);
     }
 
     private handleError(error: Error): void {

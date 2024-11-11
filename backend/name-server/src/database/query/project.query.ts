@@ -1,11 +1,12 @@
 import { db } from '../mysql/mysql-database';
 import type { RowDataPacket } from 'mysql2/promise';
+import { ProjectQueryInterface } from './project.query.interface';
 
 interface ProjectExists extends RowDataPacket {
     exists_flag: number;
 }
 
-export class ProjectQuery {
+export class ProjectQuery implements ProjectQueryInterface {
     private readonly db = db;
     private readonly EXIST = 1;
 
