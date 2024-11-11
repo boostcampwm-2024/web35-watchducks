@@ -17,16 +17,16 @@ export default forwardRef<HTMLInputElement, Props>(function ValidateTextInput(
   const validationStyle = isValid ? 'border-green' : 'border-red';
 
   return (
-    <div className='relative w-full max-w-[360px]'>
+    <div className='relative w-full'>
       <Input
         ref={ref}
         type={type}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        cssOption={`w-full h-[40px] pl-[16px] pr-[30px] border-[1.5px] rounded-[1.5px] hover:border-blue ${validationStyle}`}
+        cssOption={`w-full h-40 pl-16 pr-30 border-1.5 rounded-1.5 hover:border-blue ${validationStyle}`}
       />
-      <div className='absolute right-[10px] top-1/2 -translate-y-1/2'>
+      <div className='absolute right-10 top-1/2 -translate-y-1/2'>
         <ValidIcon type={isValid ? 'success' : 'fail'} />
       </div>
     </div>
