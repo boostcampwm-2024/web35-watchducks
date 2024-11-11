@@ -1,7 +1,7 @@
 import type { Packet, Question, RecordClass } from 'dns-packet';
 import type { ServerConfig } from '../../utils/validator/configuration.validator';
 import { PacketValidator } from '../../utils/validator/packet.validator';
-import { DNSFlags } from '../name-server';
+import { DNSFlags, ResponseCode } from '../name-server';
 
 export interface DNSResponse extends Packet {
     answers: Array<{
@@ -10,6 +10,7 @@ export interface DNSResponse extends Packet {
         class: RecordClass;
         ttl: number;
         data: string;
+        rcode: number;
     }>;
 }
 
@@ -17,8 +18,8 @@ export class DNSResponseBuilder {
     private readonly response: Partial<DNSResponse>;
 
     constructor(
-        query: Packet,
         private config: ServerConfig,
+        query: Packet,
     ) {
         this.response = {
             id: query.id,
@@ -38,16 +39,21 @@ export class DNSResponseBuilder {
         return flags;
     }
 
-    addAnswer(question: Question): this {
-        this.response.answers = [
-            {
-                name: question.name,
-                type: 'A',
-                class: 'IN',
-                ttl: 300,
-                data: this.config.proxyServerIp,
-            },
-        ];
+    addAnswer(rcode: ResponseCode, question?: Question): this {
+        if (rcode === ResponseCode.NOERROR && question) {
+            this.response.answers = [
+                {
+                    name: question.name,
+                    type: 'A',
+                    class: 'IN',
+                    ttl: 300,
+                    data: this.config.proxyServerIp,
+                    rcode,
+                },
+            ];
+            return this;
+        }
+        this.response.answers = [];
         return this;
     }
 

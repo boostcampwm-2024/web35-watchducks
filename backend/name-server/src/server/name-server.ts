@@ -6,6 +6,7 @@ import { decode, encode } from 'dns-packet';
 import type { ServerConfig } from '../utils/validator/configuration.validator';
 import { PacketValidator } from '../utils/validator/packet.validator';
 import { DNSResponseBuilder } from './utils/dns-response-builder';
+import { projectQuery } from '../database/query/project.query';
 
 export enum DNSFlags {
     AUTHORITATIVE_ANSWER = 0x0400, // 권한 있는 응답 (네임서버가 해당 도메인의 공식 서버일 때)
@@ -14,6 +15,12 @@ export enum DNSFlags {
     RECURSION_AVAILABLE = 0x0080, // 재귀 쿼리 지원 여부
     AUTHENTIC_DATA = 0x0020, // DNSSEC 검증된 데이터
     CHECKING_DISABLED = 0x0010, // DNSSEC 검증 비활성화
+}
+
+export enum ResponseCode {
+    NOERROR = 0, // 정상 응답
+    NXDOMAIN = 3, // 도메인이 존재하지 않음
+    SERVFAIL = 2, // 서버 에러
 }
 
 export class NameServer {
@@ -41,14 +48,24 @@ export class NameServer {
             const question = this.parseQuery(query);
 
             await this.logger.logQuery(question.name, remoteInfo);
+            await this.validateRequest(question.name);
 
-            const response = new DNSResponseBuilder(query, this.config).addAnswer(question).build();
+            const response = new DNSResponseBuilder(this.config, query)
+                .addAnswer(ResponseCode.NOERROR, question)
+                .build();
             const responseMsg = encode(response);
 
             await this.sendResponse(responseMsg, remoteInfo);
         } catch (error) {
-            await this.handleQueryError(error as Error, remoteInfo);
+            await this.handleQueryError(error as Error, msg, remoteInfo);
         }
+    }
+
+    private async validateRequest(name: string): Promise<void> {
+        if (await projectQuery.existsByDomain(name)) {
+            return;
+        }
+        throw new Error('Not found domain name');
     }
 
     private parseQuery(query: DecodedPacket): Question {
@@ -75,14 +92,26 @@ export class NameServer {
         });
     }
 
-    private async handleQueryError(error: Error, remoteInfo: RemoteInfo): Promise<void> {
-        const errorMessage = `Failed to process DNS query from ${remoteInfo.address}:${remoteInfo.port}`;
+    private async handleQueryError(
+        error: Error,
+        msg: Buffer,
+        remoteInfo: RemoteInfo,
+    ): Promise<void> {
+        const query = decode(msg);
 
+        const errorMessage = `Failed to process DNS query from ${remoteInfo.address}:${remoteInfo.port}`;
+        const response = new DNSResponseBuilder(this.config, query)
+            .addAnswer(ResponseCode.NXDOMAIN)
+            .build();
+
+        const responseMsg = encode(response);
+
+        await this.sendResponse(responseMsg, remoteInfo);
         await this.logger.error(errorMessage, error);
     }
 
     private handleError(error: Error): void {
-        this.logger.error('Server error', error);
+        this.logger.error('Server type', error);
         this.stop();
     }
 
