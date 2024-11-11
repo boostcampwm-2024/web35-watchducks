@@ -6,6 +6,7 @@ import type { ProxyService } from './proxy-service';
 import { isProxyError } from '../error/core/proxy-error.type.guard';
 import { fastifyConfig } from './config/fastify.config';
 import { HOST_HEADER } from '../common/constant/http.constant';
+import type { ErrorLog, RequestLog, ResponseLog } from '../common/interface/log.interface';
 
 export class ProxyServerFastify {
     private readonly server: FastifyInstance;
@@ -35,17 +36,20 @@ export class ProxyServerFastify {
 
     private initializeHooks(): void {
         this.server.addHook('onRequest', (request, reply, done) => {
-            this.server.log.info({
+            const requestLog: RequestLog = {
                 message: 'Request received',
                 method: request.method,
                 hostname: request.hostname,
                 url: request.url,
                 path: request.raw.url,
-            });
+            };
+
+            this.server.log.info(requestLog);
             done();
         });
+
         this.server.addHook('onResponse', (request, reply, done) => {
-            this.server.log.info({
+            const responseLog: ResponseLog = {
                 message: 'Response completed',
                 method: request.method,
                 hostname: request.hostname,
@@ -54,7 +58,9 @@ export class ProxyServerFastify {
                 statusCode: reply.statusCode,
                 statusMessage: reply.raw.statusMessage,
                 responseTime: reply.elapsedTime,
-            });
+            };
+
+            this.server.log.info(responseLog);
             done();
         });
     }
@@ -65,8 +71,12 @@ export class ProxyServerFastify {
                 ? error
                 : new ProxyError('내부 서버 오류가 발생했습니다.', 500, error);
 
-            this.server.log.error({
+            const errorLog: ErrorLog = {
                 message: 'Error occurred',
+                method: request.method,
+                hostname: request.hostname,
+                url: request.url,
+                path: request.raw.url,
                 request: {
                     method: request.method,
                     hostname: request.hostname,
@@ -84,7 +94,9 @@ export class ProxyServerFastify {
                     stack: proxyError.stack,
                     originalError: proxyError.originalError,
                 },
-            });
+            };
+
+            this.server.log.error(errorLog);
 
             reply.status(proxyError.statusCode).send({
                 error: proxyError.message,
@@ -133,9 +145,38 @@ export class ProxyServerFastify {
                 });
             });
         } catch (error) {
-            throw error instanceof ProxyError
-                ? error
-                : new ProxyError('예기치 않은 오류가 발생했습니다.', 500, error as Error);
+            const proxyError =
+                error instanceof ProxyError
+                    ? error
+                    : new ProxyError('예기치 않은 오류가 발생했습니다.', 500, error as Error);
+
+            const errorLog: ErrorLog = {
+                message: 'Proxy request failed',
+                method: request.method,
+                hostname: request.hostname,
+                url: request.url,
+                path: request.raw.url,
+                request: {
+                    method: request.method,
+                    hostname: request.hostname,
+                    url: request.url,
+                    path: request.raw.url,
+                    headers: {
+                        'user-agent': request.headers['user-agent'],
+                        'content-type': request.headers['content-type'],
+                        'x-forwarded-for': request.headers['x-forwarded-for'],
+                    },
+                },
+                error: {
+                    message: proxyError.message,
+                    name: proxyError.name,
+                    stack: proxyError.stack,
+                    originalError: proxyError.originalError,
+                },
+            };
+
+            this.server.log.error(errorLog);
+            throw proxyError;
         }
     }
 
