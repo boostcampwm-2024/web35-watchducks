@@ -15,7 +15,6 @@ export class MailService {
     ) as string[];
   }
 
-  /** TODO: 매직넘버 제거 */
   async sendNameServerInfo(email: string, projectName: string) {
     await this.mailerService.sendMail({
       to: email,
