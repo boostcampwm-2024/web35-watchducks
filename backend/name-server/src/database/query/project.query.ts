@@ -5,19 +5,11 @@ interface ProjectExists extends RowDataPacket {
     exists_flag: number;
 }
 
-class ProjectQuery {
-    private static instance: ProjectQuery;
+export class ProjectQuery {
     private readonly db = db;
     private readonly EXIST = 1;
 
-    private constructor() {}
-
-    public static getInstance(): ProjectQuery {
-        if (!ProjectQuery.instance) {
-            ProjectQuery.instance = new ProjectQuery();
-        }
-        return ProjectQuery.instance;
-    }
+    constructor() {}
 
     async existsByDomain(name: string): Promise<boolean> {
         const sql = `SELECT EXISTS(SELECT 1
@@ -29,5 +21,3 @@ class ProjectQuery {
         return rows[0].exists_flag === this.EXIST;
     }
 }
-
-export const projectQuery = ProjectQuery.getInstance();

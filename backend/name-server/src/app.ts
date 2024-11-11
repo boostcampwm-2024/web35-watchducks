@@ -4,6 +4,7 @@ import { ConfigurationValidator } from './common/utils/validator/configuration.v
 import { Server } from './server/server';
 import { db } from './database/mysql/mysql-database';
 import { logger } from './common/utils/logger/console.logger';
+import { ProjectQuery } from './database/query/project.query';
 
 config();
 
@@ -11,10 +12,12 @@ export class Application {
     constructor() {}
 
     public async initialize(): Promise<Server> {
-        const config = await this.initializeConfig();
         await this.initializeDatabase();
 
-        return new Server(config);
+        const config = await this.initializeConfig();
+        const projectQuery = new ProjectQuery();
+
+        return new Server(config, projectQuery);
     }
 
     public async cleanup(): Promise<void> {

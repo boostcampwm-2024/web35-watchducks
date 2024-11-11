@@ -1,11 +1,11 @@
 import type { Socket } from 'dgram';
 import { createSocket, type RemoteInfo } from 'dgram';
-import type { DecodedPacket, Question } from 'dns-packet';
 import { decode, encode } from 'dns-packet';
+import type { DecodedPacket, Question } from 'dns-packet';
+import type { ProjectQuery } from '../database/query/project.query';
 import type { ServerConfig } from '../common/utils/validator/configuration.validator';
 import { PacketValidator } from './utils/packet.validator';
 import { DNSResponseBuilder } from './utils/dns-response-builder';
-import { projectQuery } from '../database/query/project.query';
 import { ResponseCode } from './constant/dns-packet.constant';
 import { logger } from '../common/utils/logger/console.logger';
 import { ServerError } from './error/server.error';
@@ -13,7 +13,10 @@ import { ServerError } from './error/server.error';
 export class Server {
     private server: Socket;
 
-    constructor(private readonly config: ServerConfig) {
+    constructor(
+        private readonly config: ServerConfig,
+        private readonly projectQuery: ProjectQuery,
+    ) {
         this.server = createSocket('udp4');
         this.initializeServer();
     }
@@ -44,7 +47,7 @@ export class Server {
     }
 
     private async validateRequest(name: string): Promise<void> {
-        if (await projectQuery.existsByDomain(name)) {
+        if (await this.projectQuery.existsByDomain(name)) {
             return;
         }
         throw new Error('Not found domain name');
