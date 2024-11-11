@@ -1,4 +1,4 @@
-import { PacketValidator } from '../src/utils/validator/packet.validator';
+import { PacketValidator } from '../src/server/utils/packet.validator';
 import { EMPTY_PACKET, NONE_QUESTION_PACKET, NORMAL_PACKET } from './constant/packet';
 
 describe('PacketValidator의', () => {

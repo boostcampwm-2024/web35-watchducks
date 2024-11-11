@@ -1,13 +1,13 @@
-import { db } from '../mysql/mysql-database';
 import type { RowDataPacket } from 'mysql2/promise';
-import { ProjectQueryInterface } from './project.query.interface';
+import { TestDatabase } from './test-database';
+import { ProjectQueryInterface } from '../../src/database/query/project.query.interface';
 
 interface ProjectExists extends RowDataPacket {
     exists_flag: number;
 }
 
-export class ProjectQuery implements ProjectQueryInterface {
-    private readonly db = db;
+export class TestProjectQuery implements ProjectQueryInterface {
+    private readonly db = new TestDatabase();
     private readonly EXIST = 1;
 
     constructor() {}

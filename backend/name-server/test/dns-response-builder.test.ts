@@ -1,7 +1,7 @@
 import { DNSResponseBuilder } from '../src/server/utils/dns-response-builder';
 import type { Packet } from 'dns-packet';
-import { DNSFlags } from '../src/server/name-server';
-import { PacketValidator } from '../src/utils/validator/packet.validator';
+import { PacketValidator } from '../src/server/utils/packet.validator';
+import { DNSFlags, ResponseCode } from '../src/server/constant/dns-packet.constant';
 
 describe('DNSResponseBuilder의', () => {
     const mockConfig = {
@@ -23,7 +23,7 @@ describe('DNSResponseBuilder의', () => {
     };
 
     test('build()는 권한 있는 응답 플래그를 추가하여 DNS 응답을 생성해야 합니다.', () => {
-        const builder = new DNSResponseBuilder(mockQuery, mockConfig);
+        const builder = new DNSResponseBuilder(mockConfig, mockQuery);
 
         const response = builder.build();
 
@@ -33,10 +33,10 @@ describe('DNSResponseBuilder의', () => {
     });
 
     test('addAnswer()는 올바른 정보를 담은 answer를 추가해야 합니다.', () => {
-        const builder = new DNSResponseBuilder(mockQuery, mockConfig);
+        const builder = new DNSResponseBuilder(mockConfig, mockQuery);
 
         if (!PacketValidator.hasQuestions(mockQuery)) return;
-        builder.addAnswer(mockQuery.questions[0]);
+        builder.addAnswer(ResponseCode.NOERROR, mockQuery.questions[0]);
         const response = builder.build();
 
         expect(response.answers).toHaveLength(1);

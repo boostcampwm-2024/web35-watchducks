@@ -2,6 +2,7 @@ import type { Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import mysql from 'mysql2/promise';
 import { poolConfig } from './config';
 import type { Server } from 'node:net';
+import { DatabaseError } from '../error/database.error';
 
 type QueryResult = RowDataPacket[] | RowDataPacket[][] | ResultSetHeader;
 
@@ -24,11 +25,9 @@ class MysqlDatabase {
             this.pool = mysql.createPool(poolConfig);
 
             await this.pool.query('SELECT 1');
-            console.log('Database pool initialized successfully');
         } catch (error) {
-            console.error('Failed to initialize connection pool:', error);
             await this.cleanup();
-            throw new Error('Mysql connection failed');
+            throw new DatabaseError('Mysql connection failed', error);
         }
     }
 

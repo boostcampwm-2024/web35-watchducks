@@ -1,39 +1,41 @@
 import { config } from 'dotenv';
-import { ConsoleLogger } from './utils/logger/console.logger';
-import { ConfigurationValidator } from './utils/validator/configuration.validator';
-import { NameServer } from './server/name-server';
+import type { ServerConfig } from './common/utils/validator/configuration.validator';
+import { ConfigurationValidator } from './common/utils/validator/configuration.validator';
+import { Server } from './server/server';
 import { db } from './database/mysql/mysql-database';
+import { logger } from './common/utils/logger/console.logger';
+import { ProjectQuery } from './database/query/project.query';
 
 config();
 
-async function initializeServer(): Promise<NameServer> {
-    try {
-        const config = ConfigurationValidator.validate();
-        const logger = new ConsoleLogger();
+export class Application {
+    constructor() {}
 
-        await db.connect(); // initialize mysql connection pool
+    public async initialize(): Promise<Server> {
+        await this.initializeDatabase();
 
-        return new NameServer(config, logger);
-    } catch (error) {
-        console.error('Failed to initialize server:', error);
-        process.exit(1);
+        const config = await this.initializeConfig();
+        const projectQuery = new ProjectQuery();
+
+        return new Server(config, projectQuery);
+    }
+
+    public async cleanup(): Promise<void> {
+        try {
+            await db.end();
+            logger.info('Database connections cleaned up');
+        } catch (error) {
+            logger.error('Cleanup failed:', error);
+            throw error;
+        }
+    }
+
+    private async initializeConfig(): Promise<ServerConfig> {
+        return ConfigurationValidator.validate();
+    }
+
+    private async initializeDatabase(): Promise<void> {
+        await db.connect();
+        logger.info('Database connection established');
     }
 }
-
-const server = await initializeServer();
-
-server.start();
-
-process.on('SIGINT', async () => {
-    try {
-        await db.end();
-
-        console.log('Database connections cleaned up');
-
-        process.exit(0);
-    } catch (error) {
-        console.error('Error during cleanup:', error);
-
-        process.exit(1);
-    }
-});
