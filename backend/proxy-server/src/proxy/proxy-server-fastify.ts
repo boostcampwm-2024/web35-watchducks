@@ -6,18 +6,17 @@ import type { ProxyService } from './proxy-service';
 import { fastifyConfig } from './config/fastify.config';
 import { HOST_HEADER } from '../common/constant/http.constant';
 import type { RequestLog, ResponseLog } from '../common/interface/log.interface';
-import type { FastifyLogger } from '../common/logger/fastify.logger';
 import { ProxyErrorHandler } from '../error/core/proxy-error.handler';
+import { FastifyLogger } from '../common/logger/fastify.logger';
 
 export class ProxyServerFastify {
     private readonly server: FastifyInstance;
     private readonly errorHandler: ProxyErrorHandler;
+    private readonly logger: FastifyLogger;
 
-    constructor(
-        private readonly proxyService: ProxyService,
-        private readonly logger: FastifyLogger,
-    ) {
+    constructor(private readonly proxyService: ProxyService) {
         this.server = fastify(fastifyConfig);
+        this.logger = new FastifyLogger(this.server);
         this.errorHandler = new ProxyErrorHandler({ logger: this.logger });
 
         this.initializePlugins();
@@ -127,6 +126,7 @@ export class ProxyServerFastify {
             this.logger.info({ message: `Proxy server is running on port ${process.env.PORT}` });
         } catch (error) {
             this.server.log.error('Failed to start proxy server:', error);
+            console.error('Detailed error:', error);
             process.exit(1);
         }
     }
