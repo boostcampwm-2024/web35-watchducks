@@ -36,12 +36,12 @@ jobs:
     with:
       service: web35-watchducks
       path: backend/console-server
+    secrets:
       host: ${{ secrets.CONSOLE_SERVER_HOST }}
       user: ${{ secrets.CONSOLE_SERVER_USER }}
       key: ${{ secrets.SSH_KEY }}
       port: ${{ secrets.SSH_PORT }}
       env: ${{ secrets.CONSOLE_SERVER_ENV }}
-
 
 
 #  # 프록시 서버 배포
