@@ -41,33 +41,41 @@ export class ProxyServerFastify {
 
     private initializeHooks(): void {
         this.server.addHook('onRequest', (request, reply, done) => {
-            const requestLog: RequestLog = {
-                message: 'Request received',
-                method: request.method,
-                hostname: request.hostname,
-                url: request.url,
-                path: request.raw.url,
-            };
-
-            this.logger.info(requestLog);
+            this.logRequest(request);
             done();
         });
 
         this.server.addHook('onResponse', (request, reply, done) => {
-            const responseLog: ResponseLog = {
-                message: 'Response completed',
-                method: request.method,
-                hostname: request.hostname,
-                url: request.url,
-                path: request.raw.url,
-                statusCode: reply.statusCode,
-                statusMessage: reply.raw.statusMessage,
-                responseTime: reply.elapsedTime,
-            };
-
-            this.logger.info(responseLog);
+            this.logResponse(request, reply);
             done();
         });
+    }
+
+    private logRequest(request: FastifyRequest): void {
+        const requestLog: RequestLog = {
+            message: 'Request received',
+            method: request.method,
+            hostname: request.hostname,
+            url: request.url,
+            path: request.raw.url,
+        };
+
+        this.logger.info(requestLog);
+    }
+
+    private logResponse(request: FastifyRequest, reply: FastifyReply): void {
+        const responseLog: ResponseLog = {
+            message: 'Response completed',
+            method: request.method,
+            hostname: request.hostname,
+            url: request.url,
+            path: request.raw.url,
+            statusCode: reply.statusCode,
+            statusMessage: reply.raw.statusMessage,
+            responseTime: reply.elapsedTime,
+        };
+
+        this.logger.info(responseLog);
     }
 
     private initializeErrorHandler(): void {
