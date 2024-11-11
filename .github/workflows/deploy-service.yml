@@ -9,21 +9,17 @@ on:
       path:
         required: true
         type: string
-      host_secret:
+    secrets:
+      host:
         required: true
-        type: string
-      user_secret:
+      user:
         required: true
-        type: string
-      key_secret:
+      key:
         required: true
-        type: string
-      port_secret:
+      port:
         required: true
-        type: string
-      env_secret:
+      env:
         required: true
-        type: string
 
 jobs:
   deploy:
