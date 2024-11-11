@@ -65,7 +65,7 @@ describe('ProjectService 클래스의', () => {
       );
       expect(result).toBeInstanceOf(ProjectResponseDto);
     });
-    it('이미 존재하는 도메인이 들어오면 "ConflictException"을 던집니다.', async () => {
+    it('이미 존재하는 도메인이 들어오면 ConflictException을 던집니다.', async () => {
       const error = new QueryFailedError('query', [], {
         code: 'ER_DUP_ENTRY',
       } as unknown as Error);
