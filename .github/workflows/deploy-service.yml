@@ -65,7 +65,7 @@ jobs:
           key: ${{ secrets.key }}
           port: ${{ secrets.port }}
           script: |
-            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+#            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             cd /home/watchducks/app
             echo "${{ secrets.env }}" > .env
             docker pull ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:latest
