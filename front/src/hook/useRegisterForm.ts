@@ -1,7 +1,8 @@
 import { postRegister } from '@api/post';
-import { useMutation } from '@tanstack/react-query';
 import { validateWebsite, validateDomain, validateIp, validateEmail } from '@util/Validate';
 import { useState, useEffect } from 'react';
+
+import useCustomMutation from './useCustomMutation';
 
 import { FormState, ValidationState } from '@/type/RegisterForm';
 
@@ -38,7 +39,7 @@ export default function useRegisterForm({ successCallback, errorCallback }: Prop
     setIsAllValid(Object.values(validation).every(Boolean));
   }, [validation]);
 
-  const mutation = useMutation({
+  const mutation = useCustomMutation({
     mutationFn: postRegister,
     onSuccess: () => {
       successCallback('작성하신 이메일로 네임서버 주소를 보냈어요!');
@@ -50,7 +51,7 @@ export default function useRegisterForm({ successCallback, errorCallback }: Prop
       });
     },
     onError: () => {
-      errorCallback('중복된 도메인입니다!');
+      errorCallback('에러발생!');
     }
   });
 

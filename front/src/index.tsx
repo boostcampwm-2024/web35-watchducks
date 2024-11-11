@@ -1,4 +1,4 @@
-import CustomQueryClientProvider from '@boundary/CustomQueryClient.tsx';
+import CustomQueryProvider from '@boundary/CustomQueryProvider.tsx';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
@@ -10,11 +10,11 @@ import './index.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <CustomQueryClientProvider>
+    <CustomQueryProvider>
       <BrowserRouter>
         <App />
       </BrowserRouter>
-    </CustomQueryClientProvider>
+    </CustomQueryProvider>
     <ToastContainer />
   </StrictMode>
 );

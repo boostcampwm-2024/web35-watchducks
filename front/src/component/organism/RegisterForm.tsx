@@ -5,7 +5,6 @@ import ValidateTextInput from '@component/molecule/ValidateTextInput';
 import { useRef, useEffect } from 'react';
 
 import useRegisterForm from '@/hook/useRegisterForm';
-
 type Props = {
   showAlert: (message: string) => void;
 };
@@ -25,9 +24,9 @@ export default function RegisterForm({ showAlert }: Props) {
   }, []);
 
   return (
-    <div className='flex flex-col items-center gap-[24px] rounded-[31px] border-2 border-white bg-white/25 px-[50px] py-[50px] shadow-[4px_9px_50px_-1px_rgba(0,0,0,0.25)] backdrop-blur-[30px]'>
-      <H1 cssOption='text-blue font-bold text-[50px]' content='Register' />
-      <H2 cssOption='text-gray text-[24px]' content='그룹 프로젝트를 등록해 주세요' />
+    <div className='md:rounded-31 md:p-50 mx-auto flex w-full max-w-[600px] flex-col items-center gap-16 rounded-lg border-2 border-white bg-white/25 p-6 shadow-[4px_9px_50px_-1px_rgba(0,0,0,0.25)] backdrop-blur-[30px] md:gap-24'>
+      <H1 cssOption='text-blue font-bold text-24 md:text-50' content='Register' />
+      <H2 cssOption='text-gray text-18 md:text-24' content='그룹 프로젝트를 등록해 주세요' />
 
       <ValidateTextInput
         ref={nameInputRef}
@@ -61,10 +60,17 @@ export default function RegisterForm({ showAlert }: Props) {
         placeholder='이메일 (ex. abcd1234@naver.com)'
         isValid={validation.isValidEmail}
       />
+
       <Button
-        cssOption={`bg-blue rounded-[10px] text-white text-[25px] px-[130px] py-[15px] flex items-center justify-center whitespace-nowrap hover:text-black disabled:opacity-50 ${
-          !isAllValid ? 'cursor-not-allowed' : ''
-        }`}
+        cssOption={`bg-blue rounded-10 text-white
+                   text-16 md:text-24
+                   px-16 md:px-130
+                   py-8 md:py-15
+                   flex items-center justify-center whitespace-nowrap
+                   hover:text-black
+                   disabled:opacity-50
+                   w-full md:w-auto
+                   ${!isAllValid ? 'cursor-not-allowed' : ''}`}
         content={isLoading ? '등록 중...' : '등록하기'}
         onClick={handleSubmit}
         disabled={!isAllValid || isLoading}
