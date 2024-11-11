@@ -34,12 +34,25 @@ export class ProxyServerFastify {
     }
 
     private initializeHooks(): void {
+        this.server.addHook('onRequest', (request, reply, done) => {
+            this.server.log.info({
+                message: 'Request received',
+                method: request.method,
+                hostname: request.hostname,
+                url: request.url,
+                path: request.raw.url,
+            });
+            done();
+        });
         this.server.addHook('onResponse', (request, reply, done) => {
             this.server.log.info({
                 message: 'Response completed',
                 method: request.method,
+                hostname: request.hostname,
                 url: request.url,
+                path: request.raw.url,
                 statusCode: reply.statusCode,
+                statusMessage: reply.raw.statusMessage,
                 responseTime: reply.elapsedTime,
             });
             done();
@@ -53,16 +66,23 @@ export class ProxyServerFastify {
                 : new ProxyError('내부 서버 오류가 발생했습니다.', 500, error);
 
             this.server.log.error({
+                message: 'Error occurred',
+                request: {
+                    method: request.method,
+                    hostname: request.hostname,
+                    url: request.url,
+                    path: request.raw.url,
+                    headers: {
+                        'user-agent': request.headers['user-agent'],
+                        'content-type': request.headers['content-type'],
+                        'x-forwarded-for': request.headers['x-forwarded-for'],
+                    },
+                },
                 error: {
                     message: proxyError.message,
                     name: proxyError.name,
                     stack: proxyError.stack,
                     originalError: proxyError.originalError,
-                },
-                request: {
-                    url: request.url,
-                    method: request.method,
-                    headers: request.headers,
                 },
             });
 
@@ -82,6 +102,26 @@ export class ProxyServerFastify {
             await new Promise<void>((resolve, reject) => {
                 reply.from(targetUrl, {
                     onError: (reply, error) => {
+                        this.server.log.error({
+                            message: 'Proxy request failed',
+                            request: {
+                                method: request.method,
+                                hostname: request.hostname,
+                                url: request.url,
+                                path: request.raw.url,
+                                headers: {
+                                    'user-agent': request.headers['user-agent'],
+                                    'content-type': request.headers['content-type'],
+                                    'x-forwarded-for': request.headers['x-forwarded-for'],
+                                },
+                            },
+                            error: {
+                                message: error.error.message,
+                                name: error.error.name,
+                                stack: error.error.stack,
+                                originalError: error.error,
+                            },
+                        });
                         reject(
                             new ProxyError(
                                 '프록시 요청 처리 중 오류가 발생했습니다.',
