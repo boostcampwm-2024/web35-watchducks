@@ -34,7 +34,7 @@ jobs:
     needs: setup
     uses: ./.github/workflows/deploy-service.yml
     with:
-      service: web35-WatchDucks
+      service: web35-watchducks
       path: backend/console-server
       key_secret: SSH_KEY
       port_secret: SSH_PORT
