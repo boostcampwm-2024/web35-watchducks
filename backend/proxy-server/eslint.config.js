@@ -13,7 +13,13 @@ const compat = new FlatCompat({
 
 export default [
     {
-        ignores: ['**/eslint.config.mjs', 'node_modules', 'dist'],
+        ignores: [
+            '**/eslint.config.mjs',
+            'node_modules',
+            'dist',
+            '**/database/**/*.ts',
+            '**/database/query/*.ts',
+        ],
     },
     ...compat.config({
         env: { node: true },
