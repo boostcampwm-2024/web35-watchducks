@@ -11,7 +11,6 @@ interface DNSResponse extends Packet {
         class: RecordClass;
         ttl: number;
         data: string;
-        rcode: number;
     }>;
 }
 
@@ -41,6 +40,12 @@ export class DNSResponseBuilder {
     }
 
     addAnswer(rcode: ResponseCodeType, question?: Question): this {
+        this.response.flags = 0x8000;
+
+        if (this.response.flags && rcode === ResponseCode.NXDOMAIN) {
+            this.response.flags |= ResponseCode.NXDOMAIN;
+        }
+
         if (rcode === ResponseCode.NOERROR && question) {
             this.response.answers = [
                 {
@@ -49,12 +54,12 @@ export class DNSResponseBuilder {
                     class: 'IN',
                     ttl: 300,
                     data: this.config.proxyServerIp,
-                    rcode,
                 },
             ];
             return this;
         }
         this.response.answers = [];
+
         return this;
     }
 

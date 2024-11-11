@@ -41,7 +41,9 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
+    "@types/better-sqlite3": "^7.6.11",
     "@types/dns-packet": "^5.6.5",
+    "better-sqlite3": "^11.5.0",
     "dns-packet": "^5.6.1",
     "dotenv": "^16.4.5",
     "mysql2": "^3.11.4",
