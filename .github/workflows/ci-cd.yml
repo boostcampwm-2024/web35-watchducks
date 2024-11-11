@@ -38,7 +38,7 @@ jobs:
       path: backend/console-server
     secrets:
       host: ${{ secrets.CONSOLE_SERVER_HOST }}
-      user: ${{ secrets.CONSOLE_SERVER_USER }}
+      user: ${{ secrets.SSH_USER }}
       key: ${{ secrets.SSH_KEY }}
       port: ${{ secrets.SSH_PORT }}
       env: ${{ secrets.CONSOLE_SERVER_ENV }}

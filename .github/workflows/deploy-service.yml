@@ -24,7 +24,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production
 
     steps:
       # 1. Sparse checkout으로 하위 디렉토리만 체크아웃
