@@ -20,6 +20,8 @@ on:
         required: true
       env:
         required: true
+      GHCR_TOKEN:
+        required: true
 
 jobs:
   deploy:
@@ -53,8 +55,8 @@ jobs:
       # 3. 도커 이미지 빌드 & 푸시
       - name: Build and push Docker image for ${{ inputs.service }}
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}:latest ./${{inputs.service}}/${{inputs.path}}
-          docker push ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}:latest
+          docker build -t ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:latest ./${{inputs.service}}/${{inputs.path}}
+          docker push ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:latest
 
       # 4. 각 서비스 서버에 배포
       - name: Deploy ${{ inputs.service }} to server
@@ -68,6 +70,5 @@ jobs:
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             cd /home/watchducks/app
             echo "${{ secrets.env }}" > .env
-            whoami
-            docker pull ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}:latest
+            docker pull ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:latest
             docker-compose up -d
