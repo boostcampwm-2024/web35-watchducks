@@ -26,13 +26,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Verify SSH Key Presence
-        run: |
-          if [ -z "${{ secrets.key }}" ]; then
-            echo "SSH key is missing!"
-            exit 1
-          fi
-          echo "${{ secrets.key }}" | grep "BEGIN" || { echo "SSH key format is incorrect!"; exit 1; }
       # 1. Sparse checkout으로 하위 디렉토리만 체크아웃
       - name: Checkout repository with sparse checkout
         uses: actions/checkout@v3
@@ -53,7 +46,10 @@ jobs:
       # 3. 도커 이미지 빌드 & 푸시
       - name: Build and push Docker image for ${{ inputs.service }}
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:latest ./${{inputs.service}}/${{inputs.path}}
+          TAG=$(date +%Y%m%d%H%M%S)
+          docker build -t ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:${TAG} ./${{inputs.service}}/${{inputs.path}}
+          docker push ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:${TAG}
+          docker tag ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:${TAG} ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:latest
           docker push ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:latest
 
       # 4. 각 서비스 서버에 배포
@@ -68,4 +64,12 @@ jobs:
             cd /home/watchducks/app
             echo "${{ secrets.env }}" > .env
             docker pull ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:latest
-            docker-compose up -d
+            if docker-compose up -d; then
+              echo "Deployment successful"
+            else
+              echo "Deployment failed, rolling back"
+              docker-compose down
+              docker pull ghcr.io/${{ github.repository_owner }}/${{ matrix.service }}:previous-tag
+              docker-compose up -d
+              exit 1
+            fi
