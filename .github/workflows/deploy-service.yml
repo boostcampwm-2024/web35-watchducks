@@ -60,12 +60,12 @@ jobs:
       - name: Deploy ${{ inputs.service }} to server
         uses: appleboy/ssh-action@v1.1.0
         with:
-          host: ${{ secrets.CONSOLE_SERVER_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
+          host: ${{ secrets.host }}
+          username: ${{ secrets.user }}
+          key: ${{ secrets.key }}
+          port: ${{ secrets.port }}
           script: |
             cd /home/watchducks/app
-            echo "${{ secrets.CONSOLE_SERVER_ENV }}" > .env
+            echo "${{ secrets.env }}" > .env
             docker pull ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}:latest
             docker-compose up -d
