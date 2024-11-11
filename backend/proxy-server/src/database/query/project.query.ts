@@ -8,7 +8,6 @@ interface ProjectIp extends RowDataPacket {
 class ProjectQuery {
     private static instance: ProjectQuery;
     private readonly db = db;
-    private readonly EXIST = 1;
 
     private constructor() {}
 
@@ -20,9 +19,9 @@ class ProjectQuery {
     }
 
     async findIpByDomain(domain: string): Promise<string> {
-        const sql = `SELECT EXISTS(SELECT ip 
-                                   FROM project
-                                   WHERE domain = ?)`;
+        const sql = `SELECT ip
+                     FROM project
+                     WHERE domain = ?`;
         const params = [domain];
         const rows = await this.db.query<ProjectIp[]>(sql, params);
 
