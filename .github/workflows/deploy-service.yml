@@ -24,6 +24,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: production
+
     steps:
       # 1. Sparse checkout으로 하위 디렉토리만 체크아웃
       - name: Checkout repository with sparse checkout
@@ -33,9 +35,6 @@ jobs:
           fetch-depth: 0
           sparse-checkout: |
             ${{ inputs.path }}
-
-      - name: List directory contents
-        run: ls -la
 
       # 2. GHCR 로그인
       - name: Log in to GHCR
@@ -61,6 +60,6 @@ jobs:
           port: ${{ secrets.port }}
           script: |
             cd /home/watchducks/app
-            echo "${{ inputs.env_secret }}" > .env
+            echo "${{ secrets.env }}" > .env
             docker pull ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}:latest
             docker-compose up -d
