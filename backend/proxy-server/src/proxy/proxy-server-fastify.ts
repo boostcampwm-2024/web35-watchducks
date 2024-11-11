@@ -7,12 +7,15 @@ import { isProxyError } from '../error/core/proxy-error.type.guard';
 import { fastifyConfig } from './config/fastify.config';
 import { HOST_HEADER } from '../common/constant/http.constant';
 import type { ErrorLog, RequestLog, ResponseLog } from '../common/interface/log.interface';
+import { FastifyLogger } from '../common/logger/fastify.logger';
 
 export class ProxyServerFastify {
     private readonly server: FastifyInstance;
+    private readonly logger: FastifyLogger;
 
     constructor(private readonly proxyService: ProxyService) {
         this.server = fastify(fastifyConfig);
+        this.logger = new FastifyLogger(this.server);
 
         this.initializePlugins();
         this.initializeHooks();
@@ -44,7 +47,7 @@ export class ProxyServerFastify {
                 path: request.raw.url,
             };
 
-            this.server.log.info(requestLog);
+            this.logger.info(requestLog);
             done();
         });
 
@@ -60,7 +63,7 @@ export class ProxyServerFastify {
                 responseTime: reply.elapsedTime,
             };
 
-            this.server.log.info(responseLog);
+            this.logger.info(responseLog);
             done();
         });
     }
@@ -96,13 +99,40 @@ export class ProxyServerFastify {
                 },
             };
 
-            this.server.log.error(errorLog);
+            this.logger.error(errorLog);
 
             reply.status(proxyError.statusCode).send({
                 error: proxyError.message,
                 statusCode: proxyError.statusCode,
             });
         });
+    }
+
+    private createErrorLog(message: string, request: FastifyRequest, error: ProxyError): ErrorLog {
+        return {
+            message,
+            method: request.method,
+            hostname: request.hostname,
+            url: request.url,
+            path: request.raw.url ?? '',
+            request: {
+                method: request.method,
+                hostname: request.hostname,
+                url: request.url,
+                path: request.raw.url ?? '',
+                headers: {
+                    'user-agent': request.headers['user-agent'],
+                    'content-type': request.headers['content-type'],
+                    'x-forwarded-for': request.headers['x-forwarded-for'],
+                },
+            },
+            error: {
+                message: error.message,
+                name: error.name,
+                stack: error.stack,
+                originalError: error.originalError,
+            },
+        };
     }
 
     private async handleProxyRequest(request: FastifyRequest, reply: FastifyReply): Promise<void> {
@@ -114,33 +144,19 @@ export class ProxyServerFastify {
             await new Promise<void>((resolve, reject) => {
                 reply.from(targetUrl, {
                     onError: (reply, error) => {
-                        this.server.log.error({
-                            message: 'Proxy request failed',
-                            request: {
-                                method: request.method,
-                                hostname: request.hostname,
-                                url: request.url,
-                                path: request.raw.url,
-                                headers: {
-                                    'user-agent': request.headers['user-agent'],
-                                    'content-type': request.headers['content-type'],
-                                    'x-forwarded-for': request.headers['x-forwarded-for'],
-                                },
-                            },
-                            error: {
-                                message: error.error.message,
-                                name: error.error.name,
-                                stack: error.error.stack,
-                                originalError: error.error,
-                            },
-                        });
-                        reject(
-                            new ProxyError(
-                                '프록시 요청 처리 중 오류가 발생했습니다.',
-                                502,
-                                error.error,
-                            ),
+                        const proxyError = new ProxyError(
+                            '프록시 요청 처리 중 오류가 발생했습니다.',
+                            502,
+                            error.error,
                         );
+                        const errorLog = this.createErrorLog(
+                            'Proxy request failed',
+                            request,
+                            proxyError,
+                        );
+
+                        this.logger.error(errorLog);
+                        reject(proxyError);
                     },
                 });
             });
@@ -175,7 +191,7 @@ export class ProxyServerFastify {
                 },
             };
 
-            this.server.log.error(errorLog);
+            this.logger.error(errorLog);
             throw proxyError;
         }
     }
