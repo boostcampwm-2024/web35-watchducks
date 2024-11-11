@@ -9,7 +9,6 @@ export const fastifyConfig = {
     logger: {
         level: process.env.LOG_LEVEL || 'info',
         serializers: {
-            // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
             req(
                 request: FastifyRequest<
                     RouteGenericInterface,
