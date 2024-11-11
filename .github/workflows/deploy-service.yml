@@ -25,7 +25,6 @@ on:
         required: true
         type: string
 
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -60,10 +59,10 @@ jobs:
       - name: Deploy ${{ inputs.service }} to server
         uses: appleboy/ssh-action@v1.1.0
         with:
-          host: ${{ inputs.host_secret }}
-          username: ${{ inputs.user_secret }}
-          key: ${{ inputs.key_secret }}
-          port: ${{ inputs.port_secret }}
+          host: ${{ inputs.host }}
+          username: ${{ inputs.user }}
+          key: ${{ inputs.key }}
+          port: ${{ inputs.port }}
           script: |
             cd /home/watchducks/app
             echo "${{ inputs.env_secret }}" > .env

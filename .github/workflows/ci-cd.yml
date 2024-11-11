@@ -36,11 +36,11 @@ jobs:
     with:
       service: web35-watchducks
       path: backend/console-server
-      key_secret: SSH_KEY
-      port_secret: SSH_PORT
-      host_secret: CONSOLE_SERVER_HOST
-      user_secret: CONSOLE_SERVER_USER
-      env_secret: CONSOLE_SERVER_ENV
+      host: ${{ secrets.CONSOLE_SERVER_HOST }}
+      user: ${{ secrets.CONSOLE_SERVER_USER }}
+      key: ${{ secrets.SSH_KEY }}
+      port: ${{ secrets.SSH_PORT }}
+      env: ${{ secrets.CONSOLE_SERVER_ENV }}
 
 
 
