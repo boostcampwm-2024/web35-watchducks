@@ -3,7 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { MailService } from '../mail/mail.service';
-import { CreateProjectDto } from './dto/create-project.dto';
+import type { CreateProjectDto } from './dto/create-project.dto';
+import { ProjectResponseDto } from './dto/create-project-response.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class ProjectService {
@@ -15,27 +17,24 @@ export class ProjectService {
 
   async create(createProjectDto: CreateProjectDto) {
     try {
-      const result = await this.projectRepository.insert(createProjectDto);
+      const project = this.projectRepository.create(createProjectDto);
+      const result = await this.projectRepository.save(project);
       await this.mailService.sendNameServerInfo(
         createProjectDto.email,
         createProjectDto.name,
       );
-      return result.identifiers;
+      return plainToInstance(ProjectResponseDto, result);
     } catch (error) {
-      if (
-        error instanceof QueryFailedError &&
-        isUniqueConstraintViolation(error.driverError)
-      ) {
-        throw new ConflictException(
-          'Project with the same domain already exists.',
-        );
-      }
+      if (isUniqueConstraintViolation(error))
+        throw new ConflictException('Domain already exists.');
       throw error;
     }
   }
 }
 
-function isUniqueConstraintViolation(error: any): boolean {
+function isUniqueConstraintViolation(error: Error): boolean {
+  if (!(error instanceof QueryFailedError)) return false;
+  const code = error.driverError.code;
   const uniqueViolationCodes = ['ER_DUP_ENTRY', '23505', 'SQLITE_CONSTRAINT'];
-  return uniqueViolationCodes.includes(error.code);
+  return uniqueViolationCodes.includes(code);
 }
