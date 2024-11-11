@@ -202,7 +202,7 @@ export class ProxyServerFastify {
                 port: Number(process.env.PORT),
                 host: process.env.LISTENING_HOST,
             });
-            this.server.log.info(`Proxy server is running on port ${process.env.PORT}`);
+            this.logger.info({ message: `Proxy server is running on port ${process.env.PORT}` });
         } catch (error) {
             this.server.log.error('Failed to start proxy server:', error);
             process.exit(1);
@@ -212,7 +212,7 @@ export class ProxyServerFastify {
     public async stop(): Promise<void> {
         try {
             await this.server.close();
-            this.server.log.info('Proxy server stopped');
+            this.logger.info({ message: 'Proxy server stopped' });
         } catch (error) {
             this.server.log.error('Error while stopping proxy server:', error);
             process.exit(1);
