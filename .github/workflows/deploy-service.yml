@@ -63,7 +63,7 @@ jobs:
           host: ${{ secrets[inputs.host_secret] }}
           username: ${{ secrets[inputs.user_secret] }}
           key: ${{ secrets[inputs.key_secret] }}
-          port: ${{ secrets.PORT }}
+          port: ${{ secrets[inputs.port_secret] }}
           script: |
             cd /home/watchducks/app
             echo "${{ secrets[inputs.env_secret] }}" > .env

@@ -39,7 +39,7 @@ jobs:
       key_secret: SSH_KEY
       port_secret: SSH_PORT
       host_secret: CONSOLE_SERVER_HOST
-      user_secret: CON  SOLE_SERVER_USER
+      user_secret: CONSOLE_SERVER_USER
       env_secret: CONSOLE_SERVER_ENV
 
 
