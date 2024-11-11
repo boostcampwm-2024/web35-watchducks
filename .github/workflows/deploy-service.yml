@@ -1,0 +1,64 @@
+name: Deploy Service
+
+on:
+  workflow_call:
+    inputs:
+      service:
+        required: true
+        type: string
+      path:
+        required: true
+        type: string
+      host_secret:
+        required: true
+        type: string
+      user_secret:
+        required: true
+        type: string
+      key_secret:
+        required: true
+        type: string
+      env_secret:
+        required: true
+        type: string
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Sparse checkout으로 하위 디렉토리만 체크아웃
+      - name: Checkout repository with sparse checkout
+        uses: actions/checkout@v3
+        with:
+          path: ${{ inputs.service }}
+          fetch-depth: 0
+          sparse-checkout: |
+            ${{ inputs.path }}/*
+
+      # 2. GHCR 로그인
+      - name: Log in to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 3. 도커 이미지 빌드 & 푸시
+      - name: Build and push Docker image for ${{ inputs.service }}
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}:latest ./${{ inputs.path }}
+          docker push ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}:latest
+
+      # 4. 각 서비스 서버에 배포
+      - name: Deploy ${{ inputs.service }} to server
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets[inputs.host_secret] }}
+          username: ${{ secrets[inputs.user_secret] }}
+          key: ${{ secrets[inputs.key_secret] }}
+          script: |
+            cd /home/watchducks/app
+            echo "${{ secrets[inputs.env_secret] }}" > .env
+            docker pull ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}:latest
+            docker-compose up -d
