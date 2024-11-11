@@ -44,7 +44,6 @@ jobs:
       key: ${{ secrets.SSH_KEY }}
       port: ${{ secrets.SSH_PORT }}
       env: ${{ secrets.CONSOLE_SERVER_ENV }}
-      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
 
 #  # 프록시 서버 배포

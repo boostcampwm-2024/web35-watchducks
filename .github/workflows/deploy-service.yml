@@ -20,8 +20,6 @@ on:
         required: true
       env:
         required: true
-      GHCR_TOKEN:
-        required: true
 
 jobs:
   deploy:
