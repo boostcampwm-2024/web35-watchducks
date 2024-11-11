@@ -1,9 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MailService {
-  constructor(private readonly mailerService: MailerService) {}
+  private readonly nameServers: string[];
+
+  constructor(
+    private readonly mailerService: MailerService,
+    private readonly configService: ConfigService,
+  ) {
+    this.nameServers = this.configService.get<string[]>(
+      'mailer.nameServers',
+    ) as string[];
+  }
 
   /** TODO: 매직넘버 제거 */
   async sendNameServerInfo(email: string, projectName: string) {
@@ -13,7 +23,7 @@ export class MailService {
       template: './nameserver',
       context: {
         projectName: projectName,
-        nameServers: [],
+        nameServers: this.nameServers,
       },
     });
   }

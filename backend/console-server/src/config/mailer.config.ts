@@ -22,4 +22,7 @@ export default registerAs('mailer', () => ({
       strict: true,
     },
   },
+  nameServers: (process.env.NAME_SERVERS || '')
+    .split(',')
+    .map((item) => item.trim()),
 }));

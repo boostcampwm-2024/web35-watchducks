@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule,
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
