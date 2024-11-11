@@ -67,5 +67,6 @@ jobs:
           script: |
             cd /home/watchducks/app
             echo "${{ secrets.env }}" > .env
+            whoami
             sudo docker pull ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}:latest
             sudo docker-compose up -d
