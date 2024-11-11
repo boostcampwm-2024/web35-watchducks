@@ -34,7 +34,7 @@ jobs:
           path: ${{ inputs.service }}
           fetch-depth: 0
           sparse-checkout: |
-            ${{ inputs.path }}/*
+            ${{ inputs.path }}
 
       # 2. GHCR 로그인
       - name: Log in to GHCR
