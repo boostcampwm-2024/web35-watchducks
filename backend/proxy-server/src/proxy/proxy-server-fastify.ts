@@ -3,15 +3,21 @@ import fastify from 'fastify';
 import replyFrom from '@fastify/reply-from';
 import { ProxyError } from '../error/core/proxy.error';
 import type { ProxyService } from './proxy-service';
-import { isProxyError } from '../error/core/proxy-error.type.guard';
 import { fastifyConfig } from './config/fastify.config';
 import { HOST_HEADER } from '../common/constant/http.constant';
+import type { RequestLog, ResponseLog } from '../common/interface/log.interface';
+import { ProxyErrorHandler } from '../error/core/proxy-error.handler';
+import { FastifyLogger } from '../common/logger/fastify.logger';
 
 export class ProxyServerFastify {
     private readonly server: FastifyInstance;
+    private readonly errorHandler: ProxyErrorHandler;
+    private readonly logger: FastifyLogger;
 
     constructor(private readonly proxyService: ProxyService) {
         this.server = fastify(fastifyConfig);
+        this.logger = new FastifyLogger(this.server);
+        this.errorHandler = new ProxyErrorHandler({ logger: this.logger });
 
         this.initializePlugins();
         this.initializeHooks();
@@ -34,37 +40,47 @@ export class ProxyServerFastify {
     }
 
     private initializeHooks(): void {
+        this.server.addHook('onRequest', (request, reply, done) => {
+            this.logRequest(request);
+            done();
+        });
+
         this.server.addHook('onResponse', (request, reply, done) => {
-            this.server.log.info({
-                message: 'Response completed',
-                method: request.method,
-                url: request.url,
-                statusCode: reply.statusCode,
-                responseTime: reply.elapsedTime,
-            });
+            this.logResponse(request, reply);
             done();
         });
     }
 
+    private logRequest(request: FastifyRequest): void {
+        const requestLog: RequestLog = {
+            message: 'Request received',
+            method: request.method,
+            hostname: request.hostname,
+            url: request.url,
+            path: request.raw.url,
+        };
+
+        this.logger.info(requestLog);
+    }
+
+    private logResponse(request: FastifyRequest, reply: FastifyReply): void {
+        const responseLog: ResponseLog = {
+            message: 'Response completed',
+            method: request.method,
+            hostname: request.hostname,
+            url: request.url,
+            path: request.raw.url,
+            statusCode: reply.statusCode,
+            statusMessage: reply.raw.statusMessage,
+            responseTime: reply.elapsedTime,
+        };
+
+        this.logger.info(responseLog);
+    }
+
     private initializeErrorHandler(): void {
         this.server.setErrorHandler((error, request, reply) => {
-            const proxyError = isProxyError(error)
-                ? error
-                : new ProxyError('내부 서버 오류가 발생했습니다.', 500, error);
-
-            this.server.log.error({
-                error: {
-                    message: proxyError.message,
-                    name: proxyError.name,
-                    stack: proxyError.stack,
-                    originalError: proxyError.originalError,
-                },
-                request: {
-                    url: request.url,
-                    method: request.method,
-                    headers: request.headers,
-                },
-            });
+            const proxyError = this.errorHandler.handleError(error, request);
 
             reply.status(proxyError.statusCode).send({
                 error: proxyError.message,
@@ -75,28 +91,38 @@ export class ProxyServerFastify {
 
     private async handleProxyRequest(request: FastifyRequest, reply: FastifyReply): Promise<void> {
         try {
-            const host = this.proxyService.validateHost(request.headers[HOST_HEADER]);
-            const ip = await this.proxyService.resolveDomain(host);
-            const targetUrl = this.proxyService.buildTargetUrl(ip, request.url);
-
-            await new Promise<void>((resolve, reject) => {
-                reply.from(targetUrl, {
-                    onError: (reply, error) => {
-                        reject(
-                            new ProxyError(
-                                '프록시 요청 처리 중 오류가 발생했습니다.',
-                                502,
-                                error.error,
-                            ),
-                        );
-                    },
-                });
-            });
+            await this.executeProxyRequest(request, reply);
         } catch (error) {
-            throw error instanceof ProxyError
-                ? error
-                : new ProxyError('예기치 않은 오류가 발생했습니다.', 500, error as Error);
+            throw this.errorHandler.handleError(error as Error, request);
         }
+    }
+
+    private async executeProxyRequest(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+        const host = this.proxyService.validateHost(request.headers[HOST_HEADER]);
+        const ip = await this.proxyService.resolveDomain(host);
+        const targetUrl = this.proxyService.buildTargetUrl(ip, request.url);
+
+        await this.sendProxyRequest(targetUrl, request, reply);
+    }
+
+    private async sendProxyRequest(
+        targetUrl: string,
+        request: FastifyRequest,
+        reply: FastifyReply,
+    ): Promise<void> {
+        await new Promise<void>((resolve, reject) => {
+            reply.from(targetUrl, {
+                onError: (reply, error) => {
+                    reject(
+                        new ProxyError(
+                            '프록시 요청 처리 중 오류가 발생했습니다.',
+                            502,
+                            error.error,
+                        ),
+                    );
+                },
+            });
+        });
     }
 
     public async start(): Promise<void> {
@@ -105,9 +131,10 @@ export class ProxyServerFastify {
                 port: Number(process.env.PORT),
                 host: process.env.LISTENING_HOST,
             });
-            this.server.log.info(`Proxy server is running on port ${process.env.PORT}`);
+            this.logger.info({ message: `Proxy server is running on port ${process.env.PORT}` });
         } catch (error) {
             this.server.log.error('Failed to start proxy server:', error);
+            console.error('Detailed error:', error);
             process.exit(1);
         }
     }
@@ -115,7 +142,7 @@ export class ProxyServerFastify {
     public async stop(): Promise<void> {
         try {
             await this.server.close();
-            this.server.log.info('Proxy server stopped');
+            this.logger.info({ message: 'Proxy server stopped' });
         } catch (error) {
             this.server.log.error('Error while stopping proxy server:', error);
             process.exit(1);
