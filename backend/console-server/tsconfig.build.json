@@ -1,10 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"],
-  "assets": [
-    {
-      "include": "mail/templates/**/*",
-      "outDir": "dist/src"
-    }
-  ]
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }

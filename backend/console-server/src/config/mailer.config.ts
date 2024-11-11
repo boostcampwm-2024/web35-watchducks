@@ -1,7 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';
-import type { MailerOptions } from '@nestjs-modules/mailer';
 
 export default registerAs('mailer', () => ({
   transport: {
