@@ -20,10 +20,8 @@ export class ProxyErrorHandler {
         const proxyError = this.ensureProxyError(error);
 
         return {
-            message,
             method: request.method,
-            hostname: request.hostname,
-            url: request.url,
+            host: request.host,
             path: request.raw.url ?? '',
             request: this.createRequestContext(request),
             error: this.createErrorContext(proxyError),
@@ -48,7 +46,7 @@ export class ProxyErrorHandler {
     private createRequestContext(request: FastifyRequest) {
         return {
             method: request.method,
-            hostname: request.hostname,
+            host: request.host,
             url: request.url,
             path: request.raw.url ?? '',
             headers: this.extractRelevantHeaders(request.headers),

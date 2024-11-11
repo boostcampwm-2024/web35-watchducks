@@ -20,10 +20,8 @@ describe('proxy-server-fastify 테스트', () => {
     describe('info()는 ', () => {
         it('요청 정보를 올바르게 로깅해야한다.', () => {
             const requestLog: RequestLog = {
-                message: 'Request received',
                 method: 'GET',
-                hostname: 'api.example.com',
-                url: '/api/v1/users',
+                host: 'api.example.com',
                 path: '/api/v1/users',
             };
 
@@ -34,13 +32,10 @@ describe('proxy-server-fastify 테스트', () => {
 
         it('응답 정보를 올바르게 로깅해야한다.', () => {
             const responseLog: ResponseLog = {
-                message: 'Response completed',
                 method: 'POST',
-                hostname: 'api.example.com',
-                url: '/api/v1/users',
+                host: 'api.example.com',
                 path: '/api/v1/users',
                 statusCode: 201,
-                statusMessage: 'Created',
                 responseTime: 123,
             };
 
@@ -54,15 +49,12 @@ describe('proxy-server-fastify 테스트', () => {
         it('오류 정보를 올바르게 로깅해야 한다.', () => {
             const originalError = new Error('Connection timeout');
             const errorLog: ErrorLog = {
-                message: 'Database connection failed',
                 method: 'GET',
-                hostname: 'api.example.com',
-                url: '/api/v1/users',
+                host: 'api.example.com',
                 path: '/api/v1/users',
                 request: {
                     method: 'GET',
-                    hostname: 'api.example.com',
-                    url: '/api/v1/users',
+                    host: 'api.example.com',
                     path: '/api/v1/users',
                     headers: {
                         'content-type': 'application/json',

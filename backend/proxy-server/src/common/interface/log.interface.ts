@@ -1,8 +1,6 @@
 interface BaseLog {
-    message: string;
     method: string;
-    hostname: string;
-    url: string;
+    host: string;
     path?: string;
 }
 
@@ -10,15 +8,13 @@ type RequestLog = BaseLog;
 
 interface ResponseLog extends BaseLog {
     statusCode: number;
-    statusMessage: string;
     responseTime: number;
 }
 
 interface ErrorLog extends BaseLog {
     request: {
         method: string;
-        hostname: string;
-        url: string;
+        host: string;
         path?: string;
         headers: {
             'user-agent'?: string | undefined;
