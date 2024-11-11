@@ -58,7 +58,7 @@ jobs:
 
       # 4. 각 서비스 서버에 배포
       - name: Deploy ${{ inputs.service }} to server
-        uses: appleboy/ssh-action@v0.1.5
+        uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets[inputs.host_secret] }}
           username: ${{ secrets[inputs.user_secret] }}
