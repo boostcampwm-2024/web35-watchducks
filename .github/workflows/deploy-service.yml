@@ -20,7 +20,7 @@ on:
         type: string
       port_secret:
         required: true
-        type: string
+        type: number
       env_secret:
         required: true
         type: string
