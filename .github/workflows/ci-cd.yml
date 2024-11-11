@@ -11,13 +11,10 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository with sparse checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          sparse-checkout: |
-            backend
-            front
 
 #  # 네임서버 배포
 #  deploy-name-server:
@@ -26,9 +23,10 @@ jobs:
 #    with:
 #      service: name-server
 #      path: backend/name-server
+#      key_secret: SSH_KEY
+#      port_secret: SSH_PORT
 #      host_secret: NAME_SERVER_HOST
 #      user_secret: NAME_SERVER_USER
-#      key_secret: SSH_KEY
 #      env_secret: NAME_SERVER_ENV
 
   # 콘솔 서버 배포
@@ -36,12 +34,15 @@ jobs:
     needs: setup
     uses: ./.github/workflows/deploy-service.yml
     with:
-      service: console-server
+      service: web35-WatchDucks
       path: backend/console-server
+      key_secret: SSH_KEY
+      port_secret: SSH_PORT
       host_secret: CONSOLE_SERVER_HOST
       user_secret: CONSOLE_SERVER_USER
-      key_secret: SSH_KEY
       env_secret: CONSOLE_SERVER_ENV
+
+
 
 #  # 프록시 서버 배포
 #  deploy-proxy-server:
@@ -50,8 +51,9 @@ jobs:
 #    with:
 #      service: proxy-server
 #      path: backend/proxy-server
+#      key_secret: SSH_KEY
+#      port_secret: SSH_PORT
 #      host_secret: PROXY_SERVER_HOST
 #      user_secret: PROXY_SERVER_USER
-#      key_secret: SSH_KEY
 #      env_secret: PROXY_SERVER_ENV
 
