@@ -35,6 +35,6 @@ export class ProjectService {
 function isUniqueConstraintViolation(error: Error): boolean {
   if (!(error instanceof QueryFailedError)) return false;
   const code = error.driverError.code;
-  const uniqueViolationCodes = ['ER_DUP_ENTRY', '23505', 'SQLITE_CONSTRAINT'];
+  const uniqueViolationCodes = ['ER_DUP_ENTRY', 'SQLITE_CONSTRAINT'];
   return uniqueViolationCodes.includes(code);
 }

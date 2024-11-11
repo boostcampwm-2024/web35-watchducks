@@ -6,10 +6,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MailModule } from './mail/mail.module';
 import typeOrmConfig from './config/typeorm.config';
+import mailerConfig from './config/mailer.config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, load: [mailerConfig] }),
     TypeOrmModule.forRootAsync(typeOrmConfig.asProvider()),
     ProjectModule,
     MailModule,

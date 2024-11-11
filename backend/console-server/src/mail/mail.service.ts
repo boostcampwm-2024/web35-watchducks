@@ -13,7 +13,7 @@ export class MailService {
       template: './nameserver',
       context: {
         projectName: projectName,
-        nameServers: ['ns.watchducks.com', 'ns1.watchducks.com'],
+        nameServers: [],
       },
     });
   }
