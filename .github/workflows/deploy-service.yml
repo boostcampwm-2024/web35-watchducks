@@ -59,10 +59,10 @@ jobs:
       - name: Deploy ${{ inputs.service }} to server
         uses: appleboy/ssh-action@v1.1.0
         with:
-          host: ${{ inputs.host }}
-          username: ${{ inputs.user }}
-          key: ${{ inputs.key }}
-          port: ${{ inputs.port }}
+          host: ${{ secrets.host }}
+          username: ${{ secrets.user }}
+          key: ${{ secrets.key }}
+          port: ${{ secrets.port }}
           script: |
             cd /home/watchducks/app
             echo "${{ inputs.env_secret }}" > .env
