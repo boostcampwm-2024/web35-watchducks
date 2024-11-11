@@ -1,9 +1,10 @@
 import { registerAs } from '@nestjs/config';
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import type { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 export default registerAs('typeOrmConfig', () => {
-  const isDevEnv =
-    process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
+  const isDevEnv = ['development', 'test', 'debug'].includes(
+    process.env.NODE_ENV as string,
+  );
   return (
     isDevEnv
       ? {

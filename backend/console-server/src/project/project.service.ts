@@ -2,33 +2,39 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { QueryFailedError, Repository } from 'typeorm';
+import { MailService } from '../mail/mail.service';
+import type { CreateProjectDto } from './dto/create-project.dto';
+import { ProjectResponseDto } from './dto/create-project-response.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class ProjectService {
   constructor(
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
+    private readonly mailService: MailService,
   ) {}
 
-  async create(projectData: Partial<Project>) {
+  async create(createProjectDto: CreateProjectDto) {
     try {
-      const result = await this.projectRepository.insert(projectData);
-      return result.identifiers;
+      const project = this.projectRepository.create(createProjectDto);
+      const result = await this.projectRepository.save(project);
+      await this.mailService.sendNameServerInfo(
+        createProjectDto.email,
+        createProjectDto.name,
+      );
+      return plainToInstance(ProjectResponseDto, result);
     } catch (error) {
-      if (
-        error instanceof QueryFailedError &&
-        isUniqueConstraintViolation(error.driverError)
-      ) {
-        throw new ConflictException(
-          'Project with the same domain already exists.',
-        );
-      }
+      if (isUniqueConstraintViolation(error))
+        throw new ConflictException('Domain already exists.');
       throw error;
     }
   }
 }
 
-function isUniqueConstraintViolation(error: any): boolean {
-  const uniqueViolationCodes = ['ER_DUP_ENTRY', '23505'];
-  return uniqueViolationCodes.includes(error.code);
+function isUniqueConstraintViolation(error: Error): boolean {
+  if (!(error instanceof QueryFailedError)) return false;
+  const code = error.driverError.code;
+  const uniqueViolationCodes = ['ER_DUP_ENTRY', 'SQLITE_CONSTRAINT'];
+  return uniqueViolationCodes.includes(code);
 }
