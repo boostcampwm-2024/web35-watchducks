@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Sparse checkout으로 하위 디렉토리만 체크아웃
+      # Sparse checkout으로 하위 디렉토리만 체크아웃
       - name: Checkout repository with sparse checkout
         uses: actions/checkout@v3
         with:
@@ -35,7 +35,26 @@ jobs:
           sparse-checkout: |
             ${{ inputs.path }}
 
-      # 2. GHCR 로그인
+      - name: Cache Docker images
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: docker-compose-cache-${{ github.sha }}
+          restore-keys: |
+            docker-compose-cache-
+
+      - name: Transfer YAML files using SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.host }}
+          username: ${{ secrets.user }}
+          key: ${{ secrets.key }}
+          port: ${{ secrets.port }}
+          source: "${{inputs.path}}/*.yml,${{inputs.path}}/*.conf"
+          target: "/home/watchducks/app"
+          strip_components: 2
+
+      # GHCR 로그인
       - name: Log in to GHCR
         uses: docker/login-action@v2
         with:
@@ -43,16 +62,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 3. 도커 이미지 빌드 & 푸시
+      # 도커 이미지 빌드 & 푸시
       - name: Build and push Docker image for ${{ inputs.service }}
-        run: |
-          TAG=$(date +%Y%m%d%H%M%S)
-          docker build -t ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:${TAG} ./${{inputs.service}}/${{inputs.path}}
-          docker push ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:${TAG}
-          docker tag ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:${TAG} ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:latest
-          docker push ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:latest
+        uses: docker/build-push-action@v2
+        with:
+          context: ./${{ inputs.path }}
+          file: ./${{ inputs.path }}/Dockerfile
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      # 4. 각 서비스 서버에 배포
+      # 각 서비스 서버에 배포
       - name: Deploy ${{ inputs.service }} to server
         uses: appleboy/ssh-action@v1.1.0
         with:
@@ -66,7 +88,7 @@ jobs:
             echo "${{ secrets.env }}" > .env
             
             # 최신 이미지 가져오기
-            docker-compose pull console-server-blue console-server-green
+            docker-compose pull
             # Nginx 시작 (재시작 포함)
             docker-compose up -d nginx
             
@@ -78,10 +100,10 @@ jobs:
               fi
               echo "Waiting for Nginx to be ready..."
               sleep 2
-            done            
+            done
 
             # Blue 인스턴스를 새 버전으로 준비
-            docker-compose up -d --no-deps console-server-blue
+            docker-compose up -d --no-deps server-blue
             
             # Blue 인스턴스 헬스 체크
             for i in {1..30}; do
@@ -97,5 +119,5 @@ jobs:
             docker-compose exec nginx nginx -s reload
             
             # 기존 Green 인스턴스 종료
-            docker-compose up -d --no-deps console-server-green
+            docker-compose up -d --no-deps server-green
             echo "Deployment completed successfully"
