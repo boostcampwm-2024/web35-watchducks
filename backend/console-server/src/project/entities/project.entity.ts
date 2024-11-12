@@ -1,7 +1,7 @@
 import { Entity, Unique } from 'typeorm';
 import { Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('projects')
+@Entity('project')
 @Unique(['domain'])
 export class Project {
     @PrimaryGeneratedColumn()
