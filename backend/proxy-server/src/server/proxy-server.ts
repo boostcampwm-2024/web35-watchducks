@@ -82,7 +82,7 @@ export class ProxyServer {
         };
 
         this.logger.info(responseLog);
-        await this.logService.saveResponseLog(responseLog);
+        // await this.logService.saveResponseLog(responseLog);
     }
 
     private initializeErrorHandler(): void {
@@ -108,6 +108,7 @@ export class ProxyServer {
         const host = validateHost(request.headers[HOST_HEADER]);
         const ip = await this.resolveDomain(host);
         const targetUrl = buildTargetUrl(ip, request.url, 'http://'); // TODO: Protocol 별 arg 세팅
+        console.log(targetUrl); // TODO: 삭제
 
         await this.sendProxyRequest(targetUrl, request, reply);
     }
