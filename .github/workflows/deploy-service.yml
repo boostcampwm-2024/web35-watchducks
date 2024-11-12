@@ -69,7 +69,7 @@ jobs:
             else
               echo "Deployment failed, rolling back"
               docker-compose down
-              docker pull ghcr.io/${{ github.repository_owner }}/${{ matrix.service }}:previous-tag
+              docker pull ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:previous-tag
               docker-compose up -d
               exit 1
             fi
