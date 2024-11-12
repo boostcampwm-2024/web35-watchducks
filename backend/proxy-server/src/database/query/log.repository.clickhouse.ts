@@ -1,12 +1,12 @@
-import type { ClickHouse } from 'clickhouse';
 import { ClickhouseDatabase } from '../clickhouse/clickhouse-database';
 import { DatabaseQueryError } from '../../common/error/database-query.error';
 import { LogRepository } from '../../domain/log/log.repository';
 import { RequestLogEntity } from '../../domain/log/request-log.entity';
 import { ResponseLogEntity } from '../../domain/log/response-log.entity';
+import { ClickHouseClient } from '@clickhouse/client';
 
 export class LogRepositoryClickhouse implements LogRepository {
-    private readonly clickhouse: ClickHouse;
+    private readonly clickhouse: ClickHouseClient;
 
     constructor() {
         this.clickhouse = ClickhouseDatabase.getInstance();
@@ -23,9 +23,11 @@ export class LogRepositoryClickhouse implements LogRepository {
         ];
 
         try {
-            const query = `\nINSERT INTO request_log FORMAT JSONEachRow ${JSON.stringify(values)}`;
-
-            await this.clickhouse.insert(query).toPromise();
+            await this.clickhouse.insert({
+                table: 'request_log',
+                values: values,
+                format: 'JSONEachRow',
+            });
         } catch (error) {
             console.error('ClickHouse Error:', error);
             throw new DatabaseQueryError(error as Error);
@@ -45,17 +47,15 @@ export class LogRepositoryClickhouse implements LogRepository {
         ];
 
         try {
-            const query = `\nINSERT INTO response_log FORMAT JSONEachRow ${this.formatValues(values)}`;
-
-            await this.clickhouse.query(query).toPromise();
+            await this.clickhouse.insert({
+                table: 'response_log',
+                values: values,
+                format: 'JSONEachRow',
+            });
         } catch (error) {
             console.error('ClickHouse Error:', error);
             throw new DatabaseQueryError(error as Error);
         }
-    }
-
-    private formatValues(values: any): string {
-        return JSON.stringify(values[0]);
     }
 
     private formatDate(date: Date): string {
