@@ -50,7 +50,7 @@ jobs:
           username: ${{ secrets.user }}
           key: ${{ secrets.key }}
           port: ${{ secrets.port }}
-          source: "${{inputs.path}}/*.yml,${{inputs.path}}/*.conf"
+          source: "./${{inputs.path}}/*.yml, ./${{inputs.path}}/*.conf"
           target: "/home/watchducks/app"
           strip_components: 2
 
