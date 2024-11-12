@@ -1,6 +1,7 @@
 import { createClient } from '@clickhouse/client';
 import { NodeClickHouseClient } from '@clickhouse/client/dist/client';
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { clickhouseConfig } from './clickhouse.config';
 
 @Injectable()
 export class Clickhouse implements OnModuleInit, OnModuleDestroy {
@@ -8,7 +9,6 @@ export class Clickhouse implements OnModuleInit, OnModuleDestroy {
     private readonly logger = new Logger('clickhouse');
     private readonly MAX_RETRIES = 3;
     private readonly RETRY_DELAY = 5 * 1000; // 5s
-    private readonly REQUEST_TIMEOUT = 30 * 1000; // 30s
 
     async onModuleDestroy() {
         this.cleanup();
@@ -44,15 +44,7 @@ export class Clickhouse implements OnModuleInit, OnModuleDestroy {
 
     private async createConnection(): Promise<void> {
         try {
-            const config = {
-                url: process.env.CLICKHOUSE_URL ?? 'http://localhost:8123',
-                username: process.env.CLICKHOUSE_USER ?? 'default',
-                database: process.env.CLICKHOUSE_DATABASE ?? 'default',
-                password: process.env.CLICKHOUSE_PASSWORD ?? '',
-                request_timeout: this.REQUEST_TIMEOUT,
-            };
-
-            this.client = createClient(config);
+            this.client = createClient(clickhouseConfig);
         } catch (error) {
             throw new Error(`Failed to initialize ClickHouse client: ${error.message}`);
         }
