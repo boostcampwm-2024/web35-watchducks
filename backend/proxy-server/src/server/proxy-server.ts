@@ -69,7 +69,7 @@ export class ProxyServer {
         };
 
         this.logger.info(requestLog);
-        console.log('------------------------ request log 호출 -----------------------------'); // TODO : 삭제
+
         await this.logService.saveRequestLog(requestLog);
     }
 
@@ -109,7 +109,6 @@ export class ProxyServer {
         const host = validateHost(request.headers[HOST_HEADER]);
         const ip = await this.resolveDomain(host);
         const targetUrl = buildTargetUrl(ip, request.url, 'http://'); // TODO: Protocol 별 arg 세팅
-        console.log(targetUrl); // TODO: 삭제
 
         await this.sendProxyRequest(targetUrl, request, reply);
     }
