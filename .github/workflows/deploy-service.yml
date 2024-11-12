@@ -35,6 +35,9 @@ jobs:
           sparse-checkout: |
             ${{ inputs.path }}
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Cache Docker images
         uses: actions/cache@v3
         with:
@@ -69,8 +72,8 @@ jobs:
           context: ./${{ inputs.service }}/${{ inputs.path }}
           file: ./${{ inputs.service }}/${{ inputs.path }}/Dockerfile
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}:${{ github.sha }}
-            ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{ inputs.path }}:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{ inputs.path }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
