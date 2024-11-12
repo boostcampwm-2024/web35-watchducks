@@ -27,6 +27,7 @@ export class LogRepositoryClickhouse implements LogRepository {
             console.log('쿠어리 ~~~~~~~~~~~~~~~~~~ : ', query); // TODO : 삭제
 
             await this.clickhouse.insert(query).toPromise();
+            console.log('쿠어리 성공~~~~~~~~~~~~~~~~~~~~'); // TODO : 삭제
         } catch (error) {
             console.error('ClickHouse Error:', error);
             throw new DatabaseQueryError(error as Error);
