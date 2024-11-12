@@ -62,6 +62,7 @@ jobs:
           port: ${{ secrets.port }}
           script: |
             cd /home/watchducks/app
+            touch .env
             echo <<EOF > .env
             ${{ secrets.env }}
             EOF
