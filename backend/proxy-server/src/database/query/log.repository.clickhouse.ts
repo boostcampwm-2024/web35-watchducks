@@ -24,6 +24,7 @@ export class LogRepositoryClickhouse implements LogRepository {
 
         try {
             const query = `\nINSERT INTO request_log FORMAT JSONEachRow ${JSON.stringify(values)}`;
+            console.log('쿠어리 ~~~~~~~~~~~~~~~~~~ : ', query); // TODO : 삭제
 
             await this.clickhouse.insert(query).toPromise();
         } catch (error) {
@@ -46,8 +47,6 @@ export class LogRepositoryClickhouse implements LogRepository {
 
         try {
             const query = `\nINSERT INTO response_log FORMAT JSONEachRow ${this.formatValues(values)}`;
-
-            console.log('쿠어리 ~~~~~~~~~~~~~~~~~~ : ', query); // TODO : 삭제
 
             await this.clickhouse.query(query).toPromise();
         } catch (error) {
