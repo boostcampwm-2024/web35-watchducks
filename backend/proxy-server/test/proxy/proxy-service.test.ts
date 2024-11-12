@@ -1,16 +1,17 @@
-import { ProxyService } from '../../src/proxy/proxy-service';
-import { projectQuery } from '../../src/database/query/project.query';
-import { DomainNotFoundError } from '../../src/error/domain-not-found.error';
-import { MissingHostHeaderError } from '../../src/error/missing-host-header.error';
-import { DatabaseQueryError } from '../../src/error/database-query.error';
+import { Utils } from '../../src/server/utils';
+import { projectQuery } from '../../src/database/query/project.repository.mysql';
+import { DomainNotFoundError } from '../../src/common/error/domain-not-found.error';
+import { MissingHostHeaderError } from '../../src/common/error/missing-host-header.error';
+import { DatabaseQueryError } from '../../src/common/error/database-query.error';
+import { ProxyError } from '../../src/common/core/proxy.error';
 
-jest.mock('../../src/database/query/project.query');
+jest.mock('../../src/database/query/project.repository.mysql');
 
-describe('proxy-service 테스트', () => {
-    let proxyService: ProxyService;
+describe('server-service 테스트', () => {
+    let proxyService: Utils;
 
     beforeEach(() => {
-        proxyService = new ProxyService();
+        proxyService = new Utils();
         jest.clearAllMocks();
     });
 
@@ -62,6 +63,18 @@ describe('proxy-service 테스트', () => {
             const result = proxyService.buildTargetUrl(ip, path);
 
             expect(result).toBe('http://10.0.0.1/');
+        });
+
+        it('URL 생성 중 오류가 발생하면 ProxyError를 throw해야 한다.', () => {
+            const badIp = {
+                toString: () => {
+                    throw new Error('IP 주소 변환 중 오류 발생');
+                },
+            };
+
+            expect(() => {
+                proxyService.buildTargetUrl(badIp as unknown as string, '/test');
+            }).toThrow(ProxyError);
         });
     });
 

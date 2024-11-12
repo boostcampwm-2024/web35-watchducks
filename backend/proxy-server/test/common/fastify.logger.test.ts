@@ -1,6 +1,6 @@
 import { FastifyLogger } from '../../src/common/logger/fastify.logger';
 import type { FastifyInstance } from 'fastify';
-import type { RequestLog, ResponseLog, ErrorLog } from '../../src/common/interface/log.interface';
+import type { RequestLog, ResponseLog, ErrorLog } from '../../src/domain/log/log.interface';
 
 describe('fastify.logger 테스트', () => {
     let mockServer: FastifyInstance;
@@ -20,10 +20,8 @@ describe('fastify.logger 테스트', () => {
     describe('logger.info()는 ', () => {
         it('요청 로그를 올바르게 수집해야 한다.', () => {
             const requestLog: RequestLog = {
-                message: 'Request received',
                 method: 'GET',
-                hostname: 'api.example.com',
-                url: '/api/v1/users',
+                host: 'api.example.com',
                 path: '/api/v1/users',
             };
 
@@ -34,13 +32,10 @@ describe('fastify.logger 테스트', () => {
 
         it('응답 로그를 올바르게 수집해야 한다.', () => {
             const responseLog: ResponseLog = {
-                message: 'Response completed',
                 method: 'POST',
-                hostname: 'api.example.com',
-                url: '/api/v1/users',
+                host: 'api.example.com',
                 path: '/api/v1/users',
                 statusCode: 201,
-                statusMessage: 'Created',
                 responseTime: 123,
             };
 
@@ -53,15 +48,12 @@ describe('fastify.logger 테스트', () => {
     describe('logger.error()는 ', () => {
         it('에러 로그를 올바르게 수집해야 한다.', () => {
             const errorLog: ErrorLog = {
-                message: 'Database connection error',
                 method: 'GET',
-                hostname: 'api.example.com',
-                url: '/api/v1/users',
+                host: 'api.example.com',
                 path: '/api/v1/users',
                 request: {
                     method: 'GET',
-                    hostname: 'api.example.com',
-                    url: '/api/v1/users',
+                    host: 'api.example.com',
                     path: '/api/v1/users',
                     headers: {
                         'user-agent': 'test-client/1.0',

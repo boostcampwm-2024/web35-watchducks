@@ -1,4 +1,4 @@
-import { ProxyError } from './core/proxy.error';
+import { ProxyError } from '../core/proxy.error';
 
 export class DatabaseQueryError extends ProxyError {
     constructor(originalError?: Error) {

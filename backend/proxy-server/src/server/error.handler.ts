@@ -1,33 +1,23 @@
 import type { FastifyRequest } from 'fastify';
-import type { FastifyLogger } from '../../common/logger/fastify.logger';
-import type { ErrorLog } from '../../common/interface/log.interface';
-import { ProxyError } from './proxy.error';
-import { isProxyError } from './proxy-error.type.guard';
+import type { FastifyLogger } from '../common/logger/fastify.logger';
+import { ProxyError } from '../common/core/proxy.error';
+import { isProxyError } from '../common/core/proxy-error.type.guard';
 import type { IncomingHttpHeaders } from 'node:http';
+import { ErrorLogRepository } from '../common/logger/error-log.repository';
+import { ErrorLog } from '../common/logger/logger.interface';
 
 interface ProxyErrorHandlerOptions {
     logger: FastifyLogger;
 }
 
-export class ProxyErrorHandler {
+export class ErrorHandler {
     private readonly logger: FastifyLogger;
 
-    constructor(options: ProxyErrorHandlerOptions) {
+    constructor(
+        options: ProxyErrorHandlerOptions,
+        private readonly errorLogRepository: ErrorLogRepository,
+    ) {
         this.logger = options.logger;
-    }
-
-    createErrorLog(message: string, request: FastifyRequest, error: Error): ErrorLog {
-        const proxyError = this.ensureProxyError(error);
-
-        return {
-            message,
-            method: request.method,
-            hostname: request.hostname,
-            url: request.url,
-            path: request.raw.url ?? '',
-            request: this.createRequestContext(request),
-            error: this.createErrorContext(proxyError),
-        };
     }
 
     handleError(error: Error, request: FastifyRequest): ProxyError {
@@ -35,6 +25,7 @@ export class ProxyErrorHandler {
         const errorLog = this.createErrorLog('Error occurred', request, proxyError);
 
         this.logger.error(errorLog);
+        this.errorLogRepository.saveErrorLog(errorLog);
         return proxyError;
     }
 
@@ -45,10 +36,22 @@ export class ProxyErrorHandler {
         return new ProxyError('예기치 않은 오류가 발생했습니다.', 500, error);
     }
 
+    private createErrorLog(message: string, request: FastifyRequest, error: Error): ErrorLog {
+        const proxyError = this.ensureProxyError(error);
+
+        return {
+            method: request.method,
+            host: request.host,
+            path: request.raw.url ?? '',
+            request: this.createRequestContext(request),
+            error: this.createErrorContext(proxyError),
+        };
+    }
+
     private createRequestContext(request: FastifyRequest) {
         return {
             method: request.method,
-            hostname: request.hostname,
+            host: request.host,
             url: request.url,
             path: request.raw.url ?? '',
             headers: this.extractRelevantHeaders(request.headers),

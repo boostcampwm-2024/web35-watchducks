@@ -1,11 +1,12 @@
 import type { FastifyInstance } from 'fastify';
-import type { Logger } from './logger.interface';
-import type { RequestLog, ResponseLog, ErrorLog } from '../interface/log.interface';
+import type { ErrorLog, Logger } from './logger.interface';
+import { RequestLogEntity } from '../../domain/log/request-log.entity';
+import { ResponseLogEntity } from '../../domain/log/response-log.entity';
 
 export class FastifyLogger implements Logger {
     constructor(private readonly server: FastifyInstance) {}
 
-    public info(log: RequestLog | ResponseLog | { message: string }): void {
+    public info(log: RequestLogEntity | ResponseLogEntity | { message: string }): void {
         this.server.log.info(log);
     }
 
