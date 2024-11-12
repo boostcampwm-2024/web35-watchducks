@@ -93,7 +93,7 @@ jobs:
             # 최신 이미지 가져오기
             docker-compose pull
             # Nginx 시작 (재시작 포함)
-            docker-compose up -d nginx
+            docker-compose up -d --no-deps nginx
             
             # Nginx가 실행 중인지 확인
             for i in {1..10}; do
