@@ -55,7 +55,7 @@ jobs:
           port: ${{ secrets.port }}
           source: "./${{ inputs.service }}/${{ inputs.path }}/*.yml, ./${{ inputs.service }}/${{ inputs.path }}/*.conf"
           target: "/home/watchducks/app"
-          strip_components: 2
+          strip_components: 3
 
       # GHCR 로그인
       - name: Log in to GHCR
