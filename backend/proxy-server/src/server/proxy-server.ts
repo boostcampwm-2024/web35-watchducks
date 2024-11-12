@@ -12,6 +12,8 @@ import { RequestLogEntity } from '../domain/log/request-log.entity';
 import { ResponseLogEntity } from '../domain/log/response-log.entity';
 import { ProjectService } from '../domain/project/project.service';
 import { DatabaseQueryError } from '../common/error/database-query.error';
+import { ErrorLog } from '../common/logger/logger.interface';
+import { ErrorLogRepository } from '../common/logger/error-log.repository';
 
 export class ProxyServer {
     private readonly server: FastifyInstance;
@@ -21,10 +23,11 @@ export class ProxyServer {
     constructor(
         private readonly logService: LogService,
         private readonly projectService: ProjectService,
+        private readonly errorLogRepository: ErrorLogRepository,
     ) {
         this.server = fastify(fastifyConfig);
         this.logger = new FastifyLogger(this.server);
-        this.errorHandler = new ErrorHandler({ logger: this.logger });
+        this.errorHandler = new ErrorHandler({ logger: this.logger }, errorLogRepository);
 
         this.initializePlugins();
         this.initializeHooks();
