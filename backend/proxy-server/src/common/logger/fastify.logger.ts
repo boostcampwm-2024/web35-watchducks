@@ -1,6 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import type { Logger } from './logger.interface';
-import type { ErrorLog } from '../../domain/log/log.interface';
+import type { ErrorLog, Logger } from './logger.interface';
 import { RequestLogEntity } from '../../domain/log/request-log.entity';
 import { ResponseLogEntity } from '../../domain/log/response-log.entity';
 

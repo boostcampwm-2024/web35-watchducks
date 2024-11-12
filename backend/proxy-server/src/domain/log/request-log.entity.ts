@@ -1,4 +1,3 @@
-import { RequestLog } from './log.interface';
 import { BaseLog } from '../core/base-log';
 
 interface RequestLog extends BaseLog {}

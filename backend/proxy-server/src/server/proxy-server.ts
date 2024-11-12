@@ -2,7 +2,7 @@ import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import fastify from 'fastify';
 import replyFrom from '@fastify/reply-from';
 import { ProxyError } from '../common/core/proxy.error';
-import type { Utils } from './utils';
+import { buildTargetUrl, validateHost, validateIp } from './utils';
 import { fastifyConfig } from './config/fastify.config';
 import { HOST_HEADER } from '../common/constant/http.constant';
 import { ErrorHandler } from './error.handler';
@@ -10,6 +10,8 @@ import { FastifyLogger } from '../common/logger/fastify.logger';
 import { LogService } from '../domain/log/log.service';
 import { RequestLogEntity } from '../domain/log/request-log.entity';
 import { ResponseLogEntity } from '../domain/log/response-log.entity';
+import { ProjectService } from '../domain/project/project.service';
+import { DatabaseQueryError } from '../common/error/database-query.error';
 
 export class ProxyServer {
     private readonly server: FastifyInstance;
@@ -17,8 +19,8 @@ export class ProxyServer {
     private readonly logger: FastifyLogger;
 
     constructor(
-        private readonly proxyService: Utils,
         private readonly logService: LogService,
+        private readonly projectService: ProjectService,
     ) {
         this.server = fastify(fastifyConfig);
         this.logger = new FastifyLogger(this.server);
@@ -100,11 +102,26 @@ export class ProxyServer {
     }
 
     private async executeProxyRequest(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-        const host = this.proxyService.validateHost(request.headers[HOST_HEADER]);
-        const ip = await this.proxyService.resolveDomain(host);
-        const targetUrl = this.proxyService.buildTargetUrl(ip, request.url);
+        const host = validateHost(request.headers[HOST_HEADER]);
+        const ip = await this.resolveDomain(host);
+        const targetUrl = buildTargetUrl(ip, request.url, 'http://'); // TODO: Protocol 별 arg 세팅
 
         await this.sendProxyRequest(targetUrl, request, reply);
+    }
+
+    private async resolveDomain(host: string): Promise<string> {
+        try {
+            const ip = await this.projectService.getIpByDomain(host);
+
+            validateIp(ip, host);
+
+            return ip;
+        } catch (error) {
+            if (error instanceof ProxyError) {
+                throw error;
+            }
+            throw new DatabaseQueryError(error as Error);
+        }
     }
 
     private async sendProxyRequest(

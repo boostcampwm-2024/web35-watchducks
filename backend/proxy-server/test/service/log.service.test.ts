@@ -19,7 +19,7 @@ jest.mock('path', () => ({
 const mockInsertRequestLog = jest.fn();
 const mockInsertResponseLog = jest.fn();
 
-jest.mock('../../src/database/query/log.query', () => {
+jest.mock('../../src/database/query/log.repository.clickhouse', () => {
     return {
         LogQuery: jest.fn().mockImplementation(() => ({
             insertRequestLog: mockInsertRequestLog,

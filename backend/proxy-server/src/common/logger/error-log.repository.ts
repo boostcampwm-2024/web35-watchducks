@@ -1,8 +1,8 @@
-import type { ErrorLog } from '../../domain/log/log.interface';
 import path from 'path';
 import fs from 'fs';
+import { ErrorLog } from './logger.interface';
 
-export class PersistError {
+export class ErrorLogRepository {
     private readonly logDir = 'logs';
     private readonly errorLogFile = 'error.log';
 

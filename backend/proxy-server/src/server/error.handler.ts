@@ -1,10 +1,10 @@
 import type { FastifyRequest } from 'fastify';
 import type { FastifyLogger } from '../common/logger/fastify.logger';
-import type { ErrorLog } from '../domain/log/log.interface';
 import { ProxyError } from '../common/core/proxy.error';
 import { isProxyError } from '../common/core/proxy-error.type.guard';
 import type { IncomingHttpHeaders } from 'node:http';
-import { PersistError } from '../common/logger/persist-error';
+import { ErrorLogRepository } from '../common/logger/error-log.repository';
+import { ErrorLog } from '../common/logger/logger.interface';
 
 interface ProxyErrorHandlerOptions {
     logger: FastifyLogger;
@@ -12,11 +12,12 @@ interface ProxyErrorHandlerOptions {
 
 export class ErrorHandler {
     private readonly logger: FastifyLogger;
-    private readonly logService: PersistError;
 
-    constructor(options: ProxyErrorHandlerOptions) {
+    constructor(
+        options: ProxyErrorHandlerOptions,
+        private readonly errorLogRepository: ErrorLogRepository,
+    ) {
         this.logger = options.logger;
-        this.logService = new PersistError();
     }
 
     handleError(error: Error, request: FastifyRequest): ProxyError {
@@ -24,7 +25,7 @@ export class ErrorHandler {
         const errorLog = this.createErrorLog('Error occurred', request, proxyError);
 
         this.logger.error(errorLog);
-        this.logService.saveErrorLog(errorLog);
+        this.errorLogRepository.saveErrorLog(errorLog);
         return proxyError;
     }
 
