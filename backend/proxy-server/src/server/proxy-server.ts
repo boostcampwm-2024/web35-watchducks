@@ -69,6 +69,7 @@ export class ProxyServer {
         };
 
         this.logger.info(requestLog);
+        console.log('------------------------ request log 호출 -----------------------------'); // TODO : 삭제
         await this.logService.saveRequestLog(requestLog);
     }
 
