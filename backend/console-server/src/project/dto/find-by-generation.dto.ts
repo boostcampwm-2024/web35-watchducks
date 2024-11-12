@@ -1,9 +1,9 @@
 import { IsNotEmpty, IsNumber } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Type } from 'class-transformer';
 
 export class FindByGenerationDto {
     @IsNotEmpty()
-    @Transform(({ value }) => Number(value))
+    @Type(() => Number)
     @IsNumber()
     generation: number;
 }
