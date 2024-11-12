@@ -83,7 +83,7 @@ export class ProxyServer {
         };
 
         this.logger.info(responseLog);
-        // await this.logService.saveResponseLog(responseLog);
+        await this.logService.saveResponseLog(responseLog);
     }
 
     private initializeErrorHandler(): void {
