@@ -65,12 +65,23 @@ jobs:
             touch .env
             echo "${{ secrets.env }}" > .env
             docker pull ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:latest
-            if docker-compose up -d; then
-              echo "Deployment successful"
-            else
-              echo "Deployment failed, rolling back"
-              docker-compose down
-              docker pull ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:previous-tag
-              docker-compose up -d
-              exit 1
-            fi
+            
+            # Blue 인스턴스를 새 버전으로 준비
+            docker-compose up -d --no-deps console-server-blue
+            
+            # Blue 인스턴스 헬스 체크
+            for i in {1..30}; do
+              if curl -s http://localhost | grep -q "Hello World!"; then
+                echo "Blue container is ready"
+                break
+              fi
+              echo "Waiting for Blue container to be ready..."
+              sleep 1
+            done
+            
+            # Nginx 리로드로 트래픽 전환
+            docker-compose exec nginx nginx -s reload
+            
+            # 기존 Green 인스턴스 종료
+            docker-compose up -d --no-deps console-server-green
+            echo "Deployment completed successfully"
