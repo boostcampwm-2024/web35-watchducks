@@ -19,9 +19,10 @@ export class ProjectService {
     try {
       const project = this.projectRepository.create(createProjectDto);
       const result = await this.projectRepository.save(project);
-      await this.mailService.sendNameServerInfo(
-        createProjectDto.email,
-        createProjectDto.name,
+      new Promise((resolve, _reject) =>
+        this.mailService
+          .sendNameServerInfo(createProjectDto.email, createProjectDto.name)
+          .then(() => resolve),
       );
       return plainToInstance(ProjectResponseDto, result);
     } catch (error) {
