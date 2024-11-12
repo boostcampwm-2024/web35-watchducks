@@ -1,6 +1,6 @@
-import { BaseLog } from '../core/base-log';
+import type { BaseLog } from '../core/base-log';
 
-interface RequestLog extends BaseLog {}
+type RequestLog = BaseLog;
 
 export class RequestLogEntity {
     readonly method: string;

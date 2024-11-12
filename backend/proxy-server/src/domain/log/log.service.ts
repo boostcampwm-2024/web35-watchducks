@@ -1,8 +1,7 @@
 import { DatabaseQueryError } from '../../common/error/database-query.error';
-import { RequestLogEntity } from './request-log.entity';
-import { ResponseLogEntity } from './response-log.entity';
-import { LogRepository } from './log.repository';
-
+import type { RequestLogEntity } from './request-log.entity';
+import type { ResponseLogEntity } from './response-log.entity';
+import type { LogRepository } from './log.repository';
 export class LogService {
     constructor(private readonly logRepository: LogRepository) {}
 

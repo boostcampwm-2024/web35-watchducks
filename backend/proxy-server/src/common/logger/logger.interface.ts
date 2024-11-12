@@ -1,6 +1,6 @@
-import { RequestLogEntity } from '../../domain/log/request-log.entity';
-import { ResponseLogEntity } from '../../domain/log/response-log.entity';
-import { BaseLog } from '../../domain/core/base-log';
+import type { RequestLogEntity } from '../../domain/log/request-log.entity';
+import type { ResponseLogEntity } from '../../domain/log/response-log.entity';
+import type { BaseLog } from '../../domain/core/base-log';
 
 export interface ErrorLog extends BaseLog {
     request: {

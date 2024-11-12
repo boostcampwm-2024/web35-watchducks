@@ -7,13 +7,12 @@ import { fastifyConfig } from './config/fastify.config';
 import { HOST_HEADER } from '../common/constant/http.constant';
 import { ErrorHandler } from './error.handler';
 import { FastifyLogger } from '../common/logger/fastify.logger';
-import { LogService } from '../domain/log/log.service';
-import { RequestLogEntity } from '../domain/log/request-log.entity';
-import { ResponseLogEntity } from '../domain/log/response-log.entity';
-import { ProjectService } from '../domain/project/project.service';
+import type { LogService } from '../domain/log/log.service';
+import type { RequestLogEntity } from '../domain/log/request-log.entity';
+import type { ResponseLogEntity } from '../domain/log/response-log.entity';
+import type { ProjectService } from '../domain/project/project.service';
 import { DatabaseQueryError } from '../common/error/database-query.error';
-import { ErrorLog } from '../common/logger/logger.interface';
-import { ErrorLogRepository } from '../common/logger/error-log.repository';
+import type { ErrorLogRepository } from '../common/logger/error-log.repository';
 
 export class ProxyServer {
     private readonly server: FastifyInstance;

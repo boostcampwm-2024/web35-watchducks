@@ -1,4 +1,4 @@
-import { BaseLog } from '../core/base-log';
+import type { BaseLog } from '../core/base-log';
 
 interface ResponseLog extends BaseLog {
     statusCode: number;
