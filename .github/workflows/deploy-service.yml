@@ -63,9 +63,8 @@ jobs:
           script: |
             cd /home/watchducks/app
             touch .env
-            echo <<EOF > .env
-            ${{ secrets.env }}
-            EOF
+            echo "${{ secrets.env }}" > .env
+            cat .env
             docker pull ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{inputs.path}}:latest
             if docker-compose up -d; then
               echo "Deployment successful"
