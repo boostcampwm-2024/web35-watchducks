@@ -1,4 +1,4 @@
-import { ProxyError } from './core/proxy.error';
+import { ProxyError } from '../core/proxy.error';
 
 export class DomainNotFoundError extends ProxyError {
     constructor(domain: string, originalError?: Error) {

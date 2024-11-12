@@ -1,10 +1,10 @@
 import { projectQuery } from '../database/query/project.query';
-import { DomainNotFoundError } from '../error/domain-not-found.error';
-import { ProxyError } from '../error/core/proxy.error';
-import { MissingHostHeaderError } from '../error/missing-host-header.error';
-import { DatabaseQueryError } from '../error/database-query.error';
+import { DomainNotFoundError } from '../common/error/domain-not-found.error';
+import { ProxyError } from '../common/core/proxy.error';
+import { MissingHostHeaderError } from '../common/error/missing-host-header.error';
+import { DatabaseQueryError } from '../common/error/database-query.error';
 
-export class ProxyService {
+export class Utils {
     private readonly PROTOCOL = 'http://';
 
     public async resolveDomain(host: string): Promise<string> {

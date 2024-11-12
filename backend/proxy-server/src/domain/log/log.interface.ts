@@ -1,15 +1,4 @@
-interface BaseLog {
-    method: string;
-    host: string;
-    path?: string;
-}
-
-type RequestLog = BaseLog;
-
-interface ResponseLog extends BaseLog {
-    statusCode: number;
-    responseTime: number;
-}
+import { BaseLog } from '../core/base-log';
 
 interface ErrorLog extends BaseLog {
     request: {
@@ -30,4 +19,4 @@ interface ErrorLog extends BaseLog {
     };
 }
 
-export { BaseLog, RequestLog, ResponseLog, ErrorLog };
+export { ErrorLog };

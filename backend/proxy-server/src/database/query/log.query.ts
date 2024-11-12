@@ -1,31 +1,18 @@
 import type { ClickHouse } from 'clickhouse';
-import type { RequestLog, ResponseLog, ErrorLog } from '../../common/interface/log.interface';
 import { ClickhouseDatabase } from '../clickhouse/clickhouse-database';
-import { DatabaseQueryError } from '../../error/database-query.error';
+import { DatabaseQueryError } from '../../common/error/database-query.error';
+import { LogRepository } from '../../domain/log/log.repository';
+import { RequestLogEntity } from '../../domain/log/request-log.entity';
+import { ResponseLogEntity } from '../../domain/log/response-log.entity';
 
-export class LogQuery {
+export class LogRepositoryClickhouse implements LogRepository {
     private readonly clickhouse: ClickHouse;
 
     constructor() {
         this.clickhouse = ClickhouseDatabase.getInstance();
     }
 
-    private formatValues(values: any): string {
-        return JSON.stringify(values[0]);
-    }
-
-    private formatDate(date: Date): string {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const seconds = String(date.getSeconds()).padStart(2, '0');
-
-        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    }
-
-    public async insertRequestLog(log: RequestLog): Promise<void> {
+    public async insertRequestLog(log: RequestLogEntity): Promise<void> {
         const values = [
             {
                 method: log.method,
@@ -45,7 +32,7 @@ export class LogQuery {
         }
     }
 
-    public async insertResponseLog(log: ResponseLog): Promise<void> {
+    public async insertResponseLog(log: ResponseLogEntity): Promise<void> {
         const values = [
             {
                 method: log.method,
@@ -65,5 +52,20 @@ export class LogQuery {
             console.error('ClickHouse Error:', error);
             throw new DatabaseQueryError(error as Error);
         }
+    }
+
+    private formatValues(values: any): string {
+        return JSON.stringify(values[0]);
+    }
+
+    private formatDate(date: Date): string {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
 }

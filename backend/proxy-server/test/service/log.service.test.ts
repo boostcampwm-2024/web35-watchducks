@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { LogService } from '../../src/service/log.service';
-import { DatabaseQueryError } from '../../src/error/database-query.error';
-import type { RequestLog, ResponseLog, ErrorLog } from '../../src/common/interface/log.interface';
+import { LogService } from '../../src/domain/log/log.service';
+import { DatabaseQueryError } from '../../src/common/error/database-query.error';
+import type { RequestLog, ResponseLog, ErrorLog } from '../../src/domain/log/log.interface';
 
 jest.mock('fs', () => ({
     existsSync: jest.fn(),

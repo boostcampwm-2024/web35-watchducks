@@ -1,17 +1,17 @@
-import { ProxyService } from '../../src/proxy/proxy-service';
+import { Utils } from '../../src/server/utils';
 import { projectQuery } from '../../src/database/query/project.query';
-import { DomainNotFoundError } from '../../src/error/domain-not-found.error';
-import { MissingHostHeaderError } from '../../src/error/missing-host-header.error';
-import { DatabaseQueryError } from '../../src/error/database-query.error';
-import { ProxyError } from '../../src/error/core/proxy.error';
+import { DomainNotFoundError } from '../../src/common/error/domain-not-found.error';
+import { MissingHostHeaderError } from '../../src/common/error/missing-host-header.error';
+import { DatabaseQueryError } from '../../src/common/error/database-query.error';
+import { ProxyError } from '../../src/common/core/proxy.error';
 
 jest.mock('../../src/database/query/project.query');
 
-describe('proxy-service 테스트', () => {
-    let proxyService: ProxyService;
+describe('server-service 테스트', () => {
+    let proxyService: Utils;
 
     beforeEach(() => {
-        proxyService = new ProxyService();
+        proxyService = new Utils();
         jest.clearAllMocks();
     });
 

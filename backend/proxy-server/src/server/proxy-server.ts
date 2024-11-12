@@ -1,26 +1,28 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import fastify from 'fastify';
 import replyFrom from '@fastify/reply-from';
-import { ProxyError } from '../error/core/proxy.error';
-import type { ProxyService } from './proxy-service';
+import { ProxyError } from '../common/core/proxy.error';
+import type { Utils } from './utils';
 import { fastifyConfig } from './config/fastify.config';
 import { HOST_HEADER } from '../common/constant/http.constant';
-import type { RequestLog, ResponseLog } from '../common/interface/log.interface';
-import { ProxyErrorHandler } from '../error/core/proxy-error.handler';
+import { ErrorHandler } from './error.handler';
 import { FastifyLogger } from '../common/logger/fastify.logger';
-import { LogService } from '../service/log.service';
+import { LogService } from '../domain/log/log.service';
+import { RequestLogEntity } from '../domain/log/request-log.entity';
+import { ResponseLogEntity } from '../domain/log/response-log.entity';
 
-export class ProxyServerFastify {
+export class ProxyServer {
     private readonly server: FastifyInstance;
-    private readonly errorHandler: ProxyErrorHandler;
+    private readonly errorHandler: ErrorHandler;
     private readonly logger: FastifyLogger;
-    private readonly logService: LogService;
 
-    constructor(private readonly proxyService: ProxyService) {
+    constructor(
+        private readonly proxyService: Utils,
+        private readonly logService: LogService,
+    ) {
         this.server = fastify(fastifyConfig);
         this.logger = new FastifyLogger(this.server);
-        this.errorHandler = new ProxyErrorHandler({ logger: this.logger });
-        this.logService = new LogService();
+        this.errorHandler = new ErrorHandler({ logger: this.logger });
 
         this.initializePlugins();
         this.initializeHooks();
@@ -55,7 +57,7 @@ export class ProxyServerFastify {
     }
 
     private async logRequest(request: FastifyRequest): Promise<void> {
-        const requestLog: RequestLog = {
+        const requestLog: RequestLogEntity = {
             method: request.method,
             host: request.host,
             path: request.raw.url,
@@ -66,7 +68,7 @@ export class ProxyServerFastify {
     }
 
     private async logResponse(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-        const responseLog: ResponseLog = {
+        const responseLog: ResponseLogEntity = {
             method: request.method,
             host: request.host,
             path: request.raw.url,
@@ -133,7 +135,7 @@ export class ProxyServerFastify {
             });
             this.logger.info({ message: `Proxy server is running on port ${process.env.PORT}` });
         } catch (error) {
-            this.server.log.error('Failed to start proxy server:', error);
+            this.server.log.error('Failed to start server server:', error);
             console.error('Detailed error:', error);
             process.exit(1);
         }
@@ -144,7 +146,7 @@ export class ProxyServerFastify {
             await this.server.close();
             this.logger.info({ message: 'Proxy server stopped' });
         } catch (error) {
-            this.server.log.error('Error while stopping proxy server:', error);
+            this.server.log.error('Error while stopping server server:', error);
             process.exit(1);
         }
     }

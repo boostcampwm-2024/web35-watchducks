@@ -1,8 +1,8 @@
 import { FastifyLogger } from '../../src/common/logger/fastify.logger';
 import type { FastifyInstance } from 'fastify';
-import type { RequestLog, ResponseLog, ErrorLog } from '../../src/common/interface/log.interface';
+import type { RequestLog, ResponseLog, ErrorLog } from '../../src/domain/log/log.interface';
 
-describe('proxy-server-fastify 테스트', () => {
+describe('server-server-fastify 테스트', () => {
     let mockServer: FastifyInstance;
     let logger: FastifyLogger;
 
