@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Param } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Param, Query } from '@nestjs/common';
 import { Post } from '@nestjs/common';
 import { Body } from '@nestjs/common';
 import { ProjectService } from './project.service';
@@ -17,7 +17,7 @@ export class ProjectController {
 
     @Get('/generation')
     @HttpCode(HttpStatus.OK)
-    findByGeneration(@Param('generation') findGenerationProjectDto: FindByGenerationDto) {
+    findByGeneration(@Query('generation') findGenerationProjectDto: FindByGenerationDto) {
         return this.projectService.findByGeneration(findGenerationProjectDto);
     }
 }
