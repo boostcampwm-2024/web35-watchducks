@@ -15,7 +15,7 @@ export class ProjectController {
         return this.projectService.create(createProjectDto);
     }
 
-    @Get('/generation')
+    @Get()
     @HttpCode(HttpStatus.OK)
     findByGeneration(@Query('generation') findGenerationProjectDto: FindByGenerationDto) {
         return this.projectService.findByGeneration(findGenerationProjectDto);
