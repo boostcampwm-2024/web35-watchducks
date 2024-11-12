@@ -66,8 +66,7 @@ jobs:
             echo "${{ secrets.env }}" > .env
             
             # 최신 이미지 가져오기
-            docker-compose pull
-            
+            docker-compose pull console-server-blue console-server-green
             # Nginx 시작 (재시작 포함)
             docker-compose up -d nginx
             
@@ -79,14 +78,14 @@ jobs:
               fi
               echo "Waiting for Nginx to be ready..."
               sleep 2
-            done
+            done            
 
             # Blue 인스턴스를 새 버전으로 준비
             docker-compose up -d --no-deps console-server-blue
             
             # Blue 인스턴스 헬스 체크
             for i in {1..30}; do
-              if curl -s http://localhost | grep -q "Hello World!"; then
+              if curl -s http://localhost/api | grep -q "Hello World!"; then
                 echo "Blue container is ready"
                 break
               fi
