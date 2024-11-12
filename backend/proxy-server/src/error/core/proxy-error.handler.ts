@@ -4,6 +4,7 @@ import type { ErrorLog } from '../../common/interface/log.interface';
 import { ProxyError } from './proxy.error';
 import { isProxyError } from './proxy-error.type.guard';
 import type { IncomingHttpHeaders } from 'node:http';
+import { LogService } from '../../service/log.service';
 
 interface ProxyErrorHandlerOptions {
     logger: FastifyLogger;
@@ -11,9 +12,11 @@ interface ProxyErrorHandlerOptions {
 
 export class ProxyErrorHandler {
     private readonly logger: FastifyLogger;
+    private readonly logService: LogService;
 
     constructor(options: ProxyErrorHandlerOptions) {
         this.logger = options.logger;
+        this.logService = new LogService();
     }
 
     createErrorLog(message: string, request: FastifyRequest, error: Error): ErrorLog {
@@ -33,6 +36,7 @@ export class ProxyErrorHandler {
         const errorLog = this.createErrorLog('Error occurred', request, proxyError);
 
         this.logger.error(errorLog);
+        this.logService.saveErrorLog(errorLog);
         return proxyError;
     }
 
