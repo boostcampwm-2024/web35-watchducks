@@ -1,13 +1,15 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
-import { QueryFailedError, Repository } from 'typeorm';
+import { Equal, QueryFailedError, Repository } from 'typeorm';
 import { MailService } from '../mail/mail.service';
 import type { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectResponseDto } from './dto/create-project-response.dto';
 import { plainToInstance } from 'class-transformer';
 import { FindByGenerationDto } from './dto/find-by-generation.dto';
 import { FindByGenerationResponseDto } from './dto/find-by-generation-response.dto';
+import { CountProjectByGenerationDto } from './dto/count-project-by-generation.dto';
+import { CountProjectByGenerationResponseDto } from './dto/count-project-by-generation-response.dto';
 
 @Injectable()
 export class ProjectService {
@@ -48,6 +50,19 @@ export class ProjectService {
         });
 
         return projects.map((p) => plainToInstance(FindByGenerationResponseDto, p.name));
+    }
+
+    async countProjectByGeneration(countProjectByGenerationDto: CountProjectByGenerationDto) {
+        const generation = countProjectByGenerationDto.generation;
+
+        const count = await this.projectRepository.count({
+            where: { generation: generation },
+        });
+
+        return plainToInstance(CountProjectByGenerationResponseDto, {
+            generation: generation,
+            count: count,
+        });
     }
 }
 
