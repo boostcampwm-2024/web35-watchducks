@@ -17,7 +17,6 @@ export class ProjectService {
         private readonly mailService: MailService,
     ) {}
 
-
     async create(createProjectDto: CreateProjectDto) {
         try {
             const project = this.projectRepository.create(createProjectDto);
@@ -47,7 +46,7 @@ export class ProjectService {
         });
 
         return projects.map((p) => plainToInstance(FindByGenerationResponseDto, p.name));
-
+    }
 }
 
 function isUniqueConstraintViolation(error: Error): boolean {
