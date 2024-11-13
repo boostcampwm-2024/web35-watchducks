@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/app.ts",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "dev": "tsx src/app.ts"
   },
   "repository": {
@@ -28,6 +30,7 @@
     "jest": "^29.7.0",
     "prettier": "^3.3.3",
     "ts-jest": "^29.2.5",
+    "tsc-alias": "^1.8.10",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3"
   },
