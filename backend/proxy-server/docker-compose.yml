@@ -1,0 +1,19 @@
+version: '3'
+services:
+  server-blue:
+    image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/proxy-server:latest
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    restart: always
+    volumes:
+      - ./.env:/usr/src/app/.env
+
+  server-green:
+    image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/proxy-server:latest
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    restart: always
+    volumes:
+      - ./.env:/usr/src/app/.env

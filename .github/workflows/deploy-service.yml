@@ -108,14 +108,8 @@ jobs:
             docker-compose up -d --no-deps server-blue
             
             # Blue 인스턴스 헬스 체크
-            for i in {1..30}; do
-              if curl -s http://localhost/api | grep -q "Hello World!"; then
-                echo "Blue container is ready"
-                break
-              fi
-              echo "Waiting for Blue container to be ready..."
-              sleep 1
-            done
+            echo "Waiting for Blue container to be healthy..."
+            docker-compose ps | grep console-server-blue | grep "healthy" || (echo "Blue container did not become healthy" && exit 1)
             
             # Nginx 리로드로 트래픽 전환
             docker-compose exec nginx nginx -s reload
