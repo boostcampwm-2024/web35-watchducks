@@ -2,6 +2,7 @@ version: '3'
 services:
   server-blue:
     image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/proxy-server:latest
+    container_name: app-server-blue-1
     environment:
       - NODE_ENV=production
       - PORT=3001
@@ -9,9 +10,15 @@ services:
     volumes:
       - ./.env:/usr/src/app/.env
     network_mode: "host"
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "3001" ]
+      interval: 10s
+      timeout: 2s
+      retries: 5
 
   server-green:
     image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/proxy-server:latest
+    container_name: app-server-green-1
     environment:
       - NODE_ENV=production
       - PORT=3002
@@ -19,3 +26,8 @@ services:
     volumes:
       - ./.env:/usr/src/app/.env
     network_mode: "host"
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "3001" ]
+      interval: 10s
+      timeout: 2s
+      retries: 5

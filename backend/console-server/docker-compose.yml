@@ -12,6 +12,7 @@ services:
 
   server-blue:
     image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/console-server:latest
+    container_name: app-server-blue-1
     environment:
       - NODE_ENV=production
       - PORT=3001
@@ -26,6 +27,7 @@ services:
 
   server-green:
     image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/console-server:latest
+    container_name: app-server-green-1
     environment:
       - NODE_ENV=production
       - PORT=3002
