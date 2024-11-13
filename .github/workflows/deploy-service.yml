@@ -74,6 +74,7 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{ inputs.path }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          push: true
 
       # 각 서비스 서버에 배포
       - name: Deploy ${{ inputs.service }} to server
