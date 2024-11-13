@@ -47,7 +47,7 @@ export class Clickhouse implements OnModuleInit, OnModuleDestroy {
     private async createConnection(): Promise<void> {
         try {
             const config = this.configService.get('clickhouse');
-            this.client = createClient(config);
+            this.client = createClient(config.clickhouse);
             console.log(config); // TODO: 삭제
         } catch (error) {
             throw new Error(`Failed to initialize ClickHouse client: ${error.message}`);
