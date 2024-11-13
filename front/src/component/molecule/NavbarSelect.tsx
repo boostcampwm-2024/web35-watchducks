@@ -55,7 +55,7 @@ export default function NavbarSelect({
         onChange={handleGenerationChange}
       />
       <Select
-        cssOption='text-12 md:text-14 md:px-4 text-ellipsis cursor-pointer text-gray hover:font-semibold truncate flex-1'
+        cssOption='text-12 md:text-14 md:px-2 text-ellipsis cursor-pointer text-gray hover:font-semibold truncate flex-1'
         options={groupOption}
         value={selectedGroup}
         onChange={setSelectedGroup}
