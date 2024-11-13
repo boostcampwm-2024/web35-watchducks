@@ -108,8 +108,14 @@ jobs:
             docker-compose up -d --no-deps server-blue
             
             # Blue 인스턴스 헬스 체크
-            echo "Waiting for Blue container to be healthy..."
-            docker-compose ps | grep server-blue | grep "healthy" || (echo "Blue container did not become healthy" && exit 1)
+            echo "Checking Blue container health status..."
+            health_status=$(docker inspect --format='{{json .State.Health.Status}}' server-blue | tr -d '"')
+            if [ "$health_status" == "healthy" ]; then
+              echo "Blue container is healthy"
+            else
+              echo "Blue container did not become healthy"
+              exit 1
+            fi
             
             # Nginx 리로드로 트래픽 전환
             docker-compose exec nginx nginx -s reload
