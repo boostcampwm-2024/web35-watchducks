@@ -1,29 +1,43 @@
-version: '3'
+version: '3.8'
 services:
-  nginx:
-    image: nginx:latest
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse
+    restart: always
+    environment:
+      CLICKHOUSE_DB: ${LOCAL_CH_DB}
+      CLICKHOUSE_USER: ${LOCAL_CH_USER}
+      CLICKHOUSE_PASSWORD: ${LOCAL_CH_PASSWORD}
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+      TZ: Asia/Seoul
     ports:
-      - "80:80"
+      - "8123:8123"   # HTTP 인터페이스
+      - "9000:9000"   # Native 인터페이스
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-    depends_on:
-      - server-blue
-      - server-green
+      - clickhouse_data:/var/lib/clickhouse
+    networks:
+      - app_network
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+      memlock:
+        soft: -1
+        hard: -1
+      nproc:
+        soft: 131072
+        hard: 131072
+    cap_add:
+      - SYS_NICE
+      - NET_ADMIN
+      - IPC_LOCK
+    security_opt:
+      - seccomp:unconfined
+volumes:
+  clickhouse_data:
+    driver: local
 
-  server-blue:
-    image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/console-server:latest
-    environment:
-      - NODE_ENV=production
-      - PORT=3000
-    restart: always
-    volumes:
-      - ./.env:/usr/src/app/.env
-
-  server-green:
-    image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/console-server:latest
-    environment:
-      - NODE_ENV=production
-      - PORT=3000
-    restart: always
-    volumes:
-      - ./.env:/usr/src/app/.env
+networks:
+  app_network:
+    name: app_network
+    driver: bridge
