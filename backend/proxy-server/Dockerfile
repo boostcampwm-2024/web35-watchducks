@@ -27,7 +27,7 @@ COPY --from=build /usr/src/app/dist ./dist
 RUN npm install pm2 -g
 
 # PM2 설정 파일 복사 (옵션)
-COPY ecosystem.config.js ./
+COPY ecosystem.config.cjs ./
 
 # 애플리케이션 실행
-CMD ["pm2-runtime", "ecosystem.config.js"]
+CMD ["pm2-runtime", "ecosystem.config.cjs"]
