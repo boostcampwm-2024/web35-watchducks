@@ -9,6 +9,8 @@ on:
       path:
         required: true
         type: string
+      source:
+        type: string
     secrets:
       host:
         required: true
