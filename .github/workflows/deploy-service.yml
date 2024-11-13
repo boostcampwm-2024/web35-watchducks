@@ -105,20 +105,30 @@ jobs:
             if [ "${{ inputs.use_host_nginx }}" == "true" ]; then
               # Dockerized Nginx 없이 Blue 컨테이너만 시작
               docker-compose up -d --no-deps server-blue
-              sleep 10
             
-              # Blue 인스턴스 헬스 체크
+              # Blue 인스턴스 헬스 체크 - 최대 5번 시도
               echo "Blue 컨테이너 헬스 상태 확인 중..."
-              health_status=$(docker inspect --format='{{json .State.Health.Status}}' app-server-blue-1 | tr -d '"')
-              if [ "$health_status" == "healthy" ]; then
-                echo "Blue 컨테이너가 정상 상태입니다."
-              else
+              for i in {1..5}; do
+                health_status=$(docker inspect --format='{{json .State.Health.Status}}' app-server-blue-1 | tr -d '"')
+                if [ "$health_status" == "healthy" ]; then
+                  echo "Blue 컨테이너가 정상 상태입니다."
+                  break
+                else
+                  echo "Blue 컨테이너가 정상 상태로 전환되지 않았습니다. 시도 $i/5..."
+                  sleep 10
+                fi
+              done
+            
+              # 최종 헬스 상태 확인
+              if [ "$health_status" != "healthy" ]; then
                 echo "Blue 컨테이너가 정상 상태로 전환되지 않았습니다."
                 exit 1
               fi
+            
+              # Nginx 재로드
               sudo nginx -s reload
               echo "호스트 Nginx 리로드 완료로 트래픽 전환 완료"
-
+            
             else
               # 콘솔 서버의 Dockerized Nginx 설정
               docker-compose up -d --no-deps nginx
@@ -126,20 +136,28 @@ jobs:
               # Dockerized Nginx와 함께 Blue 컨테이너 시작
               docker-compose up -d --no-deps server-blue
             
-              sleep 10
-            
-              # Blue 인스턴스 헬스 체크
+              # Blue 인스턴스 헬스 체크 - 최대 5번 시도
               echo "Blue 컨테이너 헬스 상태 확인 중..."
-              health_status=$(docker inspect --format='{{json .State.Health.Status}}' app-server-blue-1 | tr -d '"')
-              if [ "$health_status" == "healthy" ]; then
-                echo "Blue 컨테이너가 정상 상태입니다."
-              else
+              for i in {1..5}; do
+                health_status=$(docker inspect --format='{{json .State.Health.Status}}' app-server-blue-1 | tr -d '"')
+                if [ "$health_status" == "healthy" ]; then
+                  echo "Blue 컨테이너가 정상 상태입니다."
+                  break
+                else
+                  echo "Blue 컨테이너가 정상 상태로 전환되지 않았습니다. 시도 $i/5..."
+                  sleep 10
+                fi
+              done
+            
+              # 최종 헬스 상태 확인
+              if [ "$health_status" != "healthy" ]; then
                 echo "Blue 컨테이너가 정상 상태로 전환되지 않았습니다."
                 exit 1
               fi
             
               # Dockerized Nginx 리로드로 트래픽 전환
               docker-compose exec nginx nginx -s reload
+              echo "Dockerized Nginx 리로드 완료로 트래픽 전환 완료"
             fi
             
             # Green 컨테이너 시작 (두 설정 모두에서 수행)
