@@ -2,7 +2,7 @@ name: Deploy Service
 
 permissions:
   contents: read
-  packages: write
+
 
 on:
   workflow_call:
@@ -36,7 +36,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    permissions:
+      packages: write
     steps:
       # Sparse checkout으로 하위 디렉토리만 체크아웃
       - name: Checkout repository with sparse checkout
