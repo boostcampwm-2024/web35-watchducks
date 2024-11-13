@@ -9,7 +9,7 @@ const ERROR_CODE: ErrorCodeType = {
 
   ERR_NETWORK: {
     code: '통신 에러',
-    message: '서버가 응답하지 않습니다.'
+    message: '네트워크가 응답하지 않습니다.'
   },
 
   ECONNABORTED: { code: '요청 시간 초과', message: '요청 시간을 초과했습니다.' },

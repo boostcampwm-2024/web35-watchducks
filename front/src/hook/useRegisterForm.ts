@@ -1,10 +1,9 @@
 import { postRegister } from '@api/post';
+import { FormState, ValidationState } from '@type/RegisterForm';
 import { validateWebsite, validateDomain, validateIp, validateEmail } from '@util/Validate';
 import { useState, useEffect } from 'react';
 
 import useCustomMutation from './useCustomMutation';
-
-import { FormState, ValidationState } from '@/type/RegisterForm';
 
 type Props = {
   successCallback: (message: string) => void;
