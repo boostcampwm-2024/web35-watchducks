@@ -13,7 +13,7 @@ export default function NavigateButton({ path = '', content = '', cssOption }: P
     navigate(path);
   };
   return (
-    <div className='flex justify-center px-[40px] py-[20px]'>
+    <div className='flex w-full justify-center'>
       <Button cssOption={cssOption} content={content} onClick={handleNavigate} />
     </div>
   );

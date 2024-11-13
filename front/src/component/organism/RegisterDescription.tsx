@@ -10,7 +10,7 @@ export default function RegisterDescription() {
       <NavigateButton
         path='/'
         content='메인으로'
-        cssOption='bg-blue w-full rounded-[10px] text-white text-[25px] px-[100px] py-[10px] flex items-center justify-center whitespace-nowrap hover:text-black'
+        cssOption='bg-blue w-full rounded-[10px] text-white text-[25px] px-[100px] py-[10px] flex items-center justify-center whitespace-nowrap hover:text-black mx-[40px] my-[20px]'
       />
     </div>
   );

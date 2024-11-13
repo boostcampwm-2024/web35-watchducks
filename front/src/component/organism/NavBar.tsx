@@ -27,7 +27,7 @@ export default function Navbar() {
       <NavigateButton
         path='/register'
         content='프로젝트 등록하러가기'
-        cssOption='bg-blue rounded-[10px] text-white text-12 md:text-14 p-16 flex items-center justify-center whitespace-nowrap hover:text-black'
+        cssOption='bg-blue rounded-10 text-white text-10 md:text-12 p-16 flex items-center whitespace-nowrap hover:text-black'
       />
     </div>
   );
