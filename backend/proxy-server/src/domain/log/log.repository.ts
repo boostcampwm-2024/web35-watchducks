@@ -1,7 +1,5 @@
-import type { RequestLogEntity } from './request-log.entity';
-import type { ResponseLogEntity } from './response-log.entity';
+import type { HttpLogEntity } from './http-log.entity';
 
 export interface LogRepository {
-    insertRequestLog(log: RequestLogEntity): Promise<void>;
-    insertResponseLog(log: ResponseLogEntity): Promise<void>;
+    insertHttpLog(log: HttpLogEntity): Promise<void>;
 }

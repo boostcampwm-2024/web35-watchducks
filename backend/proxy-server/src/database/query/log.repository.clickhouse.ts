@@ -1,8 +1,7 @@
 import { ClickhouseDatabase } from '../clickhouse/clickhouse-database';
 import { DatabaseQueryError } from '../../common/error/database-query.error';
 import { LogRepository } from '../../domain/log/log.repository';
-import { RequestLogEntity } from '../../domain/log/request-log.entity';
-import { ResponseLogEntity } from '../../domain/log/response-log.entity';
+import { HttpLogEntity } from '../../domain/log/http-log.entity';
 import { ClickHouseClient } from '@clickhouse/client';
 
 export class LogRepositoryClickhouse implements LogRepository {
@@ -12,29 +11,7 @@ export class LogRepositoryClickhouse implements LogRepository {
         this.clickhouse = ClickhouseDatabase.getInstance();
     }
 
-    public async insertRequestLog(log: RequestLogEntity): Promise<void> {
-        const values = [
-            {
-                method: log.method,
-                path: log.path || '',
-                host: log.host,
-                timestamp: this.formatDate(new Date()),
-            },
-        ];
-
-        try {
-            await this.clickhouse.insert({
-                table: 'request_log',
-                values: values,
-                format: 'JSONEachRow',
-            });
-        } catch (error) {
-            console.error('ClickHouse Error:', error);
-            throw new DatabaseQueryError(error as Error);
-        }
-    }
-
-    public async insertResponseLog(log: ResponseLogEntity): Promise<void> {
+    public async insertHttpLog(log: HttpLogEntity): Promise<void> {
         const values = [
             {
                 method: log.method,

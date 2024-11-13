@@ -1,7 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import { FastifyLogger } from '../../../src/common/logger/fastify.logger';
-import type { RequestLogEntity } from '../../../src/domain/log/request-log.entity';
-import type { ResponseLogEntity } from '../../../src/domain/log/response-log.entity';
+import type { HttpLogEntity } from '../../../src/domain/log/http-log.entity';
 
 const mockFastifyInstance = {
     log: {
@@ -19,28 +18,17 @@ describe('FastifyLogger 테스트', () => {
     });
 
     describe('info()는 ', () => {
-        it('요청 로그를 올바르게 처리해야 한다.', () => {
-            const requestLog = {
-                method: 'GET',
-                host: 'www.example.com',
-                path: '/test',
-            } as RequestLogEntity;
-
-            logger.info(requestLog);
-            expect(mockFastifyInstance.log.info).toHaveBeenCalledWith(requestLog);
-        });
-
         it('응답 로그를 올바르게 처리해야 한다.', () => {
-            const responseLog = {
+            const httpLog = {
                 method: 'POST',
                 host: 'www.example.com',
                 path: '/test',
                 statusCode: 200,
                 responseTime: 100,
-            } as ResponseLogEntity;
+            } as HttpLogEntity;
 
-            logger.info(responseLog);
-            expect(mockFastifyInstance.log.info).toHaveBeenCalledWith(responseLog);
+            logger.info(httpLog);
+            expect(mockFastifyInstance.log.info).toHaveBeenCalledWith(httpLog);
         });
 
         it('should log simple message', () => {
