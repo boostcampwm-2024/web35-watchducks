@@ -5,8 +5,11 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 import CustomErrorFallback from './CustomErrorFallback';
 
-export default function CustomErrorBoundary({ children }: { children: React.ReactElement }) {
-  console.log(children);
+type Props = {
+  children: React.ReactNode;
+};
+
+export default function CustomErrorBoundary({ children }: Props) {
   return (
     <QueryErrorResetBoundary>
       {({ reset }) => (
