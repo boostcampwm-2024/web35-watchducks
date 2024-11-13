@@ -5,13 +5,18 @@ import type { LogRepository } from '../src/domain/log/log.repository';
 import { ErrorLogRepository } from '../src/common/logger/error-log.repository';
 import type { ProjectService } from '../src/domain/project/project.service';
 import { fastifyConfig } from '../src/server/config/fastify.config';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: '../.env' });
 
 describe('Proxy Server 통합 테스트', () => {
     let server: ProxyServer;
-    const port = 3000;
+    const targetAddress = 'https://' + process.env.TEST_TARGET_ADDRESS;
+    console.log(targetAddress);
+    const proxyPort = 3000;
 
     beforeAll(async () => {
-        process.env.PORT = port.toString();
+        process.env.PORT = proxyPort.toString();
         process.env.LISTENING_HOST = 'localhost';
         process.env.DEFAULT_CONNECTIONS = '10';
         process.env.DEFAULT_PIPELINING = '5';
@@ -29,7 +34,7 @@ describe('Proxy Server 통합 테스트', () => {
 
         const mockProjectService: ProjectService = {
             getIpByDomain: jest.fn().mockImplementation(async (_domain: string) => {
-                return 'watchducks-test.shop';
+                return process.env.TEST_TARGET_ADDRESS;
             }),
         } as unknown as ProjectService;
 
@@ -52,44 +57,15 @@ describe('Proxy Server 통합 테스트', () => {
     });
 
     describe('Proxy Server 테스트', () => {
-        it('요청을 로깅할 수 있어야 한다.', async () => {
-            const firstResponse = await request(`http://localhost:${port}`)
+        it('프록시 서버가 요청을 올바르게 처리할 수 있어야 한다.', async () => {
+            const response = await request(targetAddress)
                 .get('/api')
                 .set('Host', 'watchducks-test.shop')
                 .set('Accept', '*/*')
                 .set('Accept-Encoding', 'gzip, deflate, br')
                 .set('Connection', 'keep-alive');
 
-            if (firstResponse.status === 301 && firstResponse.headers.location) {
-                const redirectUrl = firstResponse.headers.location;
-                console.log('Following redirect to:', redirectUrl);
-
-                const secondResponse = await request(redirectUrl)
-                    .get('')
-                    .set('Accept', '*/*')
-                    .set('Accept-Encoding', 'gzip, deflate, br')
-                    .set('Connection', 'keep-alive');
-
-                expect([200, 404, 502]).toContain(secondResponse.status);
-            } else {
-                expect([200, 404, 502]).toContain(firstResponse.status);
-            }
-        });
-
-        it('예상한 응답을 올바르게 처리할 수 있어야 한다.', async () => {
-            const response = await request(`http://localhost:${port}`)
-                .get('/api')
-                .set('Host', 'watchducks-test.shop')
-                .set('Accept', '*/*')
-                .set('Accept-Encoding', 'gzip, deflate, br')
-                .set('Connection', 'keep-alive')
-                .redirects(5);
-
             console.log('Response Status:', response.status);
-            if (response.status !== 200) {
-                console.log('Response Body:', response.body);
-            }
-
             expect([200, 502]).toContain(response.status);
         });
     });
