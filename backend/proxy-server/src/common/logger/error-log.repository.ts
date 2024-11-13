@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import { ErrorLog } from './logger.interface';
+import type { ErrorLog } from './logger.interface';
 
 export class ErrorLogRepository {
     private readonly logDir = 'logs';

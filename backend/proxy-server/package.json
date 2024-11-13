@@ -32,6 +32,7 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
+    "@clickhouse/client": "^1.8.0",
     "@fastify/reply-from": "^11.0.1",
     "clickhouse": "^2.6.0",
     "dotenv": "^16.4.5",

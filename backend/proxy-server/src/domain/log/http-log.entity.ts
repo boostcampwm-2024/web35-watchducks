@@ -1,18 +1,18 @@
-import { BaseLog } from '../core/base-log';
+import type { BaseLog } from '../core/base-log';
 
-interface ResponseLog extends BaseLog {
+interface HttpLog extends BaseLog {
     statusCode: number;
     responseTime: number;
 }
 
-export class ResponseLogEntity {
+export class HttpLogEntity {
     readonly method: string;
     readonly host: string;
     readonly path: string | undefined;
     readonly statusCode: number;
     readonly responseTime: number;
 
-    constructor(log: ResponseLog) {
+    constructor(log: HttpLog) {
         this.method = log.method;
         this.host = log.host;
         this.path = log.path;

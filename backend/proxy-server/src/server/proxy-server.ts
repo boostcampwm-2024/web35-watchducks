@@ -7,13 +7,11 @@ import { fastifyConfig } from './config/fastify.config';
 import { HOST_HEADER } from '../common/constant/http.constant';
 import { ErrorHandler } from './error.handler';
 import { FastifyLogger } from '../common/logger/fastify.logger';
-import { LogService } from '../domain/log/log.service';
-import { RequestLogEntity } from '../domain/log/request-log.entity';
-import { ResponseLogEntity } from '../domain/log/response-log.entity';
-import { ProjectService } from '../domain/project/project.service';
+import type { LogService } from '../domain/log/log.service';
+import type { HttpLogEntity } from '../domain/log/http-log.entity';
+import type { ProjectService } from '../domain/project/project.service';
 import { DatabaseQueryError } from '../common/error/database-query.error';
-import { ErrorLog } from '../common/logger/logger.interface';
-import { ErrorLogRepository } from '../common/logger/error-log.repository';
+import type { ErrorLogRepository } from '../common/logger/error-log.repository';
 
 export class ProxyServer {
     private readonly server: FastifyInstance;
@@ -50,31 +48,14 @@ export class ProxyServer {
     }
 
     private initializeHooks(): void {
-        this.server.addHook('onRequest', (request, reply, done) => {
-            this.logRequest(request);
-            done();
-        });
-
         this.server.addHook('onResponse', (request, reply, done) => {
             this.logResponse(request, reply);
             done();
         });
     }
 
-    private async logRequest(request: FastifyRequest): Promise<void> {
-        const requestLog: RequestLogEntity = {
-            method: request.method,
-            host: request.host,
-            path: request.raw.url,
-        };
-
-        this.logger.info(requestLog);
-
-        await this.logService.saveRequestLog(requestLog);
-    }
-
     private async logResponse(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-        const responseLog: ResponseLogEntity = {
+        const httpLog: HttpLogEntity = {
             method: request.method,
             host: request.host,
             path: request.raw.url,
@@ -82,8 +63,8 @@ export class ProxyServer {
             responseTime: reply.elapsedTime,
         };
 
-        this.logger.info(responseLog);
-        await this.logService.saveResponseLog(responseLog);
+        this.logger.info(httpLog);
+        await this.logService.saveHttpLog(httpLog);
     }
 
     private initializeErrorHandler(): void {
