@@ -9,11 +9,10 @@ services:
     depends_on:
       - server-blue
       - server-green
-    networks:
-      - app-network
 
   server-blue:
     image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/name-server:latest
+    container_name: app-server-blue-1
     environment:
       - NODE_ENV=production
       - NAME_SERVER_PORT=3001
@@ -21,15 +20,14 @@ services:
     volumes:
       - ./.env:/usr/src/app/.env
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "3001"]
+      test: ["CMD", "nc", "-zu", "localhost", "3001"]
       interval: 10s
       timeout: 2s
       retries: 5
-    networks:
-      - app-network
 
   server-green:
     image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/name-server:latest
+    container_name: app-server-green-1
     environment:
       - NODE_ENV=production
       - NAME_SERVER_PORT=3002
@@ -37,13 +35,7 @@ services:
     volumes:
       - ./.env:/usr/src/app/.env
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "3002"]
+      test: ["CMD", "nc", "-zu", "localhost", "3002"]
       interval: 10s
       timeout: 2s
       retries: 5
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
