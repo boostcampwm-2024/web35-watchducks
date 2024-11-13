@@ -19,24 +19,24 @@ jobs:
       packages: read
 
   # 콘솔 서버 배포
-  deploy-console-server:
-    needs: setup
-    uses: ./.github/workflows/deploy-service.yml
-    with:
-      service: web35-watchducks
-      path: backend/console-server
-      source: "./web35-watchducks/backend/console-server/*.yml, ./web35-watchducks/backend/console-server/*.conf"
-    secrets:
-      user: ${{ secrets.SSH_USER }}
-      port: ${{ secrets.SSH_PORT }}
-      key: ${{ secrets.SSH_KEY }}
-      host: ${{ secrets.CONSOLE_SERVER_HOST }}
-      env: ${{ secrets.CONSOLE_SERVER_ENV }}
-      tok: ${{secrets.GHCR_TOKEN}}
+#  deploy-console-server:
+#    needs: setup
+#    uses: ./.github/workflows/deploy-service.yml
+#    with:
+#      service: web35-watchducks
+#      path: backend/console-server
+#      source: "./web35-watchducks/backend/console-server/*.yml, ./web35-watchducks/backend/console-server/*.conf"
+#    secrets:
+#      user: ${{ secrets.SSH_USER }}
+#      port: ${{ secrets.SSH_PORT }}
+#      key: ${{ secrets.SSH_KEY }}
+#      host: ${{ secrets.CONSOLE_SERVER_HOST }}
+#      env: ${{ secrets.CONSOLE_SERVER_ENV }}
+#      tok: ${{secrets.GHCR_TOKEN}}
 
   # 프록시 서버 배포
   deploy-proxy-server:
-    needs: deploy-console-server
+    needs: setup
     uses: ./.github/workflows/deploy-service.yml
     with:
       service: web35-watchducks
