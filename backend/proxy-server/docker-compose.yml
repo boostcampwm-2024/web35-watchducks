@@ -8,6 +8,7 @@ services:
     restart: always
     volumes:
       - ./.env:/usr/src/app/.env
+    network_mode: "host"
 
   server-green:
     image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/proxy-server:latest
@@ -17,3 +18,4 @@ services:
     restart: always
     volumes:
       - ./.env:/usr/src/app/.env
+    network_mode: "host"

@@ -96,6 +96,8 @@ jobs:
             touch .env
             echo "${{ secrets.env }}" > .env
             
+            echo "${{ secrets.tok }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            
             # 최신 이미지 가져오기
             docker-compose pull
             
