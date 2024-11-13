@@ -18,7 +18,7 @@ jobs:
     permissions:
       packages: read
 
-  # 콘솔 서버 배포
+#  # 콘솔 서버 배포
 #  deploy-console-server:
 #    needs: setup
 #    uses: ./.github/workflows/deploy-service.yml
@@ -33,34 +33,37 @@ jobs:
 #      host: ${{ secrets.CONSOLE_SERVER_HOST }}
 #      env: ${{ secrets.CONSOLE_SERVER_ENV }}
 #      tok: ${{secrets.GHCR_TOKEN}}
+#
+#  # 프록시 서버 배포
+#  deploy-proxy-server:
+#    needs: setup
+#    uses: ./.github/workflows/deploy-service.yml
+#    with:
+#      service: web35-watchducks
+#      path: backend/proxy-server
+#      source: "./web35-watchducks/backend/proxy-server/*.yml"
+#      use_host_nginx: true
+#    secrets:
+#      user: ${{ secrets.SSH_USER }}
+#      port: ${{ secrets.SSH_PORT }}
+#      key: ${{ secrets.SSH_KEY }}
+#      host: ${{ secrets.PROXY_SERVER_HOST }}
+#      env: ${{ secrets.PROXY_SERVER_ENV }}
+#      tok: ${{secrets.GHCR_TOKEN}}
 
-  # 프록시 서버 배포
-  deploy-proxy-server:
+
+  # 네임서버 배포
+  deploy-name-server:
     needs: setup
     uses: ./.github/workflows/deploy-service.yml
     with:
       service: web35-watchducks
-      path: backend/proxy-server
-      source: "./web35-watchducks/backend/proxy-server/*.yml"
-      use_host_nginx: true
+      path: backend/name-server
+      source: "./web35-watchducks/backend/name-server/*.yml, ./web35-watchducks/backend/name-server/*.conf"
     secrets:
       user: ${{ secrets.SSH_USER }}
       port: ${{ secrets.SSH_PORT }}
       key: ${{ secrets.SSH_KEY }}
-      host: ${{ secrets.PROXY_SERVER_HOST }}
-      env: ${{ secrets.PROXY_SERVER_ENV }}
+      host: ${{ secrets.NAME_SERVER_HOST }}
+      env: ${{ secrets.NAME_SERVER_ENV }}
       tok: ${{secrets.GHCR_TOKEN}}
-
-
-#  # 네임서버 배포
-#  deploy-name-server:
-#    needs: setup
-#    uses: ./.github/workflows/deploy-service.yml
-#    with:
-#      service: name-server
-#      path: backend/name-server
-#      key_secret: SSH_KEY
-#      port_secret: SSH_PORT
-#      host_secret: NAME_SERVER_HOST
-#      user_secret: NAME_SERVER_USER
-#      env_secret: NAME_SERVER_ENV
