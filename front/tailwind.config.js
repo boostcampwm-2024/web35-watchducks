@@ -36,9 +36,17 @@ export default {
         semibold: '600',
         bold: '700'
       },
+      gap: {
+        8: '8px',
+        16: '16px'
+      },
+      padding: {
+        32: '32px'
+      },
       spacing: {
         8: '8px',
         10: '10px',
+        12: '12px',
         15: '15px',
         16: '16px',
         20: '20px',
@@ -61,11 +69,18 @@ export default {
         40: '40px'
       },
       fontSize: {
+        8: '8px',
+        12: '12px',
+        14: '14px',
         18: '18px',
         24: '24px',
-        30: '30px',
         25: '25px',
+        30: '30px',
+        36: '36px',
         50: '50px'
+      },
+      animation: {
+        'spin-slow': 'spin 1.5s linear infinite'
       }
     }
   },

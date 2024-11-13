@@ -2,9 +2,9 @@ import Button from '@component/atom/Button';
 import H1 from '@component/atom/H1';
 import H2 from '@component/atom/H2';
 import ValidateTextInput from '@component/molecule/ValidateTextInput';
+import useRegisterForm from '@hook/useRegisterForm';
 import { useRef, useEffect } from 'react';
 
-import useRegisterForm from '@/hook/useRegisterForm';
 type Props = {
   showAlert: (message: string) => void;
 };
@@ -24,7 +24,7 @@ export default function RegisterForm({ showAlert }: Props) {
   }, []);
 
   return (
-    <div className='md:rounded-31 md:p-50 mx-auto flex w-full max-w-[600px] flex-col items-center gap-16 rounded-lg border-2 border-white bg-white/25 p-6 shadow-[4px_9px_50px_-1px_rgba(0,0,0,0.25)] backdrop-blur-[30px] md:gap-24'>
+    <div className='mx-auto flex w-full max-w-[600px] flex-col items-center gap-16 rounded-lg bg-white/25 p-6 shadow-[4px_9px_50px_-1px_rgba(0,0,0,0.25)] backdrop-blur-[30px] md:gap-24 md:rounded-31 md:p-50'>
       <H1 cssOption='text-blue font-bold text-24 md:text-50' content='Register' />
       <H2 cssOption='text-gray text-18 md:text-24' content='그룹 프로젝트를 등록해 주세요' />
 

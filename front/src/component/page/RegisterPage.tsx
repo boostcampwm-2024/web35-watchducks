@@ -1,15 +1,14 @@
 import Alert from '@component/atom/Alert';
+import RegisterDescription from '@component/organism/RegisterDescription';
 import RegisterForm from '@component/organism/RegisterForm';
 import useAlert from '@hook/useAlert';
-
-import RegisterDescription from '@/component/organism/RegisterDescription';
 
 export default function RegisterPage() {
   const { isVisible, message, showAlert } = useAlert({ time: 2000 });
 
   return (
     <>
-      <div className='mx-50 gap-50 relative my-auto flex h-full w-full flex-col items-center justify-center md:flex-row'>
+      <div className='relative my-auto flex h-full w-full flex-col items-center justify-center gap-50 pl-50 md:flex-row'>
         <RegisterForm showAlert={showAlert} />
         <RegisterDescription />
       </div>

@@ -10,6 +10,7 @@
       "@boundary/*": ["./src/boundary/*"],
       "@hook/*": ["./src/hook/*"],
       "@type/*": ["./src/type/*"],
+      "@constant/*": ["./src/constant/*"],
       "@util/*": ["./src/util/*"],
       "@api/*": ["./src/api/*"],
       "@asset/*": ["./asset/*"]
