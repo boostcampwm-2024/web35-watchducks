@@ -5,7 +5,7 @@ import type { Server } from 'node:net';
 
 type QueryResult = RowDataPacket[] | RowDataPacket[][] | ResultSetHeader;
 
-class MysqlDatabase {
+export class MysqlDatabase {
     private static instance: MysqlDatabase;
     private pool: Pool | null = null;
     private server: Server | null = null;
@@ -63,5 +63,3 @@ class MysqlDatabase {
         await this.cleanup();
     }
 }
-
-export const db = MysqlDatabase.getInstance();
