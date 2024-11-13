@@ -52,7 +52,7 @@ jobs:
     needs: setup
     uses: ./.github/workflows/deploy-service.yml
     with:
-      service: proxy-server
+      service: web35-watchducks
       path: backend/proxy-server
       source: "./web35-watchducks/backend/proxy-server/*.yml"
       use_host_nginx: true

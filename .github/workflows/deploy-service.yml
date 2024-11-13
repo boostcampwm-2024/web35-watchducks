@@ -103,7 +103,7 @@ jobs:
             
               # Blue 인스턴스 헬스 체크
               echo "Blue 컨테이너 헬스 상태 확인 중..."
-              health_status=$(docker inspect --format='{{json .State.Health.Status}}' server-blue | tr -d '"')
+              health_status=$(docker inspect --format='{{json .State.Health.Status}}' app-server-blue-1 | tr -d '"')
               if [ "$health_status" == "healthy" ]; then
                 echo "Blue 컨테이너가 정상 상태입니다."
               else
@@ -122,7 +122,7 @@ jobs:
             
               # Blue 인스턴스 헬스 체크
               echo "Blue 컨테이너 헬스 상태 확인 중..."
-              health_status=$(docker inspect --format='{{json .State.Health.Status}}' server-blue | tr -d '"')
+              health_status=$(docker inspect --format='{{json .State.Health.Status}}' app-server-blue-1 | tr -d '"')
               if [ "$health_status" == "healthy" ]; then
                 echo "Blue 컨테이너가 정상 상태입니다."
               else
