@@ -1,0 +1,61 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - be-feat#46
+
+jobs:
+  # 먼저 sparse checkout으로 레포지토리 체크아웃
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+    permissions:
+      packages: read
+
+#  # 네임서버 배포
+#  deploy-name-server:
+#    needs: setup
+#    uses: ./.github/workflows/deploy-service.yml
+#    with:
+#      service: name-server
+#      path: backend/name-server
+#      key_secret: SSH_KEY
+#      port_secret: SSH_PORT
+#      host_secret: NAME_SERVER_HOST
+#      user_secret: NAME_SERVER_USER
+#      env_secret: NAME_SERVER_ENV
+
+  # 콘솔 서버 배포
+  deploy-console-server:
+    needs: setup
+    uses: ./.github/workflows/deploy-service.yml
+    with:
+      service: web35-watchducks
+      path: backend/console-server
+    secrets:
+      host: ${{ secrets.CONSOLE_SERVER_HOST }}
+      user: ${{ secrets.SSH_USER }}
+      key: ${{ secrets.SSH_KEY }}
+      port: ${{ secrets.SSH_PORT }}
+      env: ${{ secrets.CONSOLE_SERVER_ENV }}
+
+
+#  # 프록시 서버 배포
+#  deploy-proxy-server:
+#    needs: setup
+#    uses: ./.github/workflows/deploy-service.yml
+#    with:
+#      service: proxy-server
+#      path: backend/proxy-server
+#      key_secret: SSH_KEY
+#      port_secret: SSH_PORT
+#      host_secret: PROXY_SERVER_HOST
+#      user_secret: PROXY_SERVER_USER
+#      env_secret: PROXY_SERVER_ENV
+
