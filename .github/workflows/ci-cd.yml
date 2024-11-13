@@ -38,7 +38,7 @@ jobs:
     with:
       service: web35-watchducks
       path: backend/console-server
-      source: "./${{ inputs.service }}/${{ inputs.path }}/*.yml, ./${{ inputs.service }}/${{ inputs.path }}/*.conf"
+      source: "./web35-watchducks/backend/console-server/*.yml, ./web35-watchducks/backend/console-server/*.conf"
     secrets:
       host: ${{ secrets.CONSOLE_SERVER_HOST }}
       user: ${{ secrets.SSH_USER }}
