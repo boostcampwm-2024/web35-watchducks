@@ -1,7 +1,7 @@
 import { HttpLogEntity } from '../../../src/domain/log/http-log.entity';
 
 describe('HttpLogEntity 테스트', () => {
-    it('모든 속성을 가지고 인스턴스를 생성해야 한다..', () => {
+    it('모든 속성을 가지고 인스턴스를 생성해야 한다.', () => {
         const log = {
             method: 'GET',
             host: 'api.example.com',
