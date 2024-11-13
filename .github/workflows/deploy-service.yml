@@ -103,6 +103,7 @@ jobs:
             if [ "${{ inputs.use_host_nginx }}" == "true" ]; then
               # Dockerized Nginx 없이 Blue 컨테이너만 시작
               docker-compose up -d --no-deps server-blue
+              sleep 5
             
               # Blue 인스턴스 헬스 체크
               echo "Blue 컨테이너 헬스 상태 확인 중..."
@@ -122,6 +123,8 @@ jobs:
             
               # Dockerized Nginx와 함께 Blue 컨테이너 시작
               docker-compose up -d --no-deps server-blue
+            
+              sleep 5
             
               # Blue 인스턴스 헬스 체크
               echo "Blue 컨테이너 헬스 상태 확인 중..."
