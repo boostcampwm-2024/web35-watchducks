@@ -7,7 +7,7 @@ on:
       - be-feat#46
 
 jobs:
-  # 먼저 sparse checkout으로 레포지토리 체크아웃
+  # 먼저 레포지토리 체크아웃
   setup:
     runs-on: ubuntu-latest
     steps:
