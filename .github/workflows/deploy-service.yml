@@ -109,7 +109,7 @@ jobs:
             
             # Blue 인스턴스 헬스 체크
             echo "Checking Blue container health status..."
-            health_status=$(docker inspect --format='{{json .State.Health.Status}}' server-blue | tr -d '"')
+            health_status=$(docker inspect --format='{{json .State.Health.Status}}' app-server-blue-1 | tr -d '"')
             if [ "$health_status" == "healthy" ]; then
               echo "Blue container is healthy"
             else
