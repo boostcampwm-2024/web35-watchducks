@@ -1,5 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -7,6 +8,16 @@ async function bootstrap() {
 
     app.useGlobalPipes(new ValidationPipe());
     app.setGlobalPrefix('api');
+    app.enableCors();
+
+    const config = new DocumentBuilder()
+        .setTitle('Watchducks API')
+        .setDescription('초 훌륭한! 오직 성호님만을 위한! 그런! 완벽한! API 문서!')
+        .setVersion('1.0')
+        .build();
+
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api-docs', app, document);
 
     const port = process.env.PORT || 3000;
     const server = await app.listen(port);
