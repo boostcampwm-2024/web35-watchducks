@@ -1,19 +1,19 @@
 import { IsEmail, IsIP, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateProjectDto {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
+    @IsString()
+    @IsNotEmpty()
+    name: string;
 
-  @IsIP()
-  @IsNotEmpty()
-  ip: string;
+    @IsIP()
+    @IsNotEmpty()
+    ip: string;
 
-  @IsString()
-  @IsNotEmpty()
-  domain: string;
+    @IsString()
+    @IsNotEmpty()
+    domain: string;
 
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
+    @IsEmail()
+    @IsNotEmpty()
+    email: string;
 }
