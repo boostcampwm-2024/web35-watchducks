@@ -10,6 +10,7 @@ export default defineConfig({
       { find: '@boundary', replacement: '/src/boundary' },
       { find: '@hook', replacement: '/src/hook' },
       { find: '@type', replacement: '/src/type' },
+      { find: '@constant', replacement: '/src/constant' },
       { find: '@util', replacement: '/src/util' },
       { find: '@api', replacement: '/src/api' },
       { find: '@asset', replacement: '/asset' }
