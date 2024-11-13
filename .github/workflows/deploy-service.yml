@@ -30,6 +30,8 @@ on:
         required: true
       env:
         required: true
+      tok:
+        required: true
 
 jobs:
   deploy:
@@ -65,7 +67,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          password: ${{ secrets.tok }}
 
       # 도커 이미지 빌드 & 푸시
       - name: Build and push Docker image for ${{ inputs.service }}
