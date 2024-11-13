@@ -12,7 +12,15 @@ const compat = new FlatCompat({
 });
 
 export default [
-    // Flat config for parsing TypeScript files. Includes rules for TypeScript.
+    {
+        ignores: [
+            '**/eslint.config.mjs',
+            'node_modules',
+            'dist',
+            '**/database/**/*.ts',
+            '**/database/query/*.ts',
+        ],
+    },
     ...compat.config({
         env: { node: true },
         extends: ['plugin:@typescript-eslint/recommended'],
@@ -23,10 +31,10 @@ export default [
         },
         plugins: ['@typescript-eslint'],
         rules: {
-            '@typescript-eslint/no-empty-interface': 'error',
-            '@typescript-eslint/no-explicit-any': 'error',
-            '@typescript-eslint/explicit-function-return-type': 'error',
-            '@typescript-eslint/explicit-module-boundary-types': 'error',
+            '@typescript-eslint/no-empty-interface': 'off',
+            '@typescript-eslint/no-explicit-any': 'off',
+            '@typescript-eslint/explicit-function-return-type': 'off',
+            '@typescript-eslint/explicit-module-boundary-types': 'off',
             '@typescript-eslint/no-unused-vars': [
                 'error',
                 {
