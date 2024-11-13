@@ -1,7 +1,6 @@
 import { Clickhouse } from '../clickhouse/clickhouse';
 import { Injectable } from '@nestjs/common';
 import { TimeSeriesQueryBuilder } from '../clickhouse/query-builder/time-series.query-builder';
-import { getDateRange } from '../clickhouse/util/date-range';
 
 @Injectable()
 export class LogRepository {
@@ -20,15 +19,31 @@ export class LogRepository {
         return await this.clickhouse.query(sql);
     }
 
-    async analyzeElapsedTime() {
-        const { start, end } = getDateRange();
+    async findAvgElapsedTime() {
         const { query, params } = new TimeSeriesQueryBuilder()
-            .interval('Day')
-            .metric('elapsed_time', 'avg')
-            .metric('*', 'count')
+            .metrics([{ name: 'elapsed_time', aggregation: 'avg' }])
             .from('http_log')
-            .timeBetween(start, end)
-            .groupBy(['timestamp'])
+            .build();
+
+        const result = await this.clickhouse.query(query, params);
+
+        return result[0];
+    }
+
+    async findCountByHost() {
+        const { query, params } = new TimeSeriesQueryBuilder()
+            .metrics([
+                {
+                    name: 'host',
+                },
+                {
+                    name: '*',
+                    aggregation: 'count',
+                },
+            ])
+            .from('http_log')
+            .groupBy(['host'])
+            .orderBy(['count'], true)
             .build();
 
         return await this.clickhouse.query(query, params);

@@ -1,5 +1,10 @@
 import { MetricAggregationType, metricExpressions } from '../util/metric-expressions';
 
+interface metric {
+    name: string;
+    aggregation?: MetricAggregationType;
+}
+
 export class TimeSeriesQueryBuilder {
     private query: string;
     private params: Record<string, any> = {};
@@ -18,13 +23,20 @@ export class TimeSeriesQueryBuilder {
         return this;
     }
 
-    metric(metric: string, aggregation: MetricAggregationType): this {
-        const expression = metricExpressions[aggregation];
+    metrics(metrics: metric[]): this {
+        const metricsQuery = metrics.map((metric) => {
+            if (metric.aggregation) {
+                const expression = metricExpressions[metric.aggregation];
 
-        if (!expression) {
-            throw new Error(`Unsupported aggregation: ${aggregation}`);
-        }
-        this.query += `, ${expression(metric)}`;
+                if (!expression) {
+                    throw new Error(`Unsupported aggregation: ${metric.aggregation}`);
+                }
+                return `${expression(metric.name)}`;
+            }
+            return metric.name;
+        });
+
+        this.query += ` ${metricsQuery.join(', ')}`;
 
         return this;
     }
@@ -59,20 +71,26 @@ export class TimeSeriesQueryBuilder {
     }
 
     groupBy(group: string[]): this {
-        this.query += `
-    GROUP BY timestamp`;
-
         if (group.length > 0) {
-            this.query += `, ${group.join(', ')}`;
+            this.query += ` GROUP BY ${group.join(', ')}`;
         }
 
-        this.query += `
-    ORDER BY timestamp`;
+        return this;
+    }
+
+    orderBy(fields: string[], desc: boolean) {
+        this.query += ` ORDER BY ${fields.join(', ')}`;
+
+        if (desc) {
+            this.query += ` DESC`;
+        }
 
         return this;
     }
 
     build() {
+        console.log(this.query);
+
         return { query: this.query, params: this.params };
     }
 }
