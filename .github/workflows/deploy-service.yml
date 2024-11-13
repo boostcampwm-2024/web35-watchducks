@@ -15,6 +15,10 @@ on:
         type: string
       source:
         type: string
+      use_host_nginx:
+        required: false
+        type: boolean
+        default: false
     secrets:
       host:
         required: true
@@ -91,25 +95,45 @@ jobs:
             
             # 최신 이미지 가져오기
             docker-compose pull
-            # Nginx 시작 (재시작 포함)
-            docker-compose up -d --no-deps nginx
-
-            # Blue 인스턴스를 새 버전으로 준비
-            docker-compose up -d --no-deps server-blue
             
-            # Blue 인스턴스 헬스 체크
-            echo "Checking Blue container health status..."
-            health_status=$(docker inspect --format='{{json .State.Health.Status}}' app-server-blue-1 | tr -d '"')
-            if [ "$health_status" == "healthy" ]; then
-              echo "Blue container is healthy"
+            # 호스트에 설치된 Nginx를 사용할지 확인
+            if [ "${{ inputs.use_host_nginx }}" == "true" ]; then
+              # Dockerized Nginx 없이 Blue 컨테이너만 시작
+              docker-compose up -d --no-deps server-blue
+            
+              # Blue 인스턴스 헬스 체크
+              echo "Blue 컨테이너 헬스 상태 확인 중..."
+              health_status=$(docker inspect --format='{{json .State.Health.Status}}' server-blue | tr -d '"')
+              if [ "$health_status" == "healthy" ]; then
+                echo "Blue 컨테이너가 정상 상태입니다."
+              else
+                echo "Blue 컨테이너가 정상 상태로 전환되지 않았습니다."
+                exit 1
+              fi
+              sudo nginx -s reload
+              echo "호스트 Nginx 리로드 완료로 트래픽 전환 완료"
+
             else
-              echo "Blue container did not become healthy"
-              exit 1
+              # 콘솔 서버의 Dockerized Nginx 설정
+              docker-compose up -d --no-deps nginx
+            
+              # Dockerized Nginx와 함께 Blue 컨테이너 시작
+              docker-compose up -d --no-deps server-blue
+            
+              # Blue 인스턴스 헬스 체크
+              echo "Blue 컨테이너 헬스 상태 확인 중..."
+              health_status=$(docker inspect --format='{{json .State.Health.Status}}' server-blue | tr -d '"')
+              if [ "$health_status" == "healthy" ]; then
+                echo "Blue 컨테이너가 정상 상태입니다."
+              else
+                echo "Blue 컨테이너가 정상 상태로 전환되지 않았습니다."
+                exit 1
+              fi
+            
+              # Dockerized Nginx 리로드로 트래픽 전환
+              docker-compose exec nginx nginx -s reload
             fi
             
-            # Nginx 리로드로 트래픽 전환
-            docker-compose exec nginx nginx -s reload
-            
-            # 기존 Green 인스턴스 종료
+            # Green 컨테이너 시작 (두 설정 모두에서 수행)
             docker-compose up -d --no-deps server-green
-            echo "Deployment completed successfully"
+            echo "배포가 성공적으로 완료되었습니다."
