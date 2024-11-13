@@ -3,8 +3,8 @@ import type { FastifyLogger } from '../common/logger/fastify.logger';
 import { ProxyError } from '../common/core/proxy.error';
 import { isProxyError } from '../common/core/proxy-error.type.guard';
 import type { IncomingHttpHeaders } from 'node:http';
-import { ErrorLogRepository } from '../common/logger/error-log.repository';
-import { ErrorLog } from '../common/logger/logger.interface';
+import type { ErrorLogRepository } from '../common/logger/error-log.repository';
+import type { ErrorLog } from '../common/logger/logger.interface';
 
 interface ProxyErrorHandlerOptions {
     logger: FastifyLogger;

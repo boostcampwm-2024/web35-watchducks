@@ -1,12 +1,12 @@
-import { ClickHouse } from 'clickhouse';
+import { createClient, ClickHouseClient } from '@clickhouse/client';
 import { clickhouseConfig } from './config/clickhouse.config';
 
 export class ClickhouseDatabase {
-    private static instance: ClickHouse;
+    private static instance: ClickHouseClient;
 
-    public static getInstance(): ClickHouse {
+    public static getInstance(): ClickHouseClient {
         if (!ClickhouseDatabase.instance) {
-            ClickhouseDatabase.instance = new ClickHouse(clickhouseConfig);
+            ClickhouseDatabase.instance = createClient(clickhouseConfig);
         }
         return ClickhouseDatabase.instance;
     }

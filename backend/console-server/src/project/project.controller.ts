@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Param, Query } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import { Post } from '@nestjs/common';
 import { Body } from '@nestjs/common';
 import { ProjectService } from './project.service';

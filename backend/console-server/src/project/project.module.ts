@@ -6,8 +6,8 @@ import { Project } from './entities/project.entity';
 import { MailModule } from '../mail/mail.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Project]), MailModule],
-  controllers: [ProjectController],
-  providers: [ProjectService],
+    imports: [TypeOrmModule.forFeature([Project]), MailModule],
+    controllers: [ProjectController],
+    providers: [ProjectService],
 })
 export class ProjectModule {}

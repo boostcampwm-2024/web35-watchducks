@@ -1,38 +1,17 @@
-import type { ClickHouse } from 'clickhouse';
 import { ClickhouseDatabase } from '../clickhouse/clickhouse-database';
 import { DatabaseQueryError } from '../../common/error/database-query.error';
 import { LogRepository } from '../../domain/log/log.repository';
-import { RequestLogEntity } from '../../domain/log/request-log.entity';
-import { ResponseLogEntity } from '../../domain/log/response-log.entity';
+import { HttpLogEntity } from '../../domain/log/http-log.entity';
+import { ClickHouseClient } from '@clickhouse/client';
 
 export class LogRepositoryClickhouse implements LogRepository {
-    private readonly clickhouse: ClickHouse;
+    private readonly clickhouse: ClickHouseClient;
 
     constructor() {
         this.clickhouse = ClickhouseDatabase.getInstance();
     }
 
-    public async insertRequestLog(log: RequestLogEntity): Promise<void> {
-        const values = [
-            {
-                method: log.method,
-                path: log.path || '',
-                host: log.host,
-                timestamp: this.formatDate(new Date()),
-            },
-        ];
-
-        try {
-            const query = `\nINSERT INTO request_log FORMAT JSONEachRow ${JSON.stringify(values)}`;
-
-            await this.clickhouse.insert(query).toPromise();
-        } catch (error) {
-            console.error('ClickHouse Error:', error);
-            throw new DatabaseQueryError(error as Error);
-        }
-    }
-
-    public async insertResponseLog(log: ResponseLogEntity): Promise<void> {
+    public async insertHttpLog(log: HttpLogEntity): Promise<void> {
         const values = [
             {
                 method: log.method,
@@ -45,17 +24,15 @@ export class LogRepositoryClickhouse implements LogRepository {
         ];
 
         try {
-            const query = `\nINSERT INTO response_log FORMAT JSONEachRow ${this.formatValues(values)}`;
-
-            await this.clickhouse.query(query).toPromise();
+            await this.clickhouse.insert({
+                table: 'http_log',
+                values: values,
+                format: 'JSONEachRow',
+            });
         } catch (error) {
             console.error('ClickHouse Error:', error);
             throw new DatabaseQueryError(error as Error);
         }
-    }
-
-    private formatValues(values: any): string {
-        return JSON.stringify(values[0]);
     }
 
     private formatDate(date: Date): string {

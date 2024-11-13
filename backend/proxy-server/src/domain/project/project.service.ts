@@ -1,4 +1,4 @@
-import { ProjectRepository } from './project.repository';
+import type { ProjectRepository } from './project.repository';
 
 export class ProjectService {
     constructor(private readonly projectRepository: ProjectRepository) {}

@@ -1,6 +1,5 @@
-import { RequestLogEntity } from '../../domain/log/request-log.entity';
-import { ResponseLogEntity } from '../../domain/log/response-log.entity';
-import { BaseLog } from '../../domain/core/base-log';
+import type { HttpLogEntity } from '../../domain/log/http-log.entity';
+import type { BaseLog } from '../../domain/core/base-log';
 
 export interface ErrorLog extends BaseLog {
     request: {
@@ -22,6 +21,6 @@ export interface ErrorLog extends BaseLog {
 }
 
 export interface Logger {
-    info(log: RequestLogEntity | ResponseLogEntity | { message: string }): void;
+    info(log: HttpLogEntity | { message: string }): void;
     error(log: ErrorLog): void;
 }

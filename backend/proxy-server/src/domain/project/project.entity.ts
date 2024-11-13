@@ -1,6 +1,6 @@
-import { ProjectRow } from '../../database/query/project.repository.mysql';
+import type { ProjectRow } from '../../database/query/project.repository.mysql';
 
-interface Project extends ProjectRow {}
+type Project = ProjectRow;
 
 export class ProjectEntity {
     readonly ip: string;
