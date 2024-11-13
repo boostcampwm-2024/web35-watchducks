@@ -14,7 +14,7 @@ services:
     image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/console-server:latest
     environment:
       - NODE_ENV=production
-      - PORT=3000
+      - PORT=3001
     restart: always
     volumes:
       - ./.env:/usr/src/app/.env
@@ -23,7 +23,7 @@ services:
     image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/console-server:latest
     environment:
       - NODE_ENV=production
-      - PORT=3000
+      - PORT=3002
     restart: always
     volumes:
       - ./.env:/usr/src/app/.env
