@@ -25,7 +25,7 @@ export class LogRepositoryClickhouse implements LogRepository {
 
         try {
             await this.clickhouse.insert({
-                table: 'response_log',
+                table: 'http_log',
                 values: values,
                 format: 'JSONEachRow',
             });
