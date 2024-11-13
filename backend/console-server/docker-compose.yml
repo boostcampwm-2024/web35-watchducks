@@ -21,7 +21,7 @@ services:
       - ./.env:/usr/src/app/.env
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "3001"]
-      interval: 10s
+      interval: 20s
       timeout: 2s
       retries: 5
 
