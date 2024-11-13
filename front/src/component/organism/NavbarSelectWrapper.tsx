@@ -17,7 +17,8 @@ export default function NavbarSelectWrapper({
   setGeneration,
   setSelectedGroup
 }: Props) {
-  const { data: projectGroups } = useGroups(generation);
+  // const { data: projectGroups } = useGroups(generation);
+  const projectGroups = [];
   const groupOptions: GroupOption[] = Array.isArray(projectGroups) ? projectGroups : [];
   // api 연결시 isArray 제거
 
