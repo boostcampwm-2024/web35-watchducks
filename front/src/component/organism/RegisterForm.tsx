@@ -1,20 +1,30 @@
 import Button from '@component/atom/Button';
 import H1 from '@component/atom/H1';
 import H2 from '@component/atom/H2';
+import Select from '@component/atom/Select';
 import ValidateTextInput from '@component/molecule/ValidateTextInput';
 import useRegisterForm from '@hook/useRegisterForm';
 import { useRef, useEffect } from 'react';
+
+import { GENERATION_OPTION } from '@/constant/NavbarSelect';
 
 type Props = {
   showAlert: (message: string) => void;
 };
 
 export default function RegisterForm({ showAlert }: Props) {
-  const { formData, validation, handleChange, handleSubmit, isLoading, isAllValid } =
-    useRegisterForm({
-      successCallback: (message) => showAlert(message),
-      errorCallback: (message) => showAlert(message)
-    });
+  const {
+    formData,
+    validation,
+    handleChange,
+    handleSelectChange,
+    handleSubmit,
+    isLoading,
+    isAllValid
+  } = useRegisterForm({
+    successCallback: (message) => showAlert(message),
+    errorCallback: (message) => showAlert(message)
+  });
   const nameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -41,7 +51,7 @@ export default function RegisterForm({ showAlert }: Props) {
         type='text'
         value={formData.domain}
         onChange={handleChange('domain')}
-        placeholder='도메인 (ex. www.WatchDucks.site)'
+        placeholder='도메인 (ex. WatchDucks.site)'
         isValid={validation.isValidDomain}
       />
 
@@ -49,7 +59,7 @@ export default function RegisterForm({ showAlert }: Props) {
         type='text'
         value={formData.ip}
         onChange={handleChange('ip')}
-        placeholder='아이피 (ex. 192.0.0.1:3000)'
+        placeholder='아이피 (ex. 192.0.0.1)'
         isValid={validation.isValidIp}
       />
 
@@ -59,6 +69,13 @@ export default function RegisterForm({ showAlert }: Props) {
         onChange={handleChange('email')}
         placeholder='이메일 (ex. abcd1234@naver.com)'
         isValid={validation.isValidEmail}
+      />
+
+      <Select
+        cssOption='w-full py-2 px-4 rounded-1.5 border border-gray'
+        options={GENERATION_OPTION}
+        value={formData.generation}
+        onChange={handleSelectChange('generation')}
       />
 
       <Button
