@@ -13,7 +13,7 @@ export default function Navbar() {
   const [selectedGroup, setSelectedGroup] = useState<string>(BOOST_CAMP_OPTION[0].value);
 
   return (
-    <div className='flex flex-col items-start gap-16 px-24 pt-24'>
+    <div className='flex flex-col gap-16 px-24 pt-24'>
       <NavbarTitle />
       <CustomErrorBoundary>
         <NavbarSelectWrapper
