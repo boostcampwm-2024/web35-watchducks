@@ -41,8 +41,4 @@ export class CreateProjectDto {
     @IsNumber()
     @IsNotEmpty()
     generation: number;
-
-    @IsEmail()
-    @IsNotEmpty()
-    email: string;
 }
