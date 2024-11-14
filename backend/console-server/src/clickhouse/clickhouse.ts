@@ -1,7 +1,7 @@
 import { createClient } from '@clickhouse/client';
 import { NodeClickHouseClient } from '@clickhouse/client/dist/client';
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { clickhouseConfig } from './clickhouse.config';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class Clickhouse implements OnModuleInit, OnModuleDestroy {
@@ -9,6 +9,8 @@ export class Clickhouse implements OnModuleInit, OnModuleDestroy {
     private readonly logger = new Logger('clickhouse');
     private readonly MAX_RETRIES = 3;
     private readonly RETRY_DELAY = 5 * 1000; // 5s
+
+    constructor(private readonly configService: ConfigService) {}
 
     async onModuleDestroy() {
         this.cleanup();
@@ -44,7 +46,8 @@ export class Clickhouse implements OnModuleInit, OnModuleDestroy {
 
     private async createConnection(): Promise<void> {
         try {
-            this.client = createClient(clickhouseConfig);
+            const config = this.configService.get('clickhouse');
+            this.client = createClient(config.clickhouse);
         } catch (error) {
             throw new Error(`Failed to initialize ClickHouse client: ${error.message}`);
         }
@@ -84,11 +87,12 @@ export class Clickhouse implements OnModuleInit, OnModuleDestroy {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
-    async query<T>(query: string): Promise<T[]> {
+    async query<T>(query: string, params?: Record<string, any>): Promise<T[]> {
         try {
             const resultSet = await this.client.query({
                 query,
                 format: 'JSONEachRow',
+                query_params: params,
             });
             return await resultSet.json<T>();
         } catch (error) {

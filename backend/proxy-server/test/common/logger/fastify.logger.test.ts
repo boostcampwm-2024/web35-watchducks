@@ -31,7 +31,7 @@ describe('FastifyLogger 테스트', () => {
             expect(mockFastifyInstance.log.info).toHaveBeenCalledWith(httpLog);
         });
 
-        it('should log simple message', () => {
+        it('단순 메시지를 올바르게 처리해야 한다.', () => {
             const messageLog = { message: 'Test message' };
 
             logger.info(messageLog);
