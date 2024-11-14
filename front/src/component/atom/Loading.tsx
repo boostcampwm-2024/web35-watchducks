@@ -1,11 +1,11 @@
 export default function Loading() {
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75'>
-      <div className='relative'>
-        <div className='h-12 w-12 animate-spin rounded-full border-4 border-blue-200' />
-        <div className='absolute left-0 top-0 h-12 w-12 animate-spin rounded-full border-t-4 border-blue-500' />
+    <div className='flex items-center justify-center bg-white bg-opacity-75 p-4 text-center'>
+      <div className='relative inline-flex'>
+        <div className='absolute h-12 w-12 rounded-full border-4 border-gray-200' />
+        <div className='h-12 w-12 animate-spin rounded-full border-4 border-blue border-t-transparent [animation-duration:1.5s]' />
       </div>
-      <span className='ml-3 text-lg font-medium text-blue-500'>Loading...</span>
+      <span className='text-lg font-medium text-gray'>Loading...</span>
     </div>
   );
 }

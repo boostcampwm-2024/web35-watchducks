@@ -1,11 +1,12 @@
+import Loading from '@component/atom/Loading';
 import { useQueryErrorResetBoundary } from '@tanstack/react-query';
-import { FallbackProps } from 'react-error-boundary';
 
-import { getErrorByCode } from './toastError';
+type Props = {
+  resetErrorBoundary: () => void;
+};
 
-export default function CustomErrorFallBack({ error, resetErrorBoundary }: FallbackProps) {
+export default function CustomErrorFallback({ resetErrorBoundary }: Props) {
   const { reset } = useQueryErrorResetBoundary();
-  const errorData = getErrorByCode(error);
 
   const handleClickReset = () => {
     resetErrorBoundary();
@@ -13,11 +14,13 @@ export default function CustomErrorFallBack({ error, resetErrorBoundary }: Fallb
   };
 
   return (
-    <div>
-      <p>{error.toString()}</p>
-      <h1>{errorData?.code}</h1>
-      <h2>{errorData?.message}</h2>
-      <button onClick={handleClickReset}>재시도</button>
+    <div className='flex flex-col items-center gap-4'>
+      <Loading />
+      <button
+        onClick={handleClickReset}
+        className='flex items-center gap-2 rounded-lg bg-blue px-6 py-2 text-white shadow-md transition-all duration-200 hover:bg-opacity-90 active:scale-95'>
+        재시도
+      </button>
     </div>
   );
 }
