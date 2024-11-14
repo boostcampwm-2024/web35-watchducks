@@ -8,7 +8,7 @@ export default function NavbarMenu() {
 
   return (
     <div className='flex flex-col gap-8 md:gap-16'>
-      <H1 cssOption='mt-16 md:mt-40 text-14 md:text-16 whitespace-nowrap' content='MENU' />
+      <H1 cssOption='mt-8 text-14 md:text-16 whitespace-nowrap' content='MENU' />
       {MENU_ITEMS.map((item) => (
         <NavbarMenuItem key={item.path} item={item} isActive={pathname === item.path} />
       ))}
