@@ -12,4 +12,12 @@ export class LogService {
 
         return result;
     }
+
+    async analyzeElapsedTime() {
+        const result = await this.logRepository.analyzeElapsedTime();
+
+        console.log(result);
+
+        return result;
+    }
 }

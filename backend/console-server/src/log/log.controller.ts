@@ -10,4 +10,10 @@ export class LogController {
     async httpLog() {
         return await this.logService.httpLog();
     }
+
+    @Get('/elapsed-time')
+    @HttpCode(HttpStatus.OK)
+    async analyzeElapsedTime() {
+        return await this.logService.analyzeElapsedTime();
+    }
 }

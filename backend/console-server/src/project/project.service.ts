@@ -11,6 +11,8 @@ import { FindByGenerationResponseDto } from './dto/find-by-generation-response.d
 
 @Injectable()
 export class ProjectService {
+    private readonly BASE_YEAR: number = 2015;
+
     constructor(
         @InjectRepository(Project)
         private readonly projectRepository: Repository<Project>,
@@ -53,5 +55,6 @@ function isUniqueConstraintViolation(error: Error): boolean {
     if (!(error instanceof QueryFailedError)) return false;
     const code = error.driverError.code;
     const uniqueViolationCodes = ['ER_DUP_ENTRY', 'SQLITE_CONSTRAINT'];
+
     return uniqueViolationCodes.includes(code);
 }
