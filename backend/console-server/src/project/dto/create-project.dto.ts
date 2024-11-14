@@ -1,5 +1,6 @@
 import { IsEmail, IsIP, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 export class CreateProjectDto {
     @ApiProperty({
@@ -38,6 +39,7 @@ export class CreateProjectDto {
         example: 9,
         description: '부스트캠프 기수',
     })
+    @Type(() => Number)
     @IsNumber()
     @IsNotEmpty()
     generation: number;
