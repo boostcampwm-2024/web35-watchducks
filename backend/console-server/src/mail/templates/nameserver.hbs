@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <title>왓치덕스 네임서버 정보</title>
+</head>
+<body>
+<p>"{{projectName}}" 서비스를 위한 왓치덕스의 네임서버입니다.</p>
+<p>프로젝트를 등록해주셔서 감사합니다! DNS 등록 절차까지 마무리해주세요 :)</p>
+<p>네임 서버 정보:</p>
+<ul>
+  {{#each nameServers}}
+    <li>{{this}}</li>
+  {{/each}}
+</ul>
+<p>Best regards,<br/>왓치덕스</p>
+</body>
+</html>

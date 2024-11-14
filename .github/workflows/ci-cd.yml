@@ -1,0 +1,69 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - be-feat#46
+
+jobs:
+  # 먼저 레포지토리 체크아웃
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+    permissions:
+      packages: read
+
+  # 콘솔 서버 배포
+  deploy-console-server:
+    needs: setup
+    uses: ./.github/workflows/deploy-service.yml
+    with:
+      service: web35-watchducks
+      path: backend/console-server
+      source: "./web35-watchducks/backend/console-server/*.yml, ./web35-watchducks/backend/console-server/*.conf"
+    secrets:
+      user: ${{ secrets.SSH_USER }}
+      port: ${{ secrets.SSH_PORT }}
+      key: ${{ secrets.SSH_KEY }}
+      host: ${{ secrets.CONSOLE_SERVER_HOST }}
+      env: ${{ secrets.CONSOLE_SERVER_ENV }}
+      tok: ${{secrets.GHCR_TOKEN}}
+
+  # 프록시 서버 배포
+  deploy-proxy-server:
+    needs: setup
+    uses: ./.github/workflows/deploy-service.yml
+    with:
+      service: web35-watchducks
+      path: backend/proxy-server
+      source: "./web35-watchducks/backend/proxy-server/*.yml"
+      use_host_nginx: true
+    secrets:
+      user: ${{ secrets.SSH_USER }}
+      port: ${{ secrets.SSH_PORT }}
+      key: ${{ secrets.SSH_KEY }}
+      host: ${{ secrets.PROXY_SERVER_HOST }}
+      env: ${{ secrets.PROXY_SERVER_ENV }}
+      tok: ${{secrets.GHCR_TOKEN}}
+
+
+  # 네임서버 배포
+  deploy-name-server:
+    needs: setup
+    uses: ./.github/workflows/deploy-service.yml
+    with:
+      service: web35-watchducks
+      path: backend/name-server
+      source: "./web35-watchducks/backend/name-server/*.yml, ./web35-watchducks/backend/name-server/*.conf"
+    secrets:
+      user: ${{ secrets.SSH_USER }}
+      port: ${{ secrets.SSH_PORT }}
+      key: ${{ secrets.SSH_KEY }}
+      host: ${{ secrets.NAME_SERVER_HOST }}
+      env: ${{ secrets.NAME_SERVER_ENV }}
+      tok: ${{secrets.GHCR_TOKEN}}

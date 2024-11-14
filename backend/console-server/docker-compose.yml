@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - server-blue
+      - server-green
+
+  server-blue:
+    image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/console-server:latest
+    container_name: app-server-blue-1
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    restart: always
+    volumes:
+      - ./.env:/usr/src/app/.env
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "3001"]
+      interval: 10s
+      timeout: 2s
+      retries: 5
+
+  server-green:
+    image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/console-server:latest
+    container_name: app-server-green-1
+    environment:
+      - NODE_ENV=production
+      - PORT=3002
+    restart: always
+    volumes:
+      - ./.env:/usr/src/app/.env
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "3002"]
+      interval: 10s
+      timeout: 2s
+      retries: 5
