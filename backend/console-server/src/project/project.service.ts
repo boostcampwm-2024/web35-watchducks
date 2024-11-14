@@ -49,7 +49,9 @@ export class ProjectService {
             where: { generation: generation },
         });
 
-        return projects.map((p) => plainToInstance(FindByGenerationResponseDto, p));
+        return projects.map((p) =>
+            plainToInstance(FindByGenerationResponseDto, p, { excludeExtraneousValues: true }),
+        );
     }
 
     async countProjectByGeneration(countProjectByGenerationDto: CountProjectByGenerationDto) {
