@@ -3,26 +3,24 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { join } from 'path';
 
 export default registerAs('mailer', () => ({
-  transport: {
-    host: process.env.EMAIL_HOST,
-    port: Number(process.env.EMAIL_PORT) || 587,
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+    transport: {
+        host: process.env.EMAIL_HOST,
+        port: Number(process.env.EMAIL_PORT) || 587,
+        secure: false,
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+        },
     },
-  },
-  defaults: {
-    from: process.env.EMAIL_FROM,
-  },
-  template: {
-    dir: join(__dirname, '../mail/templates'),
-    adapter: new HandlebarsAdapter(),
-    options: {
-      strict: true,
+    defaults: {
+        from: process.env.EMAIL_FROM,
     },
-  },
-  nameServers: (process.env.NAME_SERVERS || '')
-    .split(',')
-    .map((item) => item.trim()),
+    template: {
+        dir: join(__dirname, '../mail/templates'),
+        adapter: new HandlebarsAdapter(),
+        options: {
+            strict: true,
+        },
+    },
+    nameServers: (process.env.NAME_SERVERS || '').split(',').map((item) => item.trim()),
 }));

@@ -9,7 +9,7 @@ import { QueryFailedError } from 'typeorm';
 import type { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectResponseDto } from './dto/create-project-response.dto';
 import { ConflictException } from '@nestjs/common';
-import { FindByGenerationDto } from './dto/find-by-generation.dto';
+import type { FindByGenerationDto } from './dto/find-by-generation.dto';
 import { FindByGenerationResponseDto } from './dto/find-by-generation-response.dto';
 import { plainToInstance } from 'class-transformer';
 

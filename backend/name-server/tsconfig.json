@@ -3,13 +3,24 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
+    "outDir": "dist",
+    "rootDir": "src",
     "esModuleInterop": true,
     "strict": true,
-    "outDir": "dist",
-    "rootDir": "./",
-    "types": ["jest"], // Jest 타입 정의 추가
-    "allowSyntheticDefaultImports": true // Babel 사용 시 필요
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "typeRoots": ["./node_modules/@types"],
+    "baseUrl": "./",
+    "paths": {
+      "*": ["src/*"]
+    }
   },
-  "include": ["src/**/*", "test/**/*"], // 테스트 디렉토리 포함
-  "exclude": ["node_modules"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test"],
+  "tsc-alias": {
+    "resolveFullPaths": true,
+    "resolveFullExtension": ".js"
+  }
 }

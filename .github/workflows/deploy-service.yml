@@ -1,5 +1,9 @@
 name: Deploy Service
 
+permissions:
+  contents: read
+
+
 on:
   workflow_call:
     inputs:
@@ -9,6 +13,12 @@ on:
       path:
         required: true
         type: string
+      source:
+        type: string
+      use_host_nginx:
+        required: false
+        type: boolean
+        default: false
     secrets:
       host:
         required: true
@@ -20,11 +30,14 @@ on:
         required: true
       env:
         required: true
+      tok:
+        required: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    permissions:
+      packages: write
     steps:
       # Sparse checkout으로 하위 디렉토리만 체크아웃
       - name: Checkout repository with sparse checkout
@@ -38,14 +51,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Cache Docker images
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: docker-compose-cache-${{ github.sha }}
-          restore-keys: |
-            docker-compose-cache-
-
       - name: Transfer YAML files using SCP
         uses: appleboy/scp-action@master
         with:
@@ -53,17 +58,17 @@ jobs:
           username: ${{ secrets.user }}
           key: ${{ secrets.key }}
           port: ${{ secrets.port }}
-          source: "./${{ inputs.service }}/${{ inputs.path }}/*.yml, ./${{ inputs.service }}/${{ inputs.path }}/*.conf"
+          source: ${{ inputs.source }}
           target: "/home/watchducks/app"
           strip_components: 3
 
       # GHCR 로그인
       - name: Log in to GHCR
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.tok }}
 
       # 도커 이미지 빌드 & 푸시
       - name: Build and push Docker image for ${{ inputs.service }}
@@ -76,6 +81,7 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/${{ inputs.service }}/${{ inputs.path }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          push: true
 
       # 각 서비스 서버에 배포
       - name: Deploy ${{ inputs.service }} to server
@@ -90,37 +96,70 @@ jobs:
             touch .env
             echo "${{ secrets.env }}" > .env
             
+            echo "${{ secrets.tok }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            
             # 최신 이미지 가져오기
             docker-compose pull
-            # Nginx 시작 (재시작 포함)
-            docker-compose up -d --no-deps nginx
             
-            # Nginx가 실행 중인지 확인
-            for i in {1..10}; do
-              if docker-compose ps | grep nginx | grep "Up"; then
-                echo "Nginx is running"
-                break
+            # 호스트에 설치된 Nginx를 사용할지 확인
+            if [ "${{ inputs.use_host_nginx }}" == "true" ]; then
+              # Dockerized Nginx 없이 Blue 컨테이너만 시작
+              docker-compose up -d --no-deps server-blue
+            
+              # Blue 인스턴스 헬스 체크 - 최대 5번 시도
+              echo "Blue 컨테이너 헬스 상태 확인 중..."
+              for i in {1..5}; do
+                health_status=$(docker inspect --format='{{json .State.Health.Status}}' app-server-blue-1 | tr -d '"')
+                if [ "$health_status" == "healthy" ]; then
+                  echo "Blue 컨테이너가 정상 상태입니다."
+                  break
+                else
+                  echo "Blue 컨테이너가 정상 상태로 전환되지 않았습니다. 시도 $i/5..."
+                  sleep 10
+                fi
+              done
+            
+              # 최종 헬스 상태 확인
+              if [ "$health_status" != "healthy" ]; then
+                echo "Blue 컨테이너가 정상 상태로 전환되지 않았습니다."
+                exit 1
               fi
-              echo "Waiting for Nginx to be ready..."
-              sleep 2
-            done
-
-            # Blue 인스턴스를 새 버전으로 준비
-            docker-compose up -d --no-deps server-blue
             
-            # Blue 인스턴스 헬스 체크
-            for i in {1..30}; do
-              if curl -s http://localhost/api | grep -q "Hello World!"; then
-                echo "Blue container is ready"
-                break
+              # Nginx 재로드
+              sudo nginx -s reload
+              echo "호스트 Nginx 리로드 완료로 트래픽 전환 완료"
+            
+            else
+              # 콘솔 서버의 Dockerized Nginx 설정
+              docker-compose up -d --no-deps nginx
+            
+              # Dockerized Nginx와 함께 Blue 컨테이너 시작
+              docker-compose up -d --no-deps server-blue
+            
+              # Blue 인스턴스 헬스 체크 - 최대 5번 시도
+              echo "Blue 컨테이너 헬스 상태 확인 중..."
+              for i in {1..5}; do
+                health_status=$(docker inspect --format='{{json .State.Health.Status}}' app-server-blue-1 | tr -d '"')
+                if [ "$health_status" == "healthy" ]; then
+                  echo "Blue 컨테이너가 정상 상태입니다."
+                  break
+                else
+                  echo "Blue 컨테이너가 정상 상태로 전환되지 않았습니다. 시도 $i/5..."
+                  sleep 10
+                fi
+              done
+            
+              # 최종 헬스 상태 확인
+              if [ "$health_status" != "healthy" ]; then
+                echo "Blue 컨테이너가 정상 상태로 전환되지 않았습니다."
+                exit 1
               fi
-              echo "Waiting for Blue container to be ready..."
-              sleep 1
-            done
             
-            # Nginx 리로드로 트래픽 전환
-            docker-compose exec nginx nginx -s reload
+              # Dockerized Nginx 리로드로 트래픽 전환
+              docker-compose exec nginx nginx -s reload
+              echo "Dockerized Nginx 리로드 완료로 트래픽 전환 완료"
+            fi
             
-            # 기존 Green 인스턴스 종료
+            # Green 컨테이너 시작 (두 설정 모두에서 수행)
             docker-compose up -d --no-deps server-green
-            echo "Deployment completed successfully"
+            echo "배포가 성공적으로 완료되었습니다."
