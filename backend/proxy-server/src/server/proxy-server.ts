@@ -39,9 +39,6 @@ export class ProxyServer {
                 connections: Number(process.env.DEFAULT_CONNECTIONS),
                 pipelining: Number(process.env.DEFAULT_PIPELINING),
                 keepAliveTimeout: Number(process.env.DEFAULT_KEEP_ALIVE),
-                connect: {
-                    rejectUnauthorized: false,
-                },
             },
         });
     }
@@ -92,7 +89,7 @@ export class ProxyServer {
     private async executeProxyRequest(request: FastifyRequest, reply: FastifyReply): Promise<void> {
         const host = validateHost(request.headers[HOST_HEADER]);
         const ip = await this.resolveDomain(host);
-        const targetUrl = buildTargetUrl(ip, request.url, 'https://'); // TODO: Protocol 별 arg 세팅
+        const targetUrl = buildTargetUrl(ip, request.url, 'http://'); // TODO: Protocol 별 arg 세팅
 
         await this.sendProxyRequest(targetUrl, request, reply);
     }
@@ -117,8 +114,6 @@ export class ProxyServer {
         request: FastifyRequest,
         reply: FastifyReply,
     ): Promise<void> {
-        const originalHost = request.headers[HOST_HEADER] as string;
-
         await new Promise<void>((resolve, reject) => {
             reply.from(targetUrl, {
                 onError: (reply, error) => {
@@ -130,11 +125,6 @@ export class ProxyServer {
                         ),
                     );
                 },
-
-                rewriteRequestHeaders: (req, headers) => ({
-                    ...headers,
-                    host: originalHost,
-                }),
             });
         });
     }
