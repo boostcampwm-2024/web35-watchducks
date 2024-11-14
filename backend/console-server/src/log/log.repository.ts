@@ -77,6 +77,7 @@ export class LogRepository {
             .from('http_log')
             .build();
 
-        return await this.clickhouse.query(query, params);
+        const result = await this.clickhouse.query(query, params);
+        return result[0];
     }
 }
