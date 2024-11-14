@@ -1,10 +1,20 @@
 import axios from 'axios';
 
-const getGroups = async (generation: string) => {
+const getGroupNames = async (generation: string) => {
   const response = await axios.get(
-    `${import.meta.env.VITE_API_URL}/api/project?generation=${generation}`
+    `${import.meta.env.VITE_API_URL}/project?generation=${generation}`
   );
   return response.data;
 };
 
-export { getGroups };
+const getRakings = async () => {
+  const response = await axios.get(`${import.meta.env.VITE_API_URL}/log/traffic/rank`);
+  return response.data;
+};
+
+const getTotalTraffic = async () => {
+  const response = await axios.get(`${import.meta.env.VITE_API_URL}/log/traffic/`);
+  return response.data;
+};
+
+export { getGroupNames, getRakings, getTotalTraffic };
