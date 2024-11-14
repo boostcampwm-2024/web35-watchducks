@@ -1,15 +1,15 @@
-type Props<T extends string> = {
+type Props<T> = {
   cssOption?: string;
   options: ReadonlyArray<{ readonly value: T; readonly label: string }>;
-  value: T;
-  onChange: (value: T) => void;
+  value: string;
+  onChange?: (value: T) => void;
 };
 
 export default function Select<T extends string>({
   cssOption,
   options = [] as ReadonlyArray<{ value: T; label: string }>,
   value,
-  onChange
+  onChange = () => {}
 }: Props<T>) {
   return (
     <select
@@ -21,7 +21,7 @@ export default function Select<T extends string>({
           key={option.value}
           value={option.value}
           className='overflow-hidden text-ellipsis whitespace-nowrap bg-white text-black'>
-          {option.label}
+          {option.label || option.value}
         </option>
       ))}
     </select>
