@@ -4,11 +4,15 @@ services:
     image: nginx:latest
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt:/etc/letsencrypt
     depends_on:
       - server-blue
       - server-green
+    networks:
+      - app-network
 
   server-blue:
     image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/console-server:latest
@@ -24,6 +28,8 @@ services:
       interval: 10s
       timeout: 2s
       retries: 5
+    networks:
+      - app-network
 
   server-green:
     image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/console-server:latest
@@ -39,3 +45,10 @@ services:
       interval: 10s
       timeout: 2s
       retries: 5
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    name: app-network
+    driver: bridge
