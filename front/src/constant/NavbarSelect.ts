@@ -1,17 +1,20 @@
+import { GroupOption } from '@type/Navbar';
+
 const GENERATION_VALUE = {
-  ALL: 'all',
-  NINTH: '9th'
+  NINTH: '9',
+  TENTH: '10'
 } as const;
 
 const BOOST_CAMP_VALUE = {
-  NINTH: '부스트캠프 9기'
+  NINTH: '부스트캠프 9기',
+  Text: '부스트캠프 10기'
 } as const;
 
-const GENERATION_OPTIONS = [
-  { value: GENERATION_VALUE.ALL, label: '전체' },
-  { value: GENERATION_VALUE.NINTH, label: '9기' }
+const GENERATION_OPTION = [
+  { value: GENERATION_VALUE.NINTH, label: '9기' },
+  { value: GENERATION_VALUE.TENTH, label: '10기' }
 ] as const;
 
-const BOOST_CAMP_OPTION = [{ value: '9', label: BOOST_CAMP_VALUE.NINTH }] as const;
+const BOOST_CAMP_OPTION: GroupOption[] = [{ value: '9', label: BOOST_CAMP_VALUE.NINTH }];
 
-export { GENERATION_OPTIONS, BOOST_CAMP_OPTION, GENERATION_VALUE, BOOST_CAMP_VALUE };
+export { GENERATION_OPTION, BOOST_CAMP_OPTION, GENERATION_VALUE, BOOST_CAMP_VALUE };
