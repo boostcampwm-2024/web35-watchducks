@@ -9,8 +9,8 @@ export default function CustomErrorFallback({ resetErrorBoundary }: Props) {
   const { reset } = useQueryErrorResetBoundary();
 
   const handleClickReset = () => {
-    resetErrorBoundary();
     reset();
+    resetErrorBoundary();
   };
 
   return (
