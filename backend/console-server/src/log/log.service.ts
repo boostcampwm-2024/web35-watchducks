@@ -13,11 +13,17 @@ export class LogService {
         return result;
     }
 
-    async analyzeElapsedTime() {
-        const result = await this.logRepository.analyzeElapsedTime();
+    async elapsedTime() {
+        const result = await this.logRepository.findAvgElapsedTime();
 
         console.log(result);
 
         return result;
+    }
+
+    async trafficRank() {
+        const result = await this.logRepository.findCountByHost();
+
+        return result.slice(0, 4);
     }
 }
