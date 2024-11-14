@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 
 export class FindByGenerationResponseDto {
     @ApiProperty({
@@ -8,5 +8,6 @@ export class FindByGenerationResponseDto {
     })
     @IsNotEmpty()
     @Expose()
-    name: string;
+    @Transform(({ obj }) => obj.name)
+    value: string;
 }
