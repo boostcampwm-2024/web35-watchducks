@@ -11,6 +11,8 @@ services:
     depends_on:
       - server-blue
       - server-green
+    networks:
+      - app-network
 
   server-blue:
     image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/console-server:latest
@@ -26,6 +28,8 @@ services:
       interval: 10s
       timeout: 2s
       retries: 5
+    networks:
+      - app-network
 
   server-green:
     image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/console-server:latest
@@ -41,3 +45,9 @@ services:
       interval: 10s
       timeout: 2s
       retries: 5
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
