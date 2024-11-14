@@ -49,7 +49,7 @@ export class ProjectService {
             where: { generation: generation },
         });
 
-        return projects.map((p) => plainToInstance(FindByGenerationResponseDto, p.name));
+        return projects.map((p) => plainToInstance(FindByGenerationResponseDto, p));
     }
 
     async countProjectByGeneration(countProjectByGenerationDto: CountProjectByGenerationDto) {
