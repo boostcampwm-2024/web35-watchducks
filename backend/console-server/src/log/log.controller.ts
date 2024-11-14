@@ -42,8 +42,34 @@ export class LogController {
     async trafficRank() {
         return await this.logService.trafficRank();
     }
-}
 
-// 1. 기수 내 전체 프로젝트
-// 2. 기수 내 총 트래픽
-// 4. 기수 내 응답 성공률
+    @Get('/response-rate')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({
+        summary: '기수 내 응답 성공률',
+        description: '요청받은 기수의 기수 내 응답 성공률를 반환합니다.',
+    })
+    @ApiResponse({
+        status: 200,
+        description: '기수 내 응답 성공률이 성공적으로 반환됨.',
+        type: ProjectResponseDto,
+    })
+    async responseSuccessRate() {
+        return await this.logService.responseSuccessRate();
+    }
+
+    @Get('/traffic')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({
+        summary: '기수 내 총 트래픽',
+        description: '요청받은 기수의 기수 내 총 트래픽를 반환합니다.',
+    })
+    @ApiResponse({
+        status: 200,
+        description: '기수 내 총 트래픽가 정상적으로 반환됨.',
+        type: ProjectResponseDto,
+    })
+    async trafficByGeneration() {
+        return await this.logService.trafficByGeneration();
+    }
+}
