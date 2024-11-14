@@ -1,9 +1,9 @@
 import ProjectActiveImg from '@asset/image/ProjectActive.png';
 import ProjectInactiveImg from '@asset/image/ProjectInactive.png';
 import ProjectsActiveImg from '@asset/image/ProjectsActive.png';
-import ProjectsInactiveImg from '@asset/image/ProjectsInActive.png';
+import ProjectsInactiveImg from '@asset/image/ProjectsInactive.png';
 import RankingActiveImg from '@asset/image/RankingActive.png';
-import RankingInactiveImg from '@asset/image/RankingInActive.png';
+import RankingInactiveImg from '@asset/image/RankingInactive.png';
 import { MenuItem } from '@type/Navbar';
 
 const MENU_ITEMS: MenuItem[] = [
