@@ -65,4 +65,18 @@ export class LogRepository {
             success_rate: 100 - (result as Array<{ is_error_rate: number }>)[0].is_error_rate,
         };
     }
+
+    async findTrafficByGeneration() {
+        const { query, params } = new TimeSeriesQueryBuilder()
+            .metrics([
+                {
+                    name: '*',
+                    aggregation: 'count',
+                },
+            ])
+            .from('http_log')
+            .build();
+
+        return await this.clickhouse.query(query, params);
+    }
 }
