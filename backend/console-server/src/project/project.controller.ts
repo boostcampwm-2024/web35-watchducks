@@ -35,7 +35,7 @@ export class ProjectController {
     @ApiResponse({
         status: 200,
         description: '프로젝트 목록이 성공적으로 반환됨',
-        type: ProjectResponseDto,
+        type: FindByGenerationDto,
     })
     findByGeneration(@Query() findGenerationProjectDto: FindByGenerationDto) {
         return this.projectService.findByGeneration(findGenerationProjectDto);
@@ -50,7 +50,7 @@ export class ProjectController {
     @ApiResponse({
         status: 200,
         description: '기수의 전체 프로젝트 개수가 정상적으로 반환됨',
-        type: ProjectResponseDto,
+        type: CountProjectByGenerationDto,
     })
     async countProjectByGeneration(
         @Query() countProjectByGenerationDto: CountProjectByGenerationDto,
