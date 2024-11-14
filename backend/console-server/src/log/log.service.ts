@@ -32,4 +32,10 @@ export class LogService {
 
         return result;
     }
+
+    async trafficByGeneration() {
+        const result = await this.logRepository.findTrafficByGeneration();
+
+        return result;
+    }
 }

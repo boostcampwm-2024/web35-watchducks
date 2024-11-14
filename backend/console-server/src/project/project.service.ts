@@ -60,7 +60,6 @@ export class ProjectService {
         });
 
         return plainToInstance(CountProjectByGenerationResponseDto, {
-            generation: generation,
             count: count,
         });
     }
