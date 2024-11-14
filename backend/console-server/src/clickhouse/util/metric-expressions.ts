@@ -8,6 +8,7 @@ export const metricExpressions: Record<string, MetricFunction> = {
     max: (metric: string) => `max(${metric}) as ${metric}`,
     p95: (metric: string) => `quantile(0.95)(${metric}) as ${metric}`,
     p99: (metric: string) => `quantile(0.99)(${metric}) as ${metric}`,
+    rate: (metric: string) => `(sum(${metric}) / count(*)) * 100 as ${metric}_rate`,
 };
 
 export type MetricAggregationType = keyof typeof metricExpressions;
