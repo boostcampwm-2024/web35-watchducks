@@ -26,4 +26,16 @@ export class LogService {
 
         return result.slice(0, 4);
     }
+
+    async responseSuccessRate() {
+        const result = await this.logRepository.findResponseSuccessRate();
+
+        return result;
+    }
+
+    async trafficByGeneration() {
+        const result = await this.logRepository.findTrafficByGeneration();
+
+        return result;
+    }
 }

@@ -48,4 +48,36 @@ export class LogRepository {
 
         return await this.clickhouse.query(query, params);
     }
+
+    async findResponseSuccessRate() {
+        const { query, params } = new TimeSeriesQueryBuilder()
+            .metrics([
+                {
+                    name: 'is_error',
+                    aggregation: 'rate',
+                },
+            ])
+            .from('http_log')
+            .build();
+
+        const result = await this.clickhouse.query(query, params);
+        return {
+            success_rate: 100 - (result as Array<{ is_error_rate: number }>)[0].is_error_rate,
+        };
+    }
+
+    async findTrafficByGeneration() {
+        const { query, params } = new TimeSeriesQueryBuilder()
+            .metrics([
+                {
+                    name: '*',
+                    aggregation: 'count',
+                },
+            ])
+            .from('http_log')
+            .build();
+
+        const result = await this.clickhouse.query(query, params);
+        return result[0];
+    }
 }
