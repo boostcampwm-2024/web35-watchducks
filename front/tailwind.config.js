@@ -78,9 +78,6 @@ export default {
         30: '30px',
         36: '36px',
         50: '50px'
-      },
-      animation: {
-        'spin-slow': 'spin 1.5s linear infinite'
       }
     }
   },

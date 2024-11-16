@@ -1,13 +1,12 @@
-import NavbarSelect from '@component/molecule/NavbarSelect';
-import { GENERATION_VALUE, BOOST_CAMP_OPTION } from '@constant/NavbarSelect';
-import { useGroups } from '@hook/useGroup';
-import { Generation } from '@type/Navbar';
-import { GroupOption } from '@type/Navbar';
+import CustomErrorBoundary from '@boundary/CustomErrorBoundary';
+import NavbarCustomSelect from '@component/molecule/NavbarCustomSelect';
+import NavbarDefaultSelect from '@component/molecule/NavbarDefaultSelect';
+import { useLocation } from 'react-router-dom';
 
 type Props = {
-  generation: Generation;
+  generation: string;
   selectedGroup: string;
-  setGeneration: (value: Generation) => void;
+  setGeneration: (value: string) => void;
   setSelectedGroup: (value: string) => void;
 };
 
@@ -17,19 +16,28 @@ export default function NavbarSelectWrapper({
   setGeneration,
   setSelectedGroup
 }: Props) {
-  const { data: projectGroups } = useGroups(generation);
-  const groupOptions: GroupOption[] = Array.isArray(projectGroups) ? projectGroups : [];
+  const { pathname } = useLocation();
+  const isProjectPath = pathname === '/project';
 
-  const groupOption: GroupOption[] =
-    generation === GENERATION_VALUE.ALL ? [...BOOST_CAMP_OPTION] : groupOptions;
+  if (isProjectPath) {
+    return (
+      <CustomErrorBoundary>
+        <NavbarCustomSelect
+          generation={generation}
+          selectedGroup={selectedGroup}
+          setGeneration={setGeneration}
+          setSelectedGroup={setSelectedGroup}
+        />
+      </CustomErrorBoundary>
+    );
+  }
 
   return (
-    <NavbarSelect
+    <NavbarDefaultSelect
       generation={generation}
       selectedGroup={selectedGroup}
       setGeneration={setGeneration}
       setSelectedGroup={setSelectedGroup}
-      groupOption={groupOption}
     />
   );
 }

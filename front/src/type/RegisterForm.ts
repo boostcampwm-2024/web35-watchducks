@@ -3,6 +3,7 @@ type FormState = {
   domain: string;
   ip: string;
   email: string;
+  generation: string;
 };
 
 type ValidationState = {

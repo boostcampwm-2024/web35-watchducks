@@ -2,14 +2,10 @@ function validateWebsite(value: string) {
   return value.length >= 2;
 }
 function validateDomain(value: string) {
-  return /^www\..+/.test(value);
+  return /\..+/.test(value);
 }
 function validateIp(value: string) {
-  const [ipPart, portPart] = value.split(':');
-
-  if (!portPart) return false;
-
-  const ipNumbers = ipPart.split('.');
+  const ipNumbers = value.split('.');
   const isValidIp =
     ipNumbers.length === 4 &&
     ipNumbers.every((num) => {
@@ -17,8 +13,7 @@ function validateIp(value: string) {
       return !isNaN(n) && n >= 0 && n <= 255;
     });
 
-  const port = parseInt(portPart);
-  return isValidIp && !isNaN(port) && port >= 0 && port <= 65535;
+  return isValidIp;
 }
 function validateEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);

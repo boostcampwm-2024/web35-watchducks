@@ -14,16 +14,14 @@ export default function CustomErrorBoundary({ children }: Props) {
     <QueryErrorResetBoundary>
       {({ reset }) => (
         <ErrorBoundary onReset={reset} FallbackComponent={CustomErrorFallback}>
-          <div className='w-full'>
-            <Suspense
-              fallback={
-                <div className='flex h-full w-full items-center justify-center'>
-                  <Loading />
-                </div>
-              }>
-              {children}
-            </Suspense>
-          </div>
+          <Suspense
+            fallback={
+              <div className='flex h-full w-full items-center justify-center'>
+                <Loading />
+              </div>
+            }>
+            {children}
+          </Suspense>
         </ErrorBoundary>
       )}
     </QueryErrorResetBoundary>

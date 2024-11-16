@@ -1,7 +1,7 @@
-type Generation = 'all' | '9th';
+type Generation = 'all' | '9';
 type GroupOption = {
-  value: string;
-  label: string;
+  readonly value: string;
+  readonly label: string;
 };
 type MenuItem = {
   path: string;
@@ -9,5 +9,9 @@ type MenuItem = {
   activeIcon: string;
   inactiveIcon: string;
 };
+type Ranking = {
+  host: string;
+  count: string;
+};
 
-export type { Generation, GroupOption, MenuItem };
+export type { Generation, GroupOption, MenuItem, Ranking };

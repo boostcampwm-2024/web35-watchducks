@@ -1,4 +1,5 @@
 import { postRegister } from '@api/post';
+import { GENERATION_VALUE } from '@constant/NavbarSelect';
 import { FormState, ValidationState } from '@type/RegisterForm';
 import { validateWebsite, validateDomain, validateIp, validateEmail } from '@util/Validate';
 import { useState, useEffect } from 'react';
@@ -15,7 +16,8 @@ export default function useRegisterForm({ successCallback, errorCallback }: Prop
     name: '',
     domain: '',
     ip: '',
-    email: ''
+    email: '',
+    generation: GENERATION_VALUE.NINTH
   });
   const [validation, setValidation] = useState<ValidationState>({
     isValidName: false,
@@ -46,7 +48,8 @@ export default function useRegisterForm({ successCallback, errorCallback }: Prop
         name: '',
         domain: '',
         ip: '',
-        email: ''
+        email: '',
+        generation: GENERATION_VALUE.NINTH
       });
     },
     onError: () => {
@@ -61,8 +64,16 @@ export default function useRegisterForm({ successCallback, errorCallback }: Prop
     }));
   };
 
+  const handleSelectChange = (key: keyof FormState) => (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
   const handleSubmit = () => {
     if (isAllValid) {
+      console.log(formData);
       mutation.mutate(formData);
     }
   };
@@ -72,6 +83,7 @@ export default function useRegisterForm({ successCallback, errorCallback }: Prop
     validation,
     handleChange,
     handleSubmit,
+    handleSelectChange,
     isLoading: mutation.isPending,
     isAllValid
   };
