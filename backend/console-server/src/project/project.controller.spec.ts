@@ -31,6 +31,7 @@ describe('ProjectController의', () => {
             email: 'test@test.com',
             ip: '127.0.0.1',
             domain: 'host.test.com',
+            generation: 9,
         };
 
         it('올바른 프로젝트 정보가 들어왔을 때 서비스의 create() 메소드를 호출해 프로젝트를 생성합니다.', async () => {
