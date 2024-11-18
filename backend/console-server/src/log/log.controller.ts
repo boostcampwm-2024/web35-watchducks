@@ -62,7 +62,7 @@ export class LogController {
         return await this.logService.responseSuccessRate();
     }
 
-    @Get('/traffic')
+    @Get('/traffic/project')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: '프로젝트 별 트래픽 조회',

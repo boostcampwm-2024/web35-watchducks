@@ -14,7 +14,7 @@ class TrafficDataPoint {
         description: '해당 타임스탬프의 트래픽 총량',
     })
     @Expose()
-    traffic: number;
+    count: number;
 }
 
 export class GetTrafficByProjectResponseDto {
