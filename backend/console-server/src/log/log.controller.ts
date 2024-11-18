@@ -4,6 +4,8 @@ import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ProjectResponseDto } from '../project/dto/create-project-response.dto';
 import { GetPathSpeedRankDto } from './dto/get-path-speed-rank.dto';
 import { GetPathSpeedRankResponseDto } from './dto/get-path-speed-rank-response.dto';
+import { GetTrafficByProjectResponseDto } from './dto/get-traffic-by-project-response.dto';
+import { GetTrafficByProjectDto } from './dto/get-traffic-by-project.dto';
 
 @Controller('log')
 export class LogController {
@@ -58,6 +60,21 @@ export class LogController {
     })
     async responseSuccessRate() {
         return await this.logService.responseSuccessRate();
+    }
+
+    @Get('/traffic')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({
+        summary: '프로젝트 별 트래픽 조회',
+        description: '프로젝트 이름과 시간 단위로 특정 프로젝트의 트래픽 데이터를 반환합니다.',
+    })
+    @ApiResponse({
+        status: 200,
+        description: '특정 프로젝트의 트래픽 데이터가 반환됨.',
+        type: GetTrafficByProjectResponseDto,
+    })
+    async getTrafficByProject(@Query() getTrafficByProjectDto: GetTrafficByProjectDto) {
+        return await this.logService.getTrafficByProject(getTrafficByProjectDto);
     }
 
     @Get('/traffic')

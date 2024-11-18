@@ -110,4 +110,19 @@ export class LogRepository {
             slowestPaths,
         };
     }
+
+    async getTrafficByProject(domain: string, timeUnit: string) {
+        const queryBuilder = new TimeSeriesQueryBuilder()
+            .metrics([
+                { name: '*', aggregation: 'count' },
+                { name: `toStartOf${timeUnit}(timestamp) as timestamp` },
+            ])
+            .from('http_log')
+            .filter({ host: domain })
+            .groupBy(['timestamp'])
+            .orderBy(['timestamp'], false)
+            .build();
+
+        return await this.clickhouse.query(queryBuilder.query, queryBuilder.params);
+    }
 }
