@@ -2,6 +2,9 @@ import { Test } from '@nestjs/testing';
 import type { TestingModule } from '@nestjs/testing';
 import { LogService } from './log.service';
 import { LogRepository } from './log.repository';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Project } from '../project/entities/project.entity';
+import { NotFoundException } from '@nestjs/common';
 
 describe('LogService 테스트', () => {
     let service: LogService;
@@ -13,6 +16,7 @@ describe('LogService 테스트', () => {
         findCountByHost: jest.fn(),
         findResponseSuccessRate: jest.fn(),
         findTrafficByGeneration: jest.fn(),
+        getPathSpeedRankByProject: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -22,6 +26,10 @@ describe('LogService 테스트', () => {
                 {
                     provide: LogRepository,
                     useValue: mockLogRepository,
+                },
+                {
+                    provide: getRepositoryToken(Project),
+                    useValue: { findOne: jest.fn() },
                 },
             ],
         }).compile();
@@ -132,6 +140,87 @@ describe('LogService 테스트', () => {
 
             expect(result).toEqual(mockStats);
             expect(repository.findTrafficByGeneration).toHaveBeenCalled();
+        });
+    });
+
+    describe('getPathSpeedRankByProject()는 ', () => {
+        const mockRequestDto = { projectName: 'example-project' };
+
+        const mockProject = {
+            name: 'example-project',
+            domain: 'example.com',
+        };
+
+        const mockPathSpeedRank = {
+            fastestPaths: [
+                { path: '/api/v1/resource', avg_elapsed_time: 123.45 },
+                { path: '/api/v1/users', avg_elapsed_time: 145.67 },
+                { path: '/api/v1/orders', avg_elapsed_time: 150.89 },
+            ],
+            slowestPaths: [
+                { path: '/api/v1/reports', avg_elapsed_time: 345.67 },
+                { path: '/api/v1/logs', avg_elapsed_time: 400.23 },
+                { path: '/api/v1/stats', avg_elapsed_time: 450.56 },
+            ],
+        };
+
+        it('프로젝트명을 기준으로 도메인을 조회한 후 경로별 응답 속도 순위를 반환해야 한다', async () => {
+            const projectRepository = service['projectRepository'];
+            projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
+
+            mockLogRepository.getPathSpeedRankByProject = jest
+                .fn()
+                .mockResolvedValue(mockPathSpeedRank);
+
+            const result = await service.getPathSpeedRankByProject(mockRequestDto);
+
+            expect(projectRepository.findOne).toHaveBeenCalledWith({
+                where: { name: mockRequestDto.projectName },
+                select: ['domain'],
+            });
+            expect(mockLogRepository.getPathSpeedRankByProject).toHaveBeenCalledWith(
+                mockProject.domain,
+            );
+            expect(result).toEqual({
+                projectName: mockRequestDto.projectName,
+                ...mockPathSpeedRank,
+            });
+        });
+
+        it('존재하지 않는 프로젝트명을 조회할 경우 NotFoundException을 던져야 한다', async () => {
+            const projectRepository = service['projectRepository'];
+            projectRepository.findOne = jest.fn().mockResolvedValue(null); // Project not found
+
+            await expect(service.getPathSpeedRankByProject(mockRequestDto)).rejects.toThrow(
+                new NotFoundException(`Project with name ${mockRequestDto.projectName} not found`),
+            );
+
+            expect(projectRepository.findOne).toHaveBeenCalledWith({
+                where: { name: mockRequestDto.projectName },
+                select: ['domain'],
+            });
+            expect(mockLogRepository.getPathSpeedRankByProject).not.toHaveBeenCalled();
+        });
+
+        it('로그 레포지토리 호출 중 에러가 발생할 경우 예외를 던져야 한다', async () => {
+            const projectRepository = service['projectRepository'];
+            projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
+
+            mockLogRepository.getPathSpeedRankByProject = jest
+                .fn()
+                .mockRejectedValue(new Error('Database error'));
+
+            await expect(service.getPathSpeedRankByProject(mockRequestDto)).rejects.toThrow(
+                'Database error',
+            );
+
+            expect(projectRepository.findOne).toHaveBeenCalledWith({
+                where: { name: mockRequestDto.projectName },
+                select: ['domain'],
+            });
+            expect(mockLogRepository.getPathSpeedRankByProject).toHaveBeenCalledWith(
+                mockProject.domain,
+            );
         });
     });
 });
