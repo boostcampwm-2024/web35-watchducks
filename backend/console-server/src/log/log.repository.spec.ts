@@ -35,7 +35,7 @@ describe('LogRepository 테스트', () => {
     });
 
     describe('findHttpLog()는 ', () => {
-        it('쿼리를 실행하고, 올바른 결과를 반환해야 한다.', async () => {
+        it('요구 받은 조건의 트래픽 정보를 반환한다.', async () => {
             const mockResult = [
                 {
                     date: '2024-11-18',
