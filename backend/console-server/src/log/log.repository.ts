@@ -87,7 +87,7 @@ export class LogRepository {
             .from('http_log')
             .filter({ host: domain })
             .groupBy(['path'])
-            .orderBy(['elapsed_time'], false)
+            .orderBy(['avg_elapsed_time'], false)
             .limit(3)
             .build();
 
@@ -96,7 +96,7 @@ export class LogRepository {
             .from('http_log')
             .filter({ host: domain })
             .groupBy(['path'])
-            .orderBy(['elapsed_time'], true)
+            .orderBy(['avg_elapsed_time'], true)
             .limit(3)
             .build();
 
