@@ -24,7 +24,7 @@ export class LogService {
     async trafficRank() {
         const result = await this.logRepository.findCountByHost();
 
-        return result.slice(0, 4);
+        return result.slice(0, 5);
     }
 
     async responseSuccessRate() {
