@@ -80,4 +80,34 @@ export class LogRepository {
         const result = await this.clickhouse.query(query, params);
         return result[0];
     }
+
+    async getPathSpeedRankByProject(domain: string) {
+        const fastestQueryBuilder = new TimeSeriesQueryBuilder()
+            .metrics([{ name: 'elapsed_time', aggregation: 'avg' }, { name: 'path' }])
+            .from('http_log')
+            .filter({ host: domain })
+            .groupBy(['path'])
+            .orderBy(['elapsed_time'], false)
+            .limit(3)
+            .build();
+
+        const slowestQueryBuilder = new TimeSeriesQueryBuilder()
+            .metrics([{ name: 'elapsed_time', aggregation: 'avg' }, { name: 'path' }])
+            .from('http_log')
+            .filter({ host: domain })
+            .groupBy(['path'])
+            .orderBy(['elapsed_time'], true)
+            .limit(3)
+            .build();
+
+        const [fastestPaths, slowestPaths] = await Promise.all([
+            this.clickhouse.query(fastestQueryBuilder.query, fastestQueryBuilder.params),
+            this.clickhouse.query(slowestQueryBuilder.query, slowestQueryBuilder.params),
+        ]);
+
+        return {
+            fastestPaths,
+            slowestPaths,
+        };
+    }
 }

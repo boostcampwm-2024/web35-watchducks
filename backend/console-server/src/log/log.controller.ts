@@ -1,7 +1,9 @@
-import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import { LogService } from './log.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ProjectResponseDto } from '../project/dto/create-project-response.dto';
+import { GetPathSpeedRankDto } from './dto/get-path-speed-rank.dto';
+import { GetPathSpeedRankResponseDto } from './dto/get-path-speed-rank-response.dto';
 
 @Controller('log')
 export class LogController {
@@ -71,5 +73,20 @@ export class LogController {
     })
     async trafficByGeneration() {
         return await this.logService.trafficByGeneration();
+    }
+
+    @Get('/response-speed/rank')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({
+        summary: '개별 프로젝트의 경로별 응답 속도 순위',
+        description: '개별 프로젝트의 경로별 응답 속도 중 가장 빠른/느린 3개를 반환합니다.',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: '개별 프로젝트의 경로별 응답 속도 중 가장 빠른/느린 3개가 반환됨.',
+        type: GetPathSpeedRankResponseDto,
+    })
+    async getPathSpeedRankByProject(@Query() getPathSpeedRankDto: GetPathSpeedRankDto) {
+        return await this.logService.getPathSpeedRankByProject(getPathSpeedRankDto);
     }
 }
