@@ -281,4 +281,33 @@ describe('LogRepository 테스트', () => {
             );
         });
     });
+
+    describe('findTrafficDailyDifferenceByGeneration()는 ', () => {
+        const currentTime = new Date('2024-03-20T15:00:00Z');
+
+        beforeEach(() => {
+            jest.useFakeTimers();
+            jest.setSystemTime(currentTime);
+        });
+
+        afterEach(() => {
+            jest.useRealTimers();
+        });
+
+        it('총 트래픽의 차이를 계산하여 리턴할 수 있어야 한다.', async () => {
+            const todayTraffic = [{ count: 500 }];
+            const yesterdayTraffic = [{ count: 400 }];
+
+            const expectedResult = { traffic_daily_difference: '+100' };
+
+            mockClickhouse.query
+                .mockResolvedValueOnce(todayTraffic)
+                .mockResolvedValueOnce(yesterdayTraffic);
+
+            const result = await repository.findTrafficDailyDifferenceByGeneration();
+
+            expect(result).toEqual(expectedResult);
+            expect(clickhouse.query).toHaveBeenCalledTimes(2);
+        });
+    });
 });
