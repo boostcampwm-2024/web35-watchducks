@@ -1,28 +1,17 @@
-import useGroupNames from '@hook/useGroupNames';
+import useGroupNames from '@hook/api/useGroupNames';
+import { NavbarSelectProps } from '@type/Navbar';
+import { useEffect } from 'react';
 
 import NavbarSelect from './NavbarSelect';
 
-type Props = {
-  generation: string;
-  selectedGroup: string;
-  setGeneration: (value: string) => void;
-  setSelectedGroup: (value: string) => void;
-};
+type Props = NavbarSelectProps;
 
-export default function NavbarCustomSelect({
-  generation,
-  selectedGroup,
-  setGeneration,
-  setSelectedGroup
-}: Props) {
-  const { data } = useGroupNames(generation);
-  return (
-    <NavbarSelect
-      generation={generation}
-      selectedGroup={selectedGroup}
-      setGeneration={setGeneration}
-      setSelectedGroup={setSelectedGroup}
-      groupOption={data}
-    />
-  );
+export default function NavbarCustomSelect(props: Props) {
+  const { data = [] } = useGroupNames(props.generation);
+
+  useEffect(() => {
+    props.setSelectedGroup(data[0].value);
+  }, [data]);
+
+  return <NavbarSelect {...props} groupOption={data} />;
 }
