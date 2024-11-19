@@ -35,7 +35,9 @@ export class Server {
             const question = this.parseQuery(query);
             logger.logQuery(question.name, remoteInfo);
             await this.validateRequest(question.name);
-            await this.dauRecorder.recordAccess(question.name);
+            this.dauRecorder.recordAccess(question.name).catch((err) => {
+                logger.error(`DAU recording failed for ${question.name}: ${err.message}`);
+            });
 
             const response = new DNSResponseBuilder(this.config, query)
                 .addAnswer(ResponseCode.NOERROR, question)
