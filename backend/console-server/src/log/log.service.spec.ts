@@ -8,6 +8,8 @@ import { NotFoundException } from '@nestjs/common';
 import type { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generation-response.dto';
 import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
 import { GetSuccessRateByProjectResponseDTO } from './dto/get-success-rate-by-project-response.dto';
+import type { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
+import { GetTrafficDailyDifferenceResponseDto } from './dto/get-traffic-daily-difference-response.dto';
 
 describe('LogService 테스트', () => {
     let service: LogService;
@@ -22,6 +24,7 @@ describe('LogService 테스트', () => {
         findTrafficByGeneration: jest.fn(),
         getPathSpeedRankByProject: jest.fn(),
         getTrafficByProject: jest.fn(),
+        findTrafficDailyDifferenceByGeneration: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -418,6 +421,50 @@ describe('LogService 테스트', () => {
                 timeUnit: mockRequestDto.timeUnit,
                 trafficData: [],
             });
+        });
+    });
+
+    describe('getTrafficDailyDifferenceByGeneration()는 ', () => {
+        const mockRequestDto: GetTrafficDailyDifferenceDto = { generation: 9 };
+
+        beforeEach(() => {
+            mockLogRepository.findTrafficDailyDifferenceByGeneration = jest.fn();
+        });
+
+        it('전일 대비 총 트래픽 증감량을 반환해야 한다', async () => {
+            const mockRepositoryResponse = { traffic_daily_difference: '+9100' };
+            mockLogRepository.findTrafficDailyDifferenceByGeneration.mockResolvedValue(
+                mockRepositoryResponse,
+            );
+
+            const result = await service.getTrafficDailyDifferenceByGeneration(mockRequestDto);
+
+            expect(result).toBeInstanceOf(GetTrafficDailyDifferenceResponseDto);
+            expect(result.traffic_daily_difference).toBe('+9100');
+            expect(mockLogRepository.findTrafficDailyDifferenceByGeneration).toHaveBeenCalledTimes(
+                1,
+            );
+        });
+
+        it('트래픽의 차이가 0인 경우에도 올바르게 처리해야 한다', async () => {
+            const mockRepositoryResponse = { traffic_daily_difference: '0' };
+            mockLogRepository.findTrafficDailyDifferenceByGeneration.mockResolvedValue(
+                mockRepositoryResponse,
+            );
+
+            const result = await service.getTrafficDailyDifferenceByGeneration(mockRequestDto);
+
+            expect(result).toEqual(mockRepositoryResponse);
+        });
+
+        it('레포지토리 호출 시, 발생하는 에러를 throw 해야 한다', async () => {
+            mockLogRepository.findTrafficDailyDifferenceByGeneration.mockRejectedValue(
+                new Error('Database error'),
+            );
+
+            await expect(
+                service.getTrafficDailyDifferenceByGeneration(mockRequestDto),
+            ).rejects.toThrow('Database error');
         });
     });
 });
