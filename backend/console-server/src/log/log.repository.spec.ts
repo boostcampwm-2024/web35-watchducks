@@ -113,7 +113,7 @@ describe('LogRepository 테스트', () => {
 
             expect(result).toEqual({ success_rate: 98.5 });
             expect(clickhouse.query).toHaveBeenCalledWith(
-                "SELECT (sum(is_error) / count(*)) * 100 as is_error_rate\n    FROM http_log"
+                'SELECT (sum(is_error) / count(*)) * 100 as is_error_rate\n    FROM http_log',
             );
         });
 
@@ -133,7 +133,7 @@ describe('LogRepository 테스트', () => {
 
             const result = await repository.findTrafficByGeneration();
 
-            expect(result).toEqual(mockResult[0]);
+            expect(result).toEqual(mockResult);
             expect(clickhouse.query).toHaveBeenCalledWith(
                 expect.stringMatching(/SELECT.*count\(\).*as count/s),
                 expect.any(Object),
