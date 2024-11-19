@@ -193,4 +193,55 @@ describe('LogRepository 테스트', () => {
             );
         });
     });
+
+    describe('getTrafficByProject()는', () => {
+        const domain = 'example.com';
+        const timeUnit = 'Hour';
+
+        const mockTrafficData = [
+            { timestamp: '2024-11-18 10:00:00', count: 150 },
+            { timestamp: '2024-11-18 11:00:00', count: 120 },
+            { timestamp: '2024-11-18 12:00:00', count: 180 },
+        ];
+
+        it('올바른 도메인과 시간 단위를 기준으로 트래픽 데이터를 반환해야 한다.', async () => {
+            mockClickhouse.query.mockResolvedValue(mockTrafficData);
+
+            const result = await repository.getTrafficByProject(domain, timeUnit);
+
+            expect(result).toEqual(mockTrafficData);
+            expect(clickhouse.query).toHaveBeenCalledWith(
+                expect.stringMatching(
+                    /SELECT\s+count\(\)\s+as\s+count,\s+toStartOfHour\(timestamp\)\s+as\s+timestamp\s+FROM\s+http_log\s+WHERE\s+host\s+=\s+\{host:String}\s+GROUP\s+BY\s+timestamp\s+ORDER\s+BY\s+timestamp/s,
+                ),
+                expect.objectContaining({ host: domain }),
+            );
+        });
+
+        it('트래픽 데이터가 없을 경우 빈 배열을 반환해야 한다.', async () => {
+            mockClickhouse.query.mockResolvedValue([]);
+
+            const result = await repository.getTrafficByProject(domain, timeUnit);
+
+            expect(result).toEqual([]);
+            expect(clickhouse.query).toHaveBeenCalledWith(
+                expect.any(String),
+                expect.objectContaining({ host: domain }),
+            );
+        });
+
+        it('Clickhouse 호출 중 에러가 발생하면 예외를 throw 해야 한다.', async () => {
+            const error = new Error('Clickhouse query failed');
+            mockClickhouse.query.mockRejectedValue(error);
+
+            await expect(repository.getTrafficByProject(domain, timeUnit)).rejects.toThrow(
+                'Clickhouse query failed',
+            );
+
+            expect(clickhouse.query).toHaveBeenCalledWith(
+                expect.any(String),
+                expect.objectContaining({ host: domain }),
+            );
+        });
+    });
 });

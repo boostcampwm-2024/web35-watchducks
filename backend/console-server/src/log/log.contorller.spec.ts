@@ -20,6 +20,7 @@ describe('LogController 테스트', () => {
         responseSuccessRate: jest.fn(),
         trafficByGeneration: jest.fn(),
         getPathSpeedRankByProject: jest.fn(),
+        getTrafficByProject: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -193,6 +194,60 @@ describe('LogController 테스트', () => {
 
             expect(service.getPathSpeedRankByProject).toHaveBeenCalledWith(mockRequestDto);
             expect(service.getPathSpeedRankByProject).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('getTrafficByProject()는', () => {
+        const mockRequestDto = { projectName: 'example-project', timeUnit: 'month' };
+        const mockResponseDto = {
+            projectName: 'example-project',
+            timeUnit: 'month',
+            trafficData: [
+                { timestamp: '2024-11-01', count: 14 },
+                { timestamp: '2024-10-01', count: 10 },
+            ],
+        };
+        it('프로젝트의 시간 단위별 트래픽 데이터를 반환해야 한다', async () => {
+            mockLogService.getTrafficByProject.mockResolvedValue(mockResponseDto);
+
+            const result = await controller.getTrafficByProject(mockRequestDto);
+
+            expect(result).toEqual(mockResponseDto);
+            expect(result).toHaveProperty('projectName', mockRequestDto.projectName);
+            expect(result).toHaveProperty('timeUnit', mockRequestDto.timeUnit);
+            expect(result.trafficData).toHaveLength(2);
+            expect(result.trafficData[0]).toHaveProperty('timestamp', '2024-11-01');
+            expect(result.trafficData[0]).toHaveProperty('count', 14);
+            expect(service.getTrafficByProject).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getTrafficByProject).toHaveBeenCalledTimes(1);
+        });
+
+        it('서비스 에러 시 예외를 throw 해야 한다', async () => {
+            const error = new Error('Database error');
+            mockLogService.getTrafficByProject.mockRejectedValue(error);
+
+            await expect(controller.getTrafficByProject(mockRequestDto)).rejects.toThrow(error);
+
+            expect(service.getTrafficByProject).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getTrafficByProject).toHaveBeenCalledTimes(1);
+        });
+
+        it('빈 트래픽 데이터를 반환해야 한다 (No Data)', async () => {
+            const emptyResponseDto = {
+                projectName: 'example-project',
+                timeUnit: 'month',
+                trafficData: [],
+            };
+            mockLogService.getTrafficByProject.mockResolvedValue(emptyResponseDto);
+
+            const result = await controller.getTrafficByProject(mockRequestDto);
+
+            expect(result).toEqual(emptyResponseDto);
+            expect(result).toHaveProperty('projectName', mockRequestDto.projectName);
+            expect(result).toHaveProperty('timeUnit', mockRequestDto.timeUnit);
+            expect(result.trafficData).toHaveLength(0);
+            expect(service.getTrafficByProject).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getTrafficByProject).toHaveBeenCalledTimes(1);
         });
     });
 });

@@ -1,11 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { LogRepository } from './log.repository';
-import { GetPathSpeedRankDto } from './dto/get-path-speed-rank.dto';
-import { GetPathSpeedRankResponseDto } from './dto/get-path-speed-rank-response.dto';
 import { plainToInstance } from 'class-transformer';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from '../project/entities/project.entity';
 import { Repository } from 'typeorm';
+import { LogRepository } from './log.repository';
+import { GetPathSpeedRankDto } from './dto/get-path-speed-rank.dto';
+import { GetPathSpeedRankResponseDto } from './dto/get-path-speed-rank-response.dto';
+import { GetTrafficByProjectDto } from './dto/get-traffic-by-project.dto';
+import { GetTrafficByProjectResponseDto } from './dto/get-traffic-by-project-response.dto';
 
 @Injectable()
 export class LogService {
@@ -61,5 +63,23 @@ export class LogService {
         const result = await this.logRepository.getPathSpeedRankByProject(project.domain);
 
         return plainToInstance(GetPathSpeedRankResponseDto, { projectName, ...result });
+    }
+
+    async getTrafficByProject(getTrafficByProjectDto: GetTrafficByProjectDto) {
+        const { projectName, timeUnit } = getTrafficByProjectDto;
+
+        const project = await this.projectRepository.findOne({
+            where: { name: projectName },
+            select: ['domain'],
+        });
+        if (!project) throw new NotFoundException(`Project with name ${projectName} not found`);
+
+        const trafficData = await this.logRepository.getTrafficByProject(project.domain, timeUnit);
+
+        return plainToInstance(GetTrafficByProjectResponseDto, {
+            projectName,
+            timeUnit,
+            trafficData,
+        });
     }
 }
