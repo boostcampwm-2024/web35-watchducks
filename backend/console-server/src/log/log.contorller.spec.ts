@@ -18,6 +18,7 @@ describe('LogController 테스트', () => {
         elapsedTime: jest.fn(),
         trafficRank: jest.fn(),
         getResponseSuccessRate: jest.fn(),
+        getResponseSuccessRateByProject: jest.fn(),
         getTrafficByGeneration: jest.fn(),
         getPathSpeedRankByProject: jest.fn(),
         getTrafficByProject: jest.fn(),
@@ -127,6 +128,53 @@ describe('LogController 테스트', () => {
             expect(result).toEqual({ success_rate: 98.5 });
             expect(service.getResponseSuccessRate).toHaveBeenCalledWith(mockSuccessRateDto);
             expect(service.getResponseSuccessRate).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('getResponseSuccessRateByProject()는 ', () => {
+        const mockRequestDto = { projectName: 'example-project' };
+        const mockServiceResponse = {
+            projectName: 'example-project',
+            success_rate: 95.5,
+        };
+
+        it('해당 프로젝트의 응답 성공률을 반환해야 한다', async () => {
+            mockLogService.getResponseSuccessRateByProject.mockResolvedValue(mockServiceResponse);
+
+            const result = await controller.getResponseSuccessRateByProject(mockRequestDto);
+
+            expect(result).toEqual(mockServiceResponse);
+            expect(result).toHaveProperty('projectName', 'example-project');
+            expect(result).toHaveProperty('success_rate', 95.5);
+            expect(service.getResponseSuccessRateByProject).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getResponseSuccessRateByProject).toHaveBeenCalledTimes(1);
+        });
+
+        it('서비스 호출 시, 에러가 발생하면 예외를 throw 해야 한다', async () => {
+            const error = new Error('Database error');
+            mockLogService.getResponseSuccessRateByProject.mockRejectedValue(error);
+
+            await expect(
+                controller.getResponseSuccessRateByProject(mockRequestDto),
+            ).rejects.toThrow(error);
+
+            expect(service.getResponseSuccessRateByProject).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getResponseSuccessRateByProject).toHaveBeenCalledTimes(1);
+        });
+
+        it('성공률이 100%인 경우에도 정상적으로 반환해야 한다', async () => {
+            const perfectRateResponse = {
+                projectName: 'example-project',
+                success_rate: 100,
+            };
+            mockLogService.getResponseSuccessRateByProject.mockResolvedValue(perfectRateResponse);
+
+            const result = await controller.getResponseSuccessRateByProject(mockRequestDto);
+
+            expect(result).toEqual(perfectRateResponse);
+            expect(result.success_rate).toBe(100);
+            expect(service.getResponseSuccessRateByProject).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getResponseSuccessRateByProject).toHaveBeenCalledTimes(1);
         });
     });
 
