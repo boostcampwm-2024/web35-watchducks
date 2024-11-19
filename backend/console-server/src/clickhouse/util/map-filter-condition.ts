@@ -13,9 +13,7 @@ export function mapFilterCondition(
     } else if (value instanceof Date) {
         type = 'DateTime64(3)';
     } else {
-        // Should not occur due to `FilterValue` type restriction
         throw new Error(`Unsupported filter value type for key "${key}": ${typeof value}`);
     }
-
     return { condition: `${key} = {${key}:${type}}`, param: value };
 }

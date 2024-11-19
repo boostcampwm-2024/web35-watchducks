@@ -9,7 +9,7 @@ interface metric {
 
 export class TimeSeriesQueryBuilder {
     private query: string;
-    private params: Record<string, any> = {};
+    private params: Record<string, unknown> = {};
     private limitValue?: number;
 
     constructor() {
@@ -62,7 +62,7 @@ export class TimeSeriesQueryBuilder {
         return this;
     }
 
-    filter(filters: Record<string, any>): this {
+    filter(filters: Record<string, unknown>): this {
         if (filters) {
             const conditions = Object.entries(filters).map(([key, value]) => {
                 const { condition, param } = mapFilterCondition(key, value);

@@ -14,7 +14,7 @@ class PathResponseDto {
         description: '해당 경로의 평균 응답 소요 시간 (ms).',
     })
     @Expose()
-    elapsed_time: number;
+    avg_elapsed_time: number;
 }
 
 @Exclude()

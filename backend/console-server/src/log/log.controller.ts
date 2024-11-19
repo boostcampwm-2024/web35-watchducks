@@ -75,7 +75,7 @@ export class LogController {
         return await this.logService.trafficByGeneration();
     }
 
-    @Get('/response-speed/rank')
+    @Get('/elapsed-time/path-rank')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: '개별 프로젝트의 경로별 응답 속도 순위',

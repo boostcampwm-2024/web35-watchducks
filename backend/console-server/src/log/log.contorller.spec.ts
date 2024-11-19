@@ -19,6 +19,7 @@ describe('LogController 테스트', () => {
         trafficRank: jest.fn(),
         responseSuccessRate: jest.fn(),
         trafficByGeneration: jest.fn(),
+        getPathSpeedRankByProject: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -146,6 +147,52 @@ describe('LogController 테스트', () => {
             expect(result).toHaveProperty('status', HttpStatus.OK);
             expect(result).toHaveProperty('data.total_traffic');
             expect(service.trafficByGeneration).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('getPathSpeedRankByProject()는 ', () => {
+        const mockRequestDto = {
+            projectName: 'example-project',
+        };
+
+        const mockResponseDto = {
+            projectName: 'example-project',
+            fastestPaths: [
+                { path: '/api/v1/resource', avg_elapsed_time: 123.45 },
+                { path: '/api/v1/users', avg_elapsed_time: 145.67 },
+                { path: '/api/v1/orders', avg_elapsed_time: 150.89 },
+            ],
+            slowestPaths: [
+                { path: '/api/v1/reports', avg_elapsed_time: 345.67 },
+                { path: '/api/v1/logs', avg_elapsed_time: 400.23 },
+                { path: '/api/v1/stats', avg_elapsed_time: 450.56 },
+            ],
+        };
+
+        it('프로젝트의 경로별 응답 속도 순위를 반환해야 한다', async () => {
+            mockLogService.getPathSpeedRankByProject.mockResolvedValue(mockResponseDto);
+
+            const result = await controller.getPathSpeedRankByProject(mockRequestDto);
+
+            expect(result).toEqual(mockResponseDto);
+            expect(service.getPathSpeedRankByProject).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getPathSpeedRankByProject).toHaveBeenCalledTimes(1);
+
+            expect(result).toHaveProperty('projectName', mockRequestDto.projectName);
+            expect(result.fastestPaths).toHaveLength(3);
+            expect(result.slowestPaths).toHaveLength(3);
+        });
+
+        it('서비스 에러 시 예외를 throw 해야 한다', async () => {
+            const error = new Error('Database error');
+            mockLogService.getPathSpeedRankByProject.mockRejectedValue(error);
+
+            await expect(controller.getPathSpeedRankByProject(mockRequestDto)).rejects.toThrow(
+                error,
+            );
+
+            expect(service.getPathSpeedRankByProject).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getPathSpeedRankByProject).toHaveBeenCalledTimes(1);
         });
     });
 });
