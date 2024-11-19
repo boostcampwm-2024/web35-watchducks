@@ -7,6 +7,7 @@ import { Project } from '../project/entities/project.entity';
 import { NotFoundException } from '@nestjs/common';
 import type { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generation-response.dto';
 import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
+import { GetSuccessRateByProjectResponseDTO } from './dto/get-success-rate-by-project-response.dto';
 
 describe('LogService 테스트', () => {
     let service: LogService;
@@ -163,6 +164,22 @@ describe('LogService 테스트', () => {
                     success_rate: mockSuccessRate.success_rate,
                 }),
             );
+        });
+
+        it('응답이 GetSuccessRateByProjectResponseDTO 형태로 변환되어야 한다', async () => {
+            const projectRepository = service['projectRepository'];
+            projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
+
+            mockLogRepository.findResponseSuccessRateByProject.mockResolvedValue(mockSuccessRate);
+
+            const result = await service.getResponseSuccessRateByProject(mockRequestDto);
+
+            expect(result).toBeInstanceOf(GetSuccessRateByProjectResponseDTO);
+            expect(Object.keys(result)).toContain('projectName');
+            expect(Object.keys(result)).toContain('success_rate');
+            expect(Object.keys(result).length).toBe(2);
+            expect(result.projectName).toBe(mockRequestDto.projectName);
+            expect(result.success_rate).toBe(mockSuccessRate.success_rate);
         });
 
         it('존재하지 않는 프로젝트명을 받은 경우, NotFoundException을 던져야 한다', async () => {
