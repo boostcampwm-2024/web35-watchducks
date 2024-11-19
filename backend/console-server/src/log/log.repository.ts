@@ -50,7 +50,7 @@ export class LogRepository {
     }
 
     async findResponseSuccessRate() {
-        const { query, params } = new TimeSeriesQueryBuilder()
+        const { query } = new TimeSeriesQueryBuilder()
             .metrics([
                 {
                     name: 'is_error',
@@ -60,7 +60,7 @@ export class LogRepository {
             .from('http_log')
             .build();
 
-        const result = await this.clickhouse.query(query, params);
+        const result = await this.clickhouse.query(query);
         return {
             success_rate: 100 - (result as Array<{ is_error_rate: number }>)[0].is_error_rate,
         };

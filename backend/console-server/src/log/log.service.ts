@@ -8,6 +8,8 @@ import { GetPathSpeedRankDto } from './dto/get-path-speed-rank.dto';
 import { GetPathSpeedRankResponseDto } from './dto/get-path-speed-rank-response.dto';
 import { GetTrafficByProjectDto } from './dto/get-traffic-by-project.dto';
 import { GetTrafficByProjectResponseDto } from './dto/get-traffic-by-project-response.dto';
+import { GetSuccessRateResponseDto } from './dto/get-success-rate-response.dto';
+import { GetSuccessRateDto } from './dto/get-success-rate.dto';
 
 @Injectable()
 export class LogService {
@@ -39,10 +41,12 @@ export class LogService {
         return result.slice(0, 5);
     }
 
-    async responseSuccessRate() {
+    async getResponseSuccessRate(_getSuccessRateDto: GetSuccessRateDto) {
         const result = await this.logRepository.findResponseSuccessRate();
 
-        return result;
+        return plainToInstance(GetSuccessRateResponseDto, {
+            success_rate: result.success_rate,
+        });
     }
 
     async trafficByGeneration() {

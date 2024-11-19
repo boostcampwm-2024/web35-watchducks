@@ -118,12 +118,14 @@ describe('LogService 테스트', () => {
 
     describe('responseSuccessRate()는 ', () => {
         it('응답 성공률을 반환할 수 있어야 한다.', async () => {
-            const mockRate = { success_rate: 98.5 };
-            mockLogRepository.findResponseSuccessRate.mockResolvedValue(mockRate);
+            const mockSuccessRateDto = { generation: 5 };
+            const mockRepositoryResponse = { success_rate: 98.5 };
+            mockLogRepository.findResponseSuccessRate.mockResolvedValue(mockRepositoryResponse);
+            const expectedResult = { success_rate: 98.5 };
 
-            const result = await service.responseSuccessRate();
+            const result = await service.getResponseSuccessRate(mockSuccessRateDto);
 
-            expect(result).toEqual(mockRate);
+            expect(result).toEqual(expectedResult);
             expect(repository.findResponseSuccessRate).toHaveBeenCalled();
         });
     });

@@ -17,7 +17,7 @@ describe('LogController 테스트', () => {
         httpLog: jest.fn(),
         elapsedTime: jest.fn(),
         trafficRank: jest.fn(),
-        responseSuccessRate: jest.fn(),
+        getResponseSuccessRate: jest.fn(),
         trafficByGeneration: jest.fn(),
         getPathSpeedRankByProject: jest.fn(),
         getTrafficByProject: jest.fn(),
@@ -115,21 +115,18 @@ describe('LogController 테스트', () => {
         });
     });
 
-    describe('responseSuccessRate()는 ', () => {
-        const mockResult = {
-            status: HttpStatus.OK,
-            data: { success_rate: 98.5 },
-        };
+    describe('getResponseSuccessRate()는 ', () => {
+        const mockSuccessRateDto = { generation: 5 };
+        const mockServiceResponse = { success_rate: 98.5 };
 
-        it('응답 성공률을 ProjectResponseDto 형식으로 반환해야 한다', async () => {
-            mockLogService.responseSuccessRate.mockResolvedValue(mockResult);
+        it('응답 성공률을 반환해야 한다', async () => {
+            mockLogService.getResponseSuccessRate.mockResolvedValue(mockServiceResponse);
 
-            const result = await controller.responseSuccessRate();
+            const result = await controller.getResponseSuccessRate(mockSuccessRateDto);
 
-            expect(result).toEqual(mockResult);
-            expect(result).toHaveProperty('status', HttpStatus.OK);
-            expect(result).toHaveProperty('data.success_rate');
-            expect(service.responseSuccessRate).toHaveBeenCalledTimes(1);
+            expect(result).toEqual({ success_rate: 98.5 });
+            expect(service.getResponseSuccessRate).toHaveBeenCalledWith(mockSuccessRateDto);
+            expect(service.getResponseSuccessRate).toHaveBeenCalledTimes(1);
         });
     });
 

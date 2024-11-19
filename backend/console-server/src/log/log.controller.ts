@@ -6,6 +6,8 @@ import { GetPathSpeedRankDto } from './dto/get-path-speed-rank.dto';
 import { GetPathSpeedRankResponseDto } from './dto/get-path-speed-rank-response.dto';
 import { GetTrafficByProjectResponseDto } from './dto/get-traffic-by-project-response.dto';
 import { GetTrafficByProjectDto } from './dto/get-traffic-by-project.dto';
+import { GetSuccessRateResponseDto } from './dto/get-success-rate-response.dto';
+import { GetSuccessRateDto } from './dto/get-success-rate.dto';
 
 @Controller('log')
 export class LogController {
@@ -56,10 +58,10 @@ export class LogController {
     @ApiResponse({
         status: 200,
         description: '기수 내 응답 성공률이 성공적으로 반환됨.',
-        type: ProjectResponseDto,
+        type: GetSuccessRateResponseDto,
     })
-    async responseSuccessRate() {
-        return await this.logService.responseSuccessRate();
+    async getResponseSuccessRate(getSuccessRateDto: GetSuccessRateDto) {
+        return await this.logService.getResponseSuccessRate(getSuccessRateDto);
     }
 
     @Get('/traffic/project')
