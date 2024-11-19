@@ -1,8 +1,9 @@
 import { FormState } from '@type/RegisterForm';
-import axios from 'axios';
+
+import { api } from './axios';
 
 const postRegister = async (data: FormState) => {
-  const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/project`, data);
+  const response = await api.post('/project', data);
   return response.data;
 };
 
