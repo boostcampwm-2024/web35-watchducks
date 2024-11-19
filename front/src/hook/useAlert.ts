@@ -5,8 +5,8 @@ type Props = {
 };
 
 export default function useAlert({ time }: Props) {
-  const [isVisible, setIsVisible] = useState(false);
-  const [message, setMessage] = useState('');
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>('');
 
   const showAlert = (alertMessage: string) => {
     setMessage(alertMessage);

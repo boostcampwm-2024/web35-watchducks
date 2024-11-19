@@ -10,10 +10,7 @@ const BOOST_CAMP_VALUE = {
   Text: '부스트캠프 10기'
 } as const;
 
-const GENERATION_OPTION = [
-  { value: GENERATION_VALUE.NINTH, label: '9기' },
-  { value: GENERATION_VALUE.TENTH, label: '10기' }
-] as const;
+const GENERATION_OPTION = [{ value: GENERATION_VALUE.NINTH, label: '9기' }] as const;
 
 const BOOST_CAMP_OPTION: GroupOption[] = [{ value: '9', label: BOOST_CAMP_VALUE.NINTH }];
 
