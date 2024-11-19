@@ -62,7 +62,10 @@ export class LogService {
 
         const result = await this.logRepository.findResponseSuccessRateByProject(project.domain);
 
-        return plainToInstance(GetSuccessRateByProjectResponseDTO, result);
+        return plainToInstance(GetSuccessRateByProjectResponseDTO, {
+            projectName,
+            ...result,
+        });
     }
 
     async getTrafficByGeneration(_getTrafficByGenerationDto: GetTrafficByGenerationDto) {
