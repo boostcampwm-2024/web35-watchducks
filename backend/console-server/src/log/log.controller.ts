@@ -9,6 +9,7 @@ import { GetTrafficByProjectDto } from './dto/get-traffic-by-project.dto';
 import { GetSuccessRateResponseDto } from './dto/get-success-rate-response.dto';
 import { GetSuccessRateDto } from './dto/get-success-rate.dto';
 import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
+import { GetSuccessRateByProjectDto } from './dto/get-success-rate-by-project.dto';
 
 @Controller('log')
 export class LogController {
@@ -67,10 +68,19 @@ export class LogController {
 
     @Get('/success-rate/project')
     @HttpCode(HttpStatus.OK)
-    @ApiOperation({})
-    @ApiResponse({})
-    async getResponseSuccessRateByProject(){
-        // return await this.logService.getResponseSuccessRate();
+    @ApiOperation({
+        summary: '프로젝트 별 응답 성공률',
+        description: '요청받은 프로젝트의 응답 성공률을 성공적으로 반환합니다.',
+    })
+    @ApiResponse({
+        status: 200,
+        description: '프로젝트 별 응답 성공률이 성공적으로 반환됨.',
+        type: GetSuccessRateByProjectDto,
+    })
+    async getResponseSuccessRateByProject(
+        @Query() getSuccessRateByProjectDto: GetSuccessRateByProjectDto,
+    ) {
+        return await this.logService.getResponseSuccessRateByProject(getSuccessRateByProjectDto);
     }
 
     @Get('/traffic/project')

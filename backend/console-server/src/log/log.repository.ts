@@ -66,6 +66,25 @@ export class LogRepository {
         };
     }
 
+    async findResponseSuccessRateByProject(domain: string) {
+        const queryBuilder = new TimeSeriesQueryBuilder()
+            .metrics([
+                {
+                    name: 'is_error',
+                    aggregation: 'rate',
+                },
+            ])
+            .from('http_log')
+            .filter({ host: domain })
+            .build();
+
+        const result = await this.clickhouse.query(queryBuilder.query, queryBuilder.params);
+
+        return {
+            success_rate: 100 - (result as Array<{ is_error_rate: number }>)[0].is_error_rate,
+        };
+    }
+
     async findTrafficByGeneration() {
         const { query, params } = new TimeSeriesQueryBuilder()
             .metrics([

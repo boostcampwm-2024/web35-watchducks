@@ -11,6 +11,8 @@ import { GetTrafficByProjectResponseDto } from './dto/get-traffic-by-project-res
 import { GetSuccessRateResponseDto } from './dto/get-success-rate-response.dto';
 import { GetSuccessRateDto } from './dto/get-success-rate.dto';
 import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
+import { GetSuccessRateByProjectResponseDTO } from './dto/get-success-rate-by-project-response.dto';
+import { GetSuccessRateByProjectDto } from './dto/get-success-rate-by-project.dto';
 
 @Injectable()
 export class LogService {
@@ -46,6 +48,21 @@ export class LogService {
         const result = await this.logRepository.findResponseSuccessRate();
 
         return plainToInstance(GetSuccessRateResponseDto, result);
+    }
+
+    async getResponseSuccessRateByProject(getSuccessRateByProjectDto: GetSuccessRateByProjectDto) {
+        const { projectName } = getSuccessRateByProjectDto;
+
+        const project = await this.projectRepository.findOne({
+            where: { name: projectName },
+            select: ['domain'],
+        });
+
+        if (!project) throw new NotFoundException(`Project with name ${projectName} not found`);
+
+        const result = await this.logRepository.findResponseSuccessRateByProject(project.domain);
+
+        return plainToInstance(GetSuccessRateByProjectResponseDTO, result);
     }
 
     async getTrafficByGeneration(_getTrafficByGenerationDto: GetTrafficByGenerationDto) {
