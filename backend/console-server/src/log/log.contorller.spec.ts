@@ -3,7 +3,6 @@ import { HttpStatus } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { LogController } from './log.controller';
 import { LogService } from './log.service';
-
 interface TrafficRankResponseType {
     status: number;
     data: Array<{ host: string; count: number }>;
@@ -22,6 +21,7 @@ describe('LogController 테스트', () => {
         getTrafficByGeneration: jest.fn(),
         getPathSpeedRankByProject: jest.fn(),
         getTrafficByProject: jest.fn(),
+        getTrafficDailyDifferenceByGeneration: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -291,6 +291,40 @@ describe('LogController 테스트', () => {
             expect(result.trafficData).toHaveLength(0);
             expect(service.getTrafficByProject).toHaveBeenCalledWith(mockRequestDto);
             expect(service.getTrafficByProject).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('getTrafficDailyDifferenceByGeneration()는 ', () => {
+        const mockRequestDto = { generation: 9 };
+        const mockResponseDto = {
+            traffic_daily_difference: '+9100',
+        };
+
+        it('전일 대비 트래픽 차이를 리턴해야 한다', async () => {
+            mockLogService.getTrafficDailyDifferenceByGeneration.mockResolvedValue(mockResponseDto);
+
+            const result = await controller.getTrafficDailyDifferenceByGeneration(mockRequestDto);
+
+            expect(result).toEqual(mockResponseDto);
+            expect(result).toHaveProperty('traffic_daily_difference');
+            expect(service.getTrafficDailyDifferenceByGeneration).toHaveBeenCalledWith(
+                mockRequestDto,
+            );
+            expect(service.getTrafficDailyDifferenceByGeneration).toHaveBeenCalledTimes(1);
+        });
+
+        it('에러 발생 시, 예외를 throw 해야 한다', async () => {
+            const error = new Error('Database error');
+            mockLogService.getTrafficDailyDifferenceByGeneration.mockRejectedValue(error);
+
+            await expect(
+                controller.getTrafficDailyDifferenceByGeneration(mockRequestDto),
+            ).rejects.toThrow(error);
+
+            expect(service.getTrafficDailyDifferenceByGeneration).toHaveBeenCalledWith(
+                mockRequestDto,
+            );
+            expect(service.getTrafficDailyDifferenceByGeneration).toHaveBeenCalledTimes(1);
         });
     });
 });
