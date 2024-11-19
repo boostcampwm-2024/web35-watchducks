@@ -2,8 +2,8 @@ import Img from '@component/atom/Img';
 import P from '@component/atom/P';
 import Span from '@component/atom/Span';
 import { MEDALS } from '@constant/Medals';
-import useRankings from '@hook/useRankings';
-import { Ranking } from '@type/Navbar';
+import useRankings from '@hook/api/useRankings';
+import { Ranking } from '@type/api';
 import { Fragment } from 'react';
 
 export default function NavbarRanking() {
