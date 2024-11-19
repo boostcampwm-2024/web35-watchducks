@@ -17,6 +17,7 @@ describe('LogService 테스트', () => {
         findResponseSuccessRate: jest.fn(),
         findTrafficByGeneration: jest.fn(),
         getPathSpeedRankByProject: jest.fn(),
+        getTrafficByProject: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -189,7 +190,7 @@ describe('LogService 테스트', () => {
 
         it('존재하지 않는 프로젝트명을 조회할 경우 NotFoundException을 던져야 한다', async () => {
             const projectRepository = service['projectRepository'];
-            projectRepository.findOne = jest.fn().mockResolvedValue(null); // Project not found
+            projectRepository.findOne = jest.fn().mockResolvedValue(null);
 
             await expect(service.getPathSpeedRankByProject(mockRequestDto)).rejects.toThrow(
                 new NotFoundException(`Project with name ${mockRequestDto.projectName} not found`),
@@ -221,6 +222,102 @@ describe('LogService 테스트', () => {
             expect(mockLogRepository.getPathSpeedRankByProject).toHaveBeenCalledWith(
                 mockProject.domain,
             );
+        });
+    });
+
+    describe('getTrafficByProject()는', () => {
+        const mockRequestDto = { projectName: 'example-project', timeUnit: 'month' };
+        const mockProject = {
+            name: 'example-project',
+            domain: 'example.com',
+        };
+        const mockTrafficData = [
+            { timestamp: '2024-11-01', count: 14 },
+            { timestamp: '2024-10-01', count: 10 },
+        ];
+        const mockResponseDto = {
+            projectName: 'example-project',
+            timeUnit: 'month',
+            trafficData: mockTrafficData,
+        };
+
+        it('프로젝트명을 기준으로 도메인을 조회한 후 트래픽 데이터를 반환해야 한다', async () => {
+            const projectRepository = service['projectRepository'];
+            projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
+
+            mockLogRepository.getTrafficByProject = jest.fn().mockResolvedValue(mockTrafficData);
+
+            const result = await service.getTrafficByProject(mockRequestDto);
+
+            expect(projectRepository.findOne).toHaveBeenCalledWith({
+                where: { name: mockRequestDto.projectName },
+                select: ['domain'],
+            });
+            expect(mockLogRepository.getTrafficByProject).toHaveBeenCalledWith(
+                mockProject.domain,
+                mockRequestDto.timeUnit,
+            );
+            expect(result).toEqual(mockResponseDto);
+        });
+
+        it('존재하지 않는 프로젝트명을 조회할 경우 NotFoundException을 던져야 한다', async () => {
+            const projectRepository = service['projectRepository'];
+            projectRepository.findOne = jest.fn().mockResolvedValue(null);
+
+            await expect(service.getTrafficByProject(mockRequestDto)).rejects.toThrow(
+                new NotFoundException(`Project with name ${mockRequestDto.projectName} not found`),
+            );
+
+            expect(projectRepository.findOne).toHaveBeenCalledWith({
+                where: { name: mockRequestDto.projectName },
+                select: ['domain'],
+            });
+            expect(mockLogRepository.getTrafficByProject).not.toHaveBeenCalled();
+        });
+
+        it('로그 레포지토리 호출 중 에러가 발생할 경우 예외를 던져야 한다', async () => {
+            const projectRepository = service['projectRepository'];
+            projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
+
+            mockLogRepository.getTrafficByProject = jest
+                .fn()
+                .mockRejectedValue(new Error('Database error'));
+
+            await expect(service.getTrafficByProject(mockRequestDto)).rejects.toThrow(
+                'Database error',
+            );
+
+            expect(projectRepository.findOne).toHaveBeenCalledWith({
+                where: { name: mockRequestDto.projectName },
+                select: ['domain'],
+            });
+            expect(mockLogRepository.getTrafficByProject).toHaveBeenCalledWith(
+                mockProject.domain,
+                mockRequestDto.timeUnit,
+            );
+        });
+
+        it('트래픽 데이터가 없을 경우 빈 배열을 반환해야 한다', async () => {
+            const projectRepository = service['projectRepository'];
+            projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
+
+            mockLogRepository.getTrafficByProject = jest.fn().mockResolvedValue([]);
+
+            const result = await service.getTrafficByProject(mockRequestDto);
+
+            expect(projectRepository.findOne).toHaveBeenCalledWith({
+                where: { name: mockRequestDto.projectName },
+                select: ['domain'],
+            });
+            expect(mockLogRepository.getTrafficByProject).toHaveBeenCalledWith(
+                mockProject.domain,
+                mockRequestDto.timeUnit,
+            );
+            expect(result).toEqual({
+                projectName: mockRequestDto.projectName,
+                timeUnit: mockRequestDto.timeUnit,
+                trafficData: [],
+            });
         });
     });
 });
