@@ -8,6 +8,7 @@ import { GetTrafficByProjectResponseDto } from './dto/get-traffic-by-project-res
 import { GetTrafficByProjectDto } from './dto/get-traffic-by-project.dto';
 import { GetSuccessRateResponseDto } from './dto/get-success-rate-response.dto';
 import { GetSuccessRateDto } from './dto/get-success-rate.dto';
+import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
 
 @Controller('log')
 export class LogController {
@@ -83,15 +84,15 @@ export class LogController {
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: '기수 내 총 트래픽',
-        description: '요청받은 기수의 기수 내 총 트래픽를 반환합니다.',
+        description: ' 요청받은 기수의 기수 내 총 트래픽를 반환합니다.',
     })
     @ApiResponse({
         status: 200,
         description: '기수 내 총 트래픽가 정상적으로 반환됨.',
-        type: ProjectResponseDto,
+        type: GetTrafficByProjectResponseDto,
     })
-    async trafficByGeneration() {
-        return await this.logService.trafficByGeneration();
+    async getTrafficByGeneration(@Query() getTrafficByGenerationDto: GetTrafficByGenerationDto) {
+        return await this.logService.getTrafficByGeneration(getTrafficByGenerationDto);
     }
 
     @Get('/elapsed-time/path-rank')

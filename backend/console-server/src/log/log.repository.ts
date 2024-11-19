@@ -78,7 +78,7 @@ export class LogRepository {
             .build();
 
         const result = await this.clickhouse.query(query, params);
-        return result[0];
+        return [{ count: ((result as unknown[])[0] as { count: number }).count }];
     }
 
     async getPathSpeedRankByProject(domain: string) {

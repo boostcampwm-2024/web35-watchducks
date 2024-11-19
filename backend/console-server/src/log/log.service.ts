@@ -10,6 +10,7 @@ import { GetTrafficByProjectDto } from './dto/get-traffic-by-project.dto';
 import { GetTrafficByProjectResponseDto } from './dto/get-traffic-by-project-response.dto';
 import { GetSuccessRateResponseDto } from './dto/get-success-rate-response.dto';
 import { GetSuccessRateDto } from './dto/get-success-rate.dto';
+import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
 
 @Injectable()
 export class LogService {
@@ -49,10 +50,12 @@ export class LogService {
         });
     }
 
-    async trafficByGeneration() {
+    async getTrafficByGeneration(_getTrafficByGenerationDto: GetTrafficByGenerationDto) {
         const result = await this.logRepository.findTrafficByGeneration();
 
-        return result;
+        return plainToInstance(GetTrafficByGenerationDto, {
+            count: result[0].count,
+        });
     }
 
     async getPathSpeedRankByProject(getPathSpeedRankDto: GetPathSpeedRankDto) {
