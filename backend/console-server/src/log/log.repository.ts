@@ -105,6 +105,44 @@ export class LogRepository {
         return [{ count: ((result as unknown[])[0] as { count: number }).count }];
     }
 
+    async findTrafficDailyDifferenceByGeneration() {
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+
+        const yesterdayStart = new Date();
+        yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+        yesterdayStart.setHours(0, 0, 0, 0);
+
+        const yesterdayEnd = new Date(todayStart);
+
+        const todayBuilder = new TimeSeriesQueryBuilder()
+            .metrics([{ name: '*', aggregation: 'count' }])
+            .from('http_log')
+            .timeBetween(todayStart, new Date());
+
+        const yesterdayBuilder = new TimeSeriesQueryBuilder()
+            .metrics([{ name: '*', aggregation: 'count' }])
+            .from('http_log')
+            .timeBetween(yesterdayStart, yesterdayEnd);
+
+        const [todayResult, yesterdayResult] = await Promise.all([
+            this.clickhouse.query<{ count: number }>(
+                todayBuilder.build().query,
+                todayBuilder.build().params,
+            ),
+            this.clickhouse.query<{ count: number }>(
+                yesterdayBuilder.build().query,
+                yesterdayBuilder.build().params,
+            ),
+        ]);
+
+        const difference = todayResult[0].count - yesterdayResult[0].count;
+
+        return {
+            traffic_daily_difference: difference >= 0 ? `+${difference}` : `${difference}`,
+        };
+    }
+
     async getPathSpeedRankByProject(domain: string) {
         const fastestQueryBuilder = new TimeSeriesQueryBuilder()
             .metrics([{ name: 'elapsed_time', aggregation: 'avg' }, { name: 'path' }])
