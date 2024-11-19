@@ -1,10 +1,14 @@
-import { ProjectNames, ResponseRate, Traffic, Ranking } from '@type/api';
+import { ResponseRate, Traffic, Ranking } from '@type/api';
+import { GroupOption } from '@type/Navbar';
 
 import { api } from './axios';
 
 const getGroupNames = async (generation: string) => {
-  const response = await api.get<ProjectNames[]>(`/project?generation=${generation}`);
-  return response.data;
+  const response = await api.get<GroupOption[]>(`/project?generation=${generation}`);
+  return response.data.map((item) => ({
+    value: item.value,
+    label: item.value
+  }));
 };
 
 const getRakings = async () => {
