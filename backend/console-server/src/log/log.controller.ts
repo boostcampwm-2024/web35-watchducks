@@ -50,7 +50,7 @@ export class LogController {
         return await this.logService.trafficRank();
     }
 
-    @Get('/response-rate')
+    @Get('/success-rate')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: '기수 내 응답 성공률',
@@ -63,6 +63,14 @@ export class LogController {
     })
     async getResponseSuccessRate(getSuccessRateDto: GetSuccessRateDto) {
         return await this.logService.getResponseSuccessRate(getSuccessRateDto);
+    }
+
+    @Get('/success-rate/project')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({})
+    @ApiResponse({})
+    async getResponseSuccessRateByProject(){
+        // return await this.logService.getResponseSuccessRate();
     }
 
     @Get('/traffic/project')

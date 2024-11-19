@@ -45,17 +45,13 @@ export class LogService {
     async getResponseSuccessRate(_getSuccessRateDto: GetSuccessRateDto) {
         const result = await this.logRepository.findResponseSuccessRate();
 
-        return plainToInstance(GetSuccessRateResponseDto, {
-            success_rate: result.success_rate,
-        });
+        return plainToInstance(GetSuccessRateResponseDto, result);
     }
 
     async getTrafficByGeneration(_getTrafficByGenerationDto: GetTrafficByGenerationDto) {
         const result = await this.logRepository.findTrafficByGeneration();
 
-        return plainToInstance(GetTrafficByGenerationDto, {
-            count: result[0].count,
-        });
+        return plainToInstance(GetTrafficByGenerationDto, result[0]);
     }
 
     async getPathSpeedRankByProject(getPathSpeedRankDto: GetPathSpeedRankDto) {
