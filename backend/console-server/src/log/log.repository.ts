@@ -101,8 +101,8 @@ export class LogRepository {
             .from('http_log')
             .build();
 
-        const result = await this.clickhouse.query(query, params);
-        return [{ count: ((result as unknown[])[0] as { count: number }).count }];
+        const result = await this.clickhouse.query<{ count: number }>(query, params);
+        return [{ count: result[0].count }];
     }
 
     async findTrafficDailyDifferenceByGeneration() {
