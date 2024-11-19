@@ -4,11 +4,11 @@ type Ranking = {
 };
 
 type Traffic = {
-  count: string;
+  count: number;
 };
 
 type ResponseRate = {
-  success_rate: string;
+  success_rate: number;
 };
 
 export type { Traffic, ResponseRate, Ranking };
