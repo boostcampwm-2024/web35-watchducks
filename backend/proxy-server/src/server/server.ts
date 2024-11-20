@@ -5,17 +5,18 @@ import { fastifyConfig } from './config/fastify.config';
 import { ErrorHandler } from './error.handler';
 import { FastifyLogger } from '../common/logger/fastify.logger';
 import type { LogService } from '../domain/log/log.service';
-import type { HttpLogEntity } from '../domain/log/http-log.entity';
 import type { ProjectService } from '../domain/project/project.service';
 import type { ErrorLogRepository } from '../common/logger/error-log.repository';
 import { createSystemErrorLog } from '../common/error/create-system.error';
 import { ProxyHandler } from '../domain/proxy/proxy.handler';
+import { LogHandler } from '../domain/log/log.handler';
 
 export class Server {
     private readonly server: FastifyInstance;
     private readonly errorHandler: ErrorHandler;
     private readonly logger: FastifyLogger;
     private readonly proxyHandler: ProxyHandler;
+    private readonly logHandler: LogHandler;
 
     constructor(
         private readonly logService: LogService,
@@ -26,6 +27,7 @@ export class Server {
         this.logger = new FastifyLogger(this.server);
         this.errorHandler = new ErrorHandler({ logger: this.logger }, errorLogRepository);
         this.proxyHandler = new ProxyHandler(projectService, this.logger, this.errorHandler);
+        this.logHandler = new LogHandler(logService, this.logger);
 
         this.initializePlugins();
         this.initializeHooks();
@@ -58,22 +60,9 @@ export class Server {
 
     private initializeHooks(): void {
         this.server.addHook('onResponse', (request, reply, done) => {
-            this.logResponse(request, reply);
+            this.logHandler.logResponse(request, reply);
             done();
         });
-    }
-
-    private async logResponse(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-        const httpLog: HttpLogEntity = {
-            method: request.method,
-            host: request.host,
-            path: request.raw.url,
-            statusCode: reply.statusCode,
-            responseTime: reply.elapsedTime,
-        };
-
-        this.logger.info(httpLog);
-        await this.logService.saveHttpLog(httpLog);
     }
 
     private initializeErrorHandler(): void {
