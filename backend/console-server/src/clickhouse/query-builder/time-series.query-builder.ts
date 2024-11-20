@@ -1,4 +1,6 @@
-import { MetricAggregationType, metricExpressions } from '../util/metric-expressions';
+import type { MetricAggregationType } from '../util/metric-expressions';
+import { metricExpressions } from '../util/metric-expressions';
+import { mapFilterCondition } from '../util/map-filter-condition';
 
 interface metric {
     name: string;
@@ -7,7 +9,8 @@ interface metric {
 
 export class TimeSeriesQueryBuilder {
     private query: string;
-    private params: Record<string, any> = {};
+    private params: Record<string, unknown> = {};
+    private limitValue?: number;
 
     constructor() {
         this.query = `SELECT`;
@@ -59,12 +62,19 @@ export class TimeSeriesQueryBuilder {
         return this;
     }
 
-    filter(filters: Record<string, any>): this {
+    filter(filters: Record<string, unknown>): this {
         if (filters) {
-            Object.entries(filters).forEach(([key, value]) => {
-                this.query += ` AND ${key} = {${key}}`;
-                this.params[key] = value;
+            const conditions = Object.entries(filters).map(([key, value]) => {
+                const { condition, param } = mapFilterCondition(key, value);
+                this.params[key] = param;
+                return condition;
             });
+
+            if (this.query.includes('WHERE')) {
+                this.query += ` AND ${conditions.join(' AND ')}`;
+            } else {
+                this.query += ` WHERE ${conditions.join(' AND ')}`;
+            }
         }
 
         return this;
@@ -88,7 +98,16 @@ export class TimeSeriesQueryBuilder {
         return this;
     }
 
+    limit(value: number): this {
+        this.limitValue = value;
+        return this;
+    }
+
     build() {
+        if (this.limitValue) {
+            this.query += ` LIMIT ${this.limitValue}`;
+        }
+
         console.log(this.query);
 
         return { query: this.query, params: this.params };

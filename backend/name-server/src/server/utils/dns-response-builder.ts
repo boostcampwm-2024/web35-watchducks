@@ -52,7 +52,7 @@ export class DNSResponseBuilder {
                     name: question.name,
                     type: 'A',
                     class: 'IN',
-                    ttl: 10,
+                    ttl: 86400,
                     data: this.config.proxyServerIp,
                 },
             ];

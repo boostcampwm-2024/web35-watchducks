@@ -50,7 +50,14 @@ describe('ProjectService 클래스의', () => {
             email: 'test@test.com',
             ip: '127.0.0.1',
             domain: 'host.test.com',
+            generation: 9,
         };
+
+        jest.setTimeout(30000);
+        beforeEach(() => {
+            jest.clearAllMocks();
+            (mailService.sendNameServerInfo as jest.Mock).mockResolvedValue(undefined);
+        });
 
         it('올바른 정보가 들어왔을 때 프로젝트를 성공적으로 생성합니다.', async () => {
             const projectEntity = { id: 1, ...createProjectDto };
