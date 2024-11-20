@@ -5,6 +5,8 @@ import { LogRepository } from './log.repository';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Project } from '../project/entities/project.entity';
 import { NotFoundException } from '@nestjs/common';
+import type { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generation-response.dto';
+import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
 
 describe('LogService 테스트', () => {
     let service: LogService;
@@ -118,29 +120,40 @@ describe('LogService 테스트', () => {
 
     describe('responseSuccessRate()는 ', () => {
         it('응답 성공률을 반환할 수 있어야 한다.', async () => {
-            const mockRate = { success_rate: 98.5 };
-            mockLogRepository.findResponseSuccessRate.mockResolvedValue(mockRate);
+            const mockSuccessRateDto = { generation: 9 };
+            const mockRepositoryResponse = { success_rate: 98.5 };
+            mockLogRepository.findResponseSuccessRate.mockResolvedValue(mockRepositoryResponse);
+            const expectedResult = { success_rate: 98.5 };
 
-            const result = await service.responseSuccessRate();
+            const result = await service.getResponseSuccessRate(mockSuccessRateDto);
 
-            expect(result).toEqual(mockRate);
+            expect(result).toEqual(expectedResult);
             expect(repository.findResponseSuccessRate).toHaveBeenCalled();
         });
     });
 
     describe('trafficByGeneration()는 ', () => {
-        it('기수별 트래픽을 올바르게 반환할 수 있어야 한다.', async () => {
+        it('기수별 트래픽의 총합을 올바르게 반환할 수 있어야 한다.', async () => {
             const mockStats = [
                 { generation: '10s', count: 500 },
                 { generation: '20s', count: 300 },
                 { generation: '30s', count: 200 },
             ];
-            mockLogRepository.findTrafficByGeneration.mockResolvedValue(mockStats);
+            const expectedTotalCount = mockStats.reduce((sum, stat) => sum + stat.count, 0);
+            const dto = new GetTrafficByGenerationDto();
+            dto.generation = 9;
 
-            const result = await service.trafficByGeneration();
+            const mockRepositoryResponse = [{ count: expectedTotalCount }];
+            const expectedResponse: GetTrafficByGenerationResponseDto = {
+                count: expectedTotalCount,
+            };
+            mockLogRepository.findTrafficByGeneration.mockResolvedValue(mockRepositoryResponse);
 
-            expect(result).toEqual(mockStats);
-            expect(repository.findTrafficByGeneration).toHaveBeenCalled();
+            const result = await service.getTrafficByGeneration(dto);
+
+            expect(result).toEqual(expectedResponse);
+            expect(mockLogRepository.findTrafficByGeneration).toHaveBeenCalledTimes(1);
+            expect(mockLogRepository.findTrafficByGeneration).toHaveBeenCalled();
         });
     });
 

@@ -8,6 +8,9 @@ import { GetPathSpeedRankDto } from './dto/get-path-speed-rank.dto';
 import { GetPathSpeedRankResponseDto } from './dto/get-path-speed-rank-response.dto';
 import { GetTrafficByProjectDto } from './dto/get-traffic-by-project.dto';
 import { GetTrafficByProjectResponseDto } from './dto/get-traffic-by-project-response.dto';
+import { GetSuccessRateResponseDto } from './dto/get-success-rate-response.dto';
+import { GetSuccessRateDto } from './dto/get-success-rate.dto';
+import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
 
 @Injectable()
 export class LogService {
@@ -39,16 +42,16 @@ export class LogService {
         return result.slice(0, 5);
     }
 
-    async responseSuccessRate() {
+    async getResponseSuccessRate(_getSuccessRateDto: GetSuccessRateDto) {
         const result = await this.logRepository.findResponseSuccessRate();
 
-        return result;
+        return plainToInstance(GetSuccessRateResponseDto, result);
     }
 
-    async trafficByGeneration() {
+    async getTrafficByGeneration(_getTrafficByGenerationDto: GetTrafficByGenerationDto) {
         const result = await this.logRepository.findTrafficByGeneration();
 
-        return result;
+        return plainToInstance(GetTrafficByGenerationDto, result[0]);
     }
 
     async getPathSpeedRankByProject(getPathSpeedRankDto: GetPathSpeedRankDto) {

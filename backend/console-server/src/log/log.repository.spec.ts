@@ -107,14 +107,13 @@ describe('LogRepository 테스트', () => {
     describe('findResponseSuccessRate()는 ', () => {
         it('성공률을 올바르게 계산할 수 있어야 한다.', async () => {
             const mockQueryResult = [{ is_error_rate: 1.5 }];
-            mockClickhouse.query.mockResolvedValue(mockQueryResult);
+            (clickhouse.query as jest.Mock).mockResolvedValue(mockQueryResult);
 
             const result = await repository.findResponseSuccessRate();
 
             expect(result).toEqual({ success_rate: 98.5 });
             expect(clickhouse.query).toHaveBeenCalledWith(
-                expect.stringMatching(/SELECT.*sum\(is_error\).*count\(\*\).*as is_error_rate/s),
-                expect.any(Object),
+                'SELECT (sum(is_error) / count(*)) * 100 as is_error_rate\n    FROM http_log',
             );
         });
 
@@ -134,7 +133,7 @@ describe('LogRepository 테스트', () => {
 
             const result = await repository.findTrafficByGeneration();
 
-            expect(result).toEqual(mockResult[0]);
+            expect(result).toEqual(mockResult);
             expect(clickhouse.query).toHaveBeenCalledWith(
                 expect.stringMatching(/SELECT.*count\(\).*as count/s),
                 expect.any(Object),
