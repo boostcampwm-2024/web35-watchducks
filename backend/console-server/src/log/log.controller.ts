@@ -8,6 +8,11 @@ import { GetTrafficByProjectResponseDto } from './dto/get-traffic-by-project-res
 import { GetTrafficByProjectDto } from './dto/get-traffic-by-project.dto';
 import { GetDAUByProjectResponseDto } from './dto/get-dau-by-project-response.dto';
 import { GetDAUByProjectDto } from './dto/get-dau-by-project.dto';
+import { GetSuccessRateResponseDto } from './dto/get-success-rate-response.dto';
+import { GetSuccessRateDto } from './dto/get-success-rate.dto';
+import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
+import { GetSuccessRateByProjectDto } from './dto/get-success-rate-by-project.dto';
+
 
 @Controller('log')
 export class LogController {
@@ -49,7 +54,7 @@ export class LogController {
         return await this.logService.trafficRank();
     }
 
-    @Get('/response-rate')
+    @Get('/success-rate')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: '기수 내 응답 성공률',
@@ -58,10 +63,27 @@ export class LogController {
     @ApiResponse({
         status: 200,
         description: '기수 내 응답 성공률이 성공적으로 반환됨.',
-        type: ProjectResponseDto,
+        type: GetSuccessRateResponseDto,
     })
-    async responseSuccessRate() {
-        return await this.logService.responseSuccessRate();
+    async getResponseSuccessRate(getSuccessRateDto: GetSuccessRateDto) {
+        return await this.logService.getResponseSuccessRate(getSuccessRateDto);
+    }
+
+    @Get('/success-rate/project')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({
+        summary: '프로젝트 별 응답 성공률',
+        description: '요청받은 프로젝트의 응답 성공률을 성공적으로 반환합니다.',
+    })
+    @ApiResponse({
+        status: 200,
+        description: '프로젝트 별 응답 성공률이 성공적으로 반환됨.',
+        type: GetSuccessRateByProjectDto,
+    })
+    async getResponseSuccessRateByProject(
+        @Query() getSuccessRateByProjectDto: GetSuccessRateByProjectDto,
+    ) {
+        return await this.logService.getResponseSuccessRateByProject(getSuccessRateByProjectDto);
     }
 
     @Get('/traffic/project')
@@ -83,15 +105,15 @@ export class LogController {
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: '기수 내 총 트래픽',
-        description: '요청받은 기수의 기수 내 총 트래픽를 반환합니다.',
+        description: ' 요청받은 기수의 기수 내 총 트래픽를 반환합니다.',
     })
     @ApiResponse({
         status: 200,
         description: '기수 내 총 트래픽가 정상적으로 반환됨.',
-        type: ProjectResponseDto,
+        type: GetTrafficByProjectResponseDto,
     })
-    async trafficByGeneration() {
-        return await this.logService.trafficByGeneration();
+    async getTrafficByGeneration(@Query() getTrafficByGenerationDto: GetTrafficByGenerationDto) {
+        return await this.logService.getTrafficByGeneration(getTrafficByGenerationDto);
     }
 
     @Get('/elapsed-time/path-rank')

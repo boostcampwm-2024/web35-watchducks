@@ -5,6 +5,9 @@ import { LogRepository } from './log.repository';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Project } from '../project/entities/project.entity';
 import { NotFoundException } from '@nestjs/common';
+import type { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generation-response.dto';
+import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
+import { GetSuccessRateByProjectResponseDTO } from './dto/get-success-rate-by-project-response.dto';
 
 describe('LogService 테스트', () => {
     let service: LogService;
@@ -15,6 +18,7 @@ describe('LogService 테스트', () => {
         findAvgElapsedTime: jest.fn(),
         findCountByHost: jest.fn(),
         findResponseSuccessRate: jest.fn(),
+        findResponseSuccessRateByProject: jest.fn(),
         findTrafficByGeneration: jest.fn(),
         getPathSpeedRankByProject: jest.fn(),
         getTrafficByProject: jest.fn(),
@@ -119,29 +123,125 @@ describe('LogService 테스트', () => {
 
     describe('responseSuccessRate()는 ', () => {
         it('응답 성공률을 반환할 수 있어야 한다.', async () => {
-            const mockRate = { success_rate: 98.5 };
-            mockLogRepository.findResponseSuccessRate.mockResolvedValue(mockRate);
+            const mockSuccessRateDto = { generation: 9 };
+            const mockRepositoryResponse = { success_rate: 98.5 };
+            mockLogRepository.findResponseSuccessRate.mockResolvedValue(mockRepositoryResponse);
+            const expectedResult = { success_rate: 98.5 };
 
-            const result = await service.responseSuccessRate();
+            const result = await service.getResponseSuccessRate(mockSuccessRateDto);
 
-            expect(result).toEqual(mockRate);
+            expect(result).toEqual(expectedResult);
             expect(repository.findResponseSuccessRate).toHaveBeenCalled();
         });
     });
 
+    describe('getResponseSuccessRateByProject()는 ', () => {
+        const mockRequestDto = { projectName: 'example-project' };
+        const mockProject = {
+            name: 'example-project',
+            domain: 'example.com',
+        };
+        const mockSuccessRate = { success_rate: 95.5 };
+
+        it('projectName을 이용해 도메인을 조회한 후 응답 성공률을 반환해야 한다', async () => {
+            const projectRepository = service['projectRepository'];
+            projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
+
+            mockLogRepository.findResponseSuccessRateByProject = jest
+                .fn()
+                .mockResolvedValue(mockSuccessRate);
+
+            const result = await service.getResponseSuccessRateByProject(mockRequestDto);
+
+            expect(projectRepository.findOne).toHaveBeenCalledWith({
+                where: { name: mockRequestDto.projectName },
+                select: ['domain'],
+            });
+            expect(mockLogRepository.findResponseSuccessRateByProject).toHaveBeenCalledWith(
+                mockProject.domain,
+            );
+            expect(result).toEqual(
+                expect.objectContaining({
+                    success_rate: mockSuccessRate.success_rate,
+                }),
+            );
+        });
+
+        it('응답이 GetSuccessRateByProjectResponseDTO 형태로 변환되어야 한다', async () => {
+            const projectRepository = service['projectRepository'];
+            projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
+
+            mockLogRepository.findResponseSuccessRateByProject.mockResolvedValue(mockSuccessRate);
+
+            const result = await service.getResponseSuccessRateByProject(mockRequestDto);
+
+            expect(result).toBeInstanceOf(GetSuccessRateByProjectResponseDTO);
+            expect(Object.keys(result)).toContain('projectName');
+            expect(Object.keys(result)).toContain('success_rate');
+            expect(Object.keys(result).length).toBe(2);
+            expect(result.projectName).toBe(mockRequestDto.projectName);
+            expect(result.success_rate).toBe(mockSuccessRate.success_rate);
+        });
+
+        it('존재하지 않는 프로젝트명을 받은 경우, NotFoundException을 던져야 한다', async () => {
+            const projectRepository = service['projectRepository'];
+            projectRepository.findOne = jest.fn().mockResolvedValue(null);
+
+            await expect(service.getResponseSuccessRateByProject(mockRequestDto)).rejects.toThrow(
+                new NotFoundException(`Project with name ${mockRequestDto.projectName} not found`),
+            );
+
+            expect(projectRepository.findOne).toHaveBeenCalledWith({
+                where: { name: mockRequestDto.projectName },
+                select: ['domain'],
+            });
+            expect(mockLogRepository.findResponseSuccessRateByProject).not.toHaveBeenCalled();
+        });
+
+        it('레포지토리 호출 시, 에러가 발생하면, 예외를 throw 해야 한다', async () => {
+            const projectRepository = service['projectRepository'];
+            projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
+
+            mockLogRepository.findResponseSuccessRateByProject = jest
+                .fn()
+                .mockRejectedValue(new Error('Database error'));
+
+            await expect(service.getResponseSuccessRateByProject(mockRequestDto)).rejects.toThrow(
+                'Database error',
+            );
+
+            expect(projectRepository.findOne).toHaveBeenCalledWith({
+                where: { name: mockRequestDto.projectName },
+                select: ['domain'],
+            });
+            expect(mockLogRepository.findResponseSuccessRateByProject).toHaveBeenCalledWith(
+                mockProject.domain,
+            );
+        });
+    });
+
     describe('trafficByGeneration()는 ', () => {
-        it('기수별 트래픽을 올바르게 반환할 수 있어야 한다.', async () => {
+        it('기수별 트래픽의 총합을 올바르게 반환할 수 있어야 한다.', async () => {
             const mockStats = [
                 { generation: '10s', count: 500 },
                 { generation: '20s', count: 300 },
                 { generation: '30s', count: 200 },
             ];
-            mockLogRepository.findTrafficByGeneration.mockResolvedValue(mockStats);
+            const expectedTotalCount = mockStats.reduce((sum, stat) => sum + stat.count, 0);
+            const dto = new GetTrafficByGenerationDto();
+            dto.generation = 9;
 
-            const result = await service.trafficByGeneration();
+            const mockRepositoryResponse = [{ count: expectedTotalCount }];
+            const expectedResponse: GetTrafficByGenerationResponseDto = {
+                count: expectedTotalCount,
+            };
+            mockLogRepository.findTrafficByGeneration.mockResolvedValue(mockRepositoryResponse);
 
-            expect(result).toEqual(mockStats);
-            expect(repository.findTrafficByGeneration).toHaveBeenCalled();
+            const result = await service.getTrafficByGeneration(dto);
+
+            expect(result).toEqual(expectedResponse);
+            expect(mockLogRepository.findTrafficByGeneration).toHaveBeenCalledTimes(1);
+            expect(mockLogRepository.findTrafficByGeneration).toHaveBeenCalled();
         });
     });
 

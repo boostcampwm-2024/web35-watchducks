@@ -17,8 +17,9 @@ describe('LogController 테스트', () => {
         httpLog: jest.fn(),
         elapsedTime: jest.fn(),
         trafficRank: jest.fn(),
-        responseSuccessRate: jest.fn(),
-        trafficByGeneration: jest.fn(),
+        getResponseSuccessRate: jest.fn(),
+        getResponseSuccessRateByProject: jest.fn(),
+        getTrafficByGeneration: jest.fn(),
         getPathSpeedRankByProject: jest.fn(),
         getTrafficByProject: jest.fn(),
         getDAUByProject: jest.fn(),
@@ -116,39 +117,81 @@ describe('LogController 테스트', () => {
         });
     });
 
-    describe('responseSuccessRate()는 ', () => {
-        const mockResult = {
-            status: HttpStatus.OK,
-            data: { success_rate: 98.5 },
+    describe('getResponseSuccessRate()는 ', () => {
+        const mockSuccessRateDto = { generation: 5 };
+        const mockServiceResponse = { success_rate: 98.5 };
+
+        it('응답 성공률을 반환해야 한다', async () => {
+            mockLogService.getResponseSuccessRate.mockResolvedValue(mockServiceResponse);
+
+            const result = await controller.getResponseSuccessRate(mockSuccessRateDto);
+
+            expect(result).toEqual({ success_rate: 98.5 });
+            expect(service.getResponseSuccessRate).toHaveBeenCalledWith(mockSuccessRateDto);
+            expect(service.getResponseSuccessRate).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('getResponseSuccessRateByProject()는 ', () => {
+        const mockRequestDto = { projectName: 'example-project' };
+        const mockServiceResponse = {
+            projectName: 'example-project',
+            success_rate: 95.5,
         };
 
-        it('응답 성공률을 ProjectResponseDto 형식으로 반환해야 한다', async () => {
-            mockLogService.responseSuccessRate.mockResolvedValue(mockResult);
+        it('해당 프로젝트의 응답 성공률을 반환해야 한다', async () => {
+            mockLogService.getResponseSuccessRateByProject.mockResolvedValue(mockServiceResponse);
 
-            const result = await controller.responseSuccessRate();
+            const result = await controller.getResponseSuccessRateByProject(mockRequestDto);
 
-            expect(result).toEqual(mockResult);
-            expect(result).toHaveProperty('status', HttpStatus.OK);
-            expect(result).toHaveProperty('data.success_rate');
-            expect(service.responseSuccessRate).toHaveBeenCalledTimes(1);
+            expect(result).toEqual(mockServiceResponse);
+            expect(result).toHaveProperty('projectName', 'example-project');
+            expect(result).toHaveProperty('success_rate', 95.5);
+            expect(service.getResponseSuccessRateByProject).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getResponseSuccessRateByProject).toHaveBeenCalledTimes(1);
+        });
+
+        it('서비스 호출 시, 에러가 발생하면 예외를 throw 해야 한다', async () => {
+            const error = new Error('Database error');
+            mockLogService.getResponseSuccessRateByProject.mockRejectedValue(error);
+
+            await expect(
+                controller.getResponseSuccessRateByProject(mockRequestDto),
+            ).rejects.toThrow(error);
+
+            expect(service.getResponseSuccessRateByProject).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getResponseSuccessRateByProject).toHaveBeenCalledTimes(1);
+        });
+
+        it('성공률이 100%인 경우에도 정상적으로 반환해야 한다', async () => {
+            const perfectRateResponse = {
+                projectName: 'example-project',
+                success_rate: 100,
+            };
+            mockLogService.getResponseSuccessRateByProject.mockResolvedValue(perfectRateResponse);
+
+            const result = await controller.getResponseSuccessRateByProject(mockRequestDto);
+
+            expect(result).toEqual(perfectRateResponse);
+            expect(result.success_rate).toBe(100);
+            expect(service.getResponseSuccessRateByProject).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getResponseSuccessRateByProject).toHaveBeenCalledTimes(1);
         });
     });
 
     describe('trafficByGeneration()는 ', () => {
-        const mockResult = {
-            status: HttpStatus.OK,
-            data: { total_traffic: 15000 },
-        };
+        it('기수별 트래픽 총량을 올바르게 반환해야 한다', async () => {
+            const mockTrafficByGenerationDto = { generation: 9 };
+            const mockResponse = { count: 1000 };
 
-        it('기수별 총 트래픽을 ProjectResponseDto 형식으로 반환해야 한다', async () => {
-            mockLogService.trafficByGeneration.mockResolvedValue(mockResult);
+            mockLogService.getTrafficByGeneration.mockResolvedValue(mockResponse);
 
-            const result = await controller.trafficByGeneration();
+            const result = await controller.getTrafficByGeneration(mockTrafficByGenerationDto);
 
-            expect(result).toEqual(mockResult);
-            expect(result).toHaveProperty('status', HttpStatus.OK);
-            expect(result).toHaveProperty('data.total_traffic');
-            expect(service.trafficByGeneration).toHaveBeenCalledTimes(1);
+            expect(result).toEqual(mockResponse);
+            expect(result).toHaveProperty('count', 1000);
+            expect(service.getTrafficByGeneration).toHaveBeenCalledWith(mockTrafficByGenerationDto);
+            expect(service.getTrafficByGeneration).toHaveBeenCalledTimes(1);
         });
     });
 
