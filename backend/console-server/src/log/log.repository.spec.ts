@@ -34,43 +34,6 @@ describe('LogRepository 테스트', () => {
         expect(repository).toBeDefined();
     });
 
-    describe('findHttpLog()는 ', () => {
-        it('요구 받은 조건의 트래픽 정보를 반환한다.', async () => {
-            const mockResult = [
-                {
-                    date: '2024-11-18',
-                    avg_elapsed_time: 100,
-                    request_count: 1000,
-                },
-            ];
-            mockClickhouse.query.mockResolvedValue(mockResult);
-
-            const result = await repository.findHttpLog();
-
-            expect(result).toEqual(mockResult);
-            expect(clickhouse.query).toHaveBeenCalledWith(
-                expect.stringMatching(
-                    /SELECT.*toDate\(timestamp\).*FROM http_log.*GROUP BY date.*ORDER BY date/s,
-                ),
-            );
-        });
-
-        it('결과가 없을 경우 빈 배열을 반환해야 한다.', async () => {
-            mockClickhouse.query.mockResolvedValue([]);
-
-            const result = await repository.findHttpLog();
-
-            expect(result).toEqual([]);
-        });
-
-        it('clickhouse 에러 발생시 예외를 throw 해야 한다.', async () => {
-            const error = new Error('Clickhouse connection error');
-            mockClickhouse.query.mockRejectedValue(error);
-
-            await expect(repository.findHttpLog()).rejects.toThrow('Clickhouse connection error');
-        });
-    });
-
     describe('findAvgElapsedTime()는 ', () => {
         it('TimeSeriesQueryBuilder를 사용하여 올바른 쿼리를 생성해야 한다.', async () => {
             const mockResult = [{ avg_elapsed_time: 150 }];
@@ -94,7 +57,7 @@ describe('LogRepository 테스트', () => {
             ];
             mockClickhouse.query.mockResolvedValue(mockResult);
 
-            const result = await repository.findCountByHost();
+            const result = await repository.findTop5CountByHost();
 
             expect(result).toEqual(mockResult);
             expect(clickhouse.query).toHaveBeenCalledWith(
@@ -197,7 +160,7 @@ describe('LogRepository 테스트', () => {
                 .mockResolvedValueOnce(mockFastestPaths)
                 .mockResolvedValueOnce(mockSlowestPaths);
 
-            const result = await repository.getPathSpeedRankByProject(domain);
+            const result = await repository.getFastestPathsByDomain(domain);
 
             expect(result).toEqual({
                 fastestPaths: mockFastestPaths,
@@ -225,7 +188,7 @@ describe('LogRepository 테스트', () => {
             const error = new Error('Clickhouse query failed');
             mockClickhouse.query.mockRejectedValue(error);
 
-            await expect(repository.getPathSpeedRankByProject(domain)).rejects.toThrow(
+            await expect(repository.getFastestPathsByDomain(domain)).rejects.toThrow(
                 'Clickhouse query failed',
             );
         });
@@ -282,6 +245,34 @@ describe('LogRepository 테스트', () => {
         });
     });
 
+    describe('findTrafficForTimeRange()는 ', () => {
+        const mockDate = new Date('2024-03-20T15:00:00Z');
+
+        beforeEach(() => {
+            jest.useFakeTimers();
+            jest.setSystemTime(mockDate);
+        });
+
+        afterEach(() => {
+            jest.useRealTimers();
+        });
+
+        it('특정 기간의 트래픽을 리턴할 수 있어야 한다.', async () => {
+            const mockTraffic = [{ count: 500 }];
+            const timeRange = {
+                start: new Date('2024-01-02T00:00:00Z'),
+                end: new Date('2024-01-02T23:59:59Z'),
+            };
+
+            mockClickhouse.query.mockResolvedValue(mockTraffic);
+
+            const result = await repository.findTrafficForTimeRange(timeRange.start, timeRange.end);
+
+            expect(result).toEqual(mockTraffic);
+            expect(clickhouse.query).toHaveBeenCalledWith(expect.any(String), expect.any(Object));
+        }
+    )}
+          
     describe('getDAUByProject()', () => {
         const domain = 'example.com';
         const date = '2024-11-18';

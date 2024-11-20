@@ -3,7 +3,6 @@ import { HttpStatus } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { LogController } from './log.controller';
 import { LogService } from './log.service';
-
 interface TrafficRankResponseType {
     status: number;
     data: Array<{ host: string; count: number }>;
@@ -22,6 +21,7 @@ describe('LogController 테스트', () => {
         getTrafficByGeneration: jest.fn(),
         getPathSpeedRankByProject: jest.fn(),
         getTrafficByProject: jest.fn(),
+        getTrafficDailyDifferenceByGeneration: jest.fn(),
         getDAUByProject: jest.fn(),
     };
 
@@ -46,32 +46,6 @@ describe('LogController 테스트', () => {
         expect(controller).toBeDefined();
     });
 
-    describe('httpLog는 ', () => {
-        const mockResult = [
-            {
-                date: '2024-11-18',
-                avg_elapsed_time: 100,
-                request_count: 1000,
-            },
-        ];
-
-        it('HTTP 로그 데이터를 반환해야 한다', async () => {
-            mockLogService.httpLog.mockResolvedValue(mockResult);
-
-            const result = await controller.httpLog();
-
-            expect(result).toEqual(mockResult);
-            expect(service.httpLog).toHaveBeenCalledTimes(1);
-        });
-
-        it('서비스 에러 시 예외를 throw 해야 한다', async () => {
-            const error = new Error('Database error');
-            mockLogService.httpLog.mockRejectedValue(error);
-
-            await expect(controller.httpLog()).rejects.toThrow(error);
-        });
-    });
-
     describe('elapsedTime()은 ', () => {
         const mockResult = {
             status: HttpStatus.OK,
@@ -86,7 +60,7 @@ describe('LogController 테스트', () => {
             expect(result).toEqual(mockResult);
             expect(result).toHaveProperty('status', HttpStatus.OK);
             expect(result).toHaveProperty('data.avg_elapsed_time');
-            expect(service.elapsedTime).toHaveBeenCalledTimes(1);
+            expect(service.getAvgElapsedTime).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -110,7 +84,7 @@ describe('LogController 테스트', () => {
             expect(result).toEqual(mockResult);
             expect(result).toHaveProperty('status', HttpStatus.OK);
             expect(result.data).toHaveLength(5);
-            expect(service.trafficRank).toHaveBeenCalledTimes(1);
+            expect(service.getTrafficRank).toHaveBeenCalledTimes(1);
 
             const sortedData = [...result.data].sort((a, b) => b.count - a.count);
             expect(result.data).toEqual(sortedData);
@@ -294,6 +268,41 @@ describe('LogController 테스트', () => {
             expect(service.getTrafficByProject).toHaveBeenCalledTimes(1);
         });
     });
+
+    describe('getTrafficDailyDifferenceByGeneration()는 ', () => {
+        const mockRequestDto = { generation: 9 };
+        const mockResponseDto = {
+            traffic_daily_difference: '+9100',
+        };
+
+        it('전일 대비 트래픽 차이를 리턴해야 한다', async () => {
+            mockLogService.getTrafficDailyDifferenceByGeneration.mockResolvedValue(mockResponseDto);
+
+            const result = await controller.getTrafficDailyDifferenceByGeneration(mockRequestDto);
+
+            expect(result).toEqual(mockResponseDto);
+            expect(result).toHaveProperty('traffic_daily_difference');
+            expect(service.getTrafficDailyDifferenceByGeneration).toHaveBeenCalledWith(
+                mockRequestDto,
+            );
+            expect(service.getTrafficDailyDifferenceByGeneration).toHaveBeenCalledTimes(1);
+        });
+
+        it('에러 발생 시, 예외를 throw 해야 한다', async () => {
+            const error = new Error('Database error');
+            mockLogService.getTrafficDailyDifferenceByGeneration.mockRejectedValue(error);
+
+            await expect(
+                controller.getTrafficDailyDifferenceByGeneration(mockRequestDto),
+            ).rejects.toThrow(error);
+
+            expect(service.getTrafficDailyDifferenceByGeneration).toHaveBeenCalledWith(
+                mockRequestDto,
+            );
+            expect(service.getTrafficDailyDifferenceByGeneration).toHaveBeenCalledTimes(1);
+        }
+    )}
+             
     describe('getDAUByProject()는', () => {
         const mockRequestDto = { projectName: 'example-project', date: '2024-11-01' };
 

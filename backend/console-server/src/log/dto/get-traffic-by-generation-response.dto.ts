@@ -3,7 +3,7 @@ import { Expose } from 'class-transformer';
 
 export class GetTrafficByGenerationResponseDto {
     @ApiProperty({
-        example: 15,
+        example: 1500,
         description: '기수 별 트래픽 수',
         type: Number,
     })
