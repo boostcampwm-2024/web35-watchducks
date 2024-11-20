@@ -16,6 +16,10 @@ import { GetAvgElapsedTimeResponseDto } from './dto/get-avg-elapsed-time-respons
 import { GetTrafficRankResponseDto } from './dto/get-traffic-rank-response.dto';
 import { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generation-response.dto';
 import { GetSuccessRateByProjectResponseDto } from './dto/get-success-rate-by-project-response.dto';
+import { GetTrafficDailyDifferenceResponseDto } from './dto/get-traffic-daily-difference-response.dto';
+import { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
+import { GetSuccessRateByProjectResponseDTO } from './dto/get-success-rate-by-project-response.dto';
+
 
 @Controller('log')
 export class LogController {
@@ -111,6 +115,25 @@ export class LogController {
     })
     async getTrafficByGeneration(@Query() getTrafficByGenerationDto: GetTrafficByGenerationDto) {
         return await this.logService.getTrafficByGeneration(getTrafficByGenerationDto);
+    }
+
+    @Get('/traffic/daily-difference')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({
+        summary: '기수 별 프로젝트 전일 대비 트래픽',
+        description: '요청받은 기수의 프로젝트 전일 대비 트래픽을 반환합니다.',
+    })
+    @ApiResponse({
+        status: 200,
+        description: '기수별 프로젝트 전일 대비 트래픽이 정상적으로 반환됨',
+        type: GetTrafficDailyDifferenceResponseDto,
+    })
+    async getTrafficDailyDifferenceByGeneration(
+        getTrafficDailyDifferenceDto: GetTrafficDailyDifferenceDto,
+    ) {
+        return await this.logService.getTrafficDailyDifferenceByGeneration(
+            getTrafficDailyDifferenceDto,
+        );
     }
 
     @Get('/elapsed-time/path-rank')

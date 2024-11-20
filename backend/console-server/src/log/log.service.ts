@@ -24,6 +24,8 @@ import { GetSuccessRateByProjectDto } from './dto/get-success-rate-by-project.dt
 import { GetAvgElapsedTimeResponseDto } from './dto/get-avg-elapsed-time-response.dto';
 import { GetTrafficRankResponseDto } from './dto/get-traffic-rank-response.dto';
 import { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generation-response.dto';
+import { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
+import { GetTrafficDailyDifferenceResponseDto } from './dto/get-traffic-daily-difference-response.dto';
 
 @Injectable()
 export class LogService {
@@ -73,6 +75,52 @@ export class LogService {
         const result = await this.logRepository.findTrafficByGeneration();
 
         return plainToInstance(GetTrafficByGenerationResponseDto, result);
+    }
+
+    private calculateTimeRanges() {
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+
+        const yesterdayStart = new Date();
+        yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+        yesterdayStart.setHours(0, 0, 0, 0);
+
+        const yesterdayEnd = new Date(todayStart);
+
+        return {
+            today: { start: todayStart, end: new Date() },
+            yesterday: { start: yesterdayStart, end: yesterdayEnd },
+        };
+    }
+
+    private async fetchTrafficData(timeRange: { start: Date; end: Date }) {
+        const result = await this.logRepository.findTrafficForTimeRange(
+            timeRange.start,
+            timeRange.end,
+        );
+        return result[0].count;
+    }
+
+    private formatTrafficDifference(difference: number): string {
+        return difference > 0 ? `+${difference}` : `${difference}`;
+    }
+
+    async getTrafficDailyDifferenceByGeneration(
+        _getTrafficDailyDifferenceDto: GetTrafficDailyDifferenceDto,
+    ) {
+        const timeRanges = this.calculateTimeRanges();
+
+        const [today, yesterday] = await Promise.all([
+            this.fetchTrafficData(timeRanges.today),
+            this.fetchTrafficData(timeRanges.yesterday),
+        ]);
+
+        const difference = today - yesterday;
+        const result = {
+            traffic_daily_difference: this.formatTrafficDifference(difference),
+        };
+
+        return plainToInstance(GetTrafficDailyDifferenceResponseDto, result);
     }
 
     async getPathSpeedRankByProject(getPathSpeedRankDto: GetPathSpeedRankDto) {

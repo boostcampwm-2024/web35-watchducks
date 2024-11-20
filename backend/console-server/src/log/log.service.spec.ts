@@ -8,6 +8,9 @@ import { NotFoundException } from '@nestjs/common';
 import type { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generation-response.dto';
 import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
 import { GetSuccessRateByProjectResponseDto } from './dto/get-success-rate-by-project-response.dto';
+import { GetSuccessRateByProjectResponseDTO } from './dto/get-success-rate-by-project-response.dto';
+import type { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
+import { GetTrafficDailyDifferenceResponseDto } from './dto/get-traffic-daily-difference-response.dto';
 
 describe('LogService 테스트', () => {
     let service: LogService;
@@ -22,6 +25,8 @@ describe('LogService 테스트', () => {
         findTrafficByGeneration: jest.fn(),
         getPathSpeedRankByProject: jest.fn(),
         getTrafficByProject: jest.fn(),
+        findTrafficDailyDifferenceByGeneration: jest.fn(),
+        findTrafficForTimeRange: jest.fn(),
         getDAUByProject: jest.fn(),
     };
 
@@ -396,6 +401,86 @@ describe('LogService 테스트', () => {
         });
     });
 
+    describe('getTrafficDailyDifferenceByGeneration()는 ', () => {
+        const mockRequestDto: GetTrafficDailyDifferenceDto = { generation: 9 };
+        let mockDate: Date;
+
+        beforeEach(() => {
+            mockDate = new Date('2024-03-20T15:00:00Z');
+            jest.useFakeTimers();
+            jest.setSystemTime(mockDate);
+            (mockLogRepository.findTrafficForTimeRange as jest.Mock).mockReset();
+        });
+
+        afterEach(() => {
+            jest.useRealTimers();
+        });
+
+        it('전일 대비 총 트래픽 증감량을 리턴해야 한다', async () => {
+            const todayTraffic = [{ count: 10000 }];
+            const yesterdayTraffic = [{ count: 900 }];
+
+            (mockLogRepository.findTrafficForTimeRange as jest.Mock)
+                .mockResolvedValueOnce(todayTraffic)
+                .mockResolvedValueOnce(yesterdayTraffic);
+
+            const result = await service.getTrafficDailyDifferenceByGeneration(mockRequestDto);
+
+            expect(result).toBeInstanceOf(GetTrafficDailyDifferenceResponseDto);
+            expect(result.traffic_daily_difference).toBe('+9100');
+            expect(mockLogRepository.findTrafficForTimeRange).toHaveBeenCalledTimes(2);
+        });
+
+        it('트래픽의 차이가 0인 경우에도 올바르게 처리해야 한다', async () => {
+            const sameTraffic = [{ count: 500 }];
+
+            (mockLogRepository.findTrafficForTimeRange as jest.Mock)
+                .mockResolvedValueOnce(sameTraffic)
+                .mockResolvedValueOnce(sameTraffic);
+
+            const result = await service.getTrafficDailyDifferenceByGeneration(mockRequestDto);
+
+            expect(result).toBeInstanceOf(GetTrafficDailyDifferenceResponseDto);
+            expect(result.traffic_daily_difference).toBe('0');
+        });
+
+        it('레포지토리 호출 시, 발생하는 에러를 throw 해야 한다', async () => {
+            (mockLogRepository.findTrafficForTimeRange as jest.Mock).mockRejectedValue(
+                new Error('Database error'),
+            );
+
+            await expect(
+                service.getTrafficDailyDifferenceByGeneration(mockRequestDto),
+            ).rejects.toThrow('Database error');
+        });
+
+        it('시간 범위가 올바르게 계산되어야 한다', async () => {
+            const mockTraffic = [{ count: 100 }];
+            (mockLogRepository.findTrafficForTimeRange as jest.Mock).mockResolvedValue(mockTraffic);
+
+            const todayStart = new Date(mockDate);
+            todayStart.setHours(0, 0, 0, 0);
+
+            const yesterdayStart = new Date(mockDate);
+            yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+            yesterdayStart.setHours(0, 0, 0, 0);
+
+            const yesterdayEnd = new Date(todayStart);
+            await service.getTrafficDailyDifferenceByGeneration(mockRequestDto);
+
+            expect(mockLogRepository.findTrafficForTimeRange).toHaveBeenNthCalledWith(
+                1,
+                todayStart,
+                expect.any(Date),
+            );
+            expect(mockLogRepository.findTrafficForTimeRange).toHaveBeenNthCalledWith(
+                2,
+                yesterdayStart,
+                yesterdayEnd,
+              }
+          )}
+       }
+    )}
     describe('getDAUByProject()는', () => {
         const mockRequestDto = { projectName: 'example-project', date: '2024-11-01' };
         const mockProject = {

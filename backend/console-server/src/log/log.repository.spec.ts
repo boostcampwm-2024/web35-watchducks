@@ -245,6 +245,34 @@ describe('LogRepository 테스트', () => {
         });
     });
 
+    describe('findTrafficForTimeRange()는 ', () => {
+        const mockDate = new Date('2024-03-20T15:00:00Z');
+
+        beforeEach(() => {
+            jest.useFakeTimers();
+            jest.setSystemTime(mockDate);
+        });
+
+        afterEach(() => {
+            jest.useRealTimers();
+        });
+
+        it('특정 기간의 트래픽을 리턴할 수 있어야 한다.', async () => {
+            const mockTraffic = [{ count: 500 }];
+            const timeRange = {
+                start: new Date('2024-01-02T00:00:00Z'),
+                end: new Date('2024-01-02T23:59:59Z'),
+            };
+
+            mockClickhouse.query.mockResolvedValue(mockTraffic);
+
+            const result = await repository.findTrafficForTimeRange(timeRange.start, timeRange.end);
+
+            expect(result).toEqual(mockTraffic);
+            expect(clickhouse.query).toHaveBeenCalledWith(expect.any(String), expect.any(Object));
+        }
+    )}
+          
     describe('getDAUByProject()', () => {
         const domain = 'example.com';
         const date = '2024-11-18';

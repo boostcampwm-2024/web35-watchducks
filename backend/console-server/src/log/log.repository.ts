@@ -113,6 +113,16 @@ export class LogRepository {
         return plainToInstance(TrafficCountMetric, result);
     }
 
+    async findTrafficForTimeRange(start: Date, end: Date) {
+        const queryBuilder = new TimeSeriesQueryBuilder()
+            .metrics([{ name: '*', aggregation: 'count' }])
+            .from('http_log')
+            .timeBetween(start, end)
+            .build();
+
+        return this.clickhouse.query<{ count: number }>(queryBuilder.query, queryBuilder.params);
+    }
+
     async getFastestPathsByDomain(domain: string) {
         const { query, params } = new TimeSeriesQueryBuilder()
             .metrics([{ name: 'elapsed_time', aggregation: 'avg' }, { name: 'path' }])
