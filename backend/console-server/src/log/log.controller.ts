@@ -12,6 +12,7 @@ import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
 import { GetSuccessRateByProjectDto } from './dto/get-success-rate-by-project.dto';
 import { GetTrafficDailyDifferenceResponseDto } from './dto/get-traffic-daily-difference-response.dto';
 import { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
+import { GetSuccessRateByProjectResponseDTO } from './dto/get-success-rate-by-project-response.dto';
 
 @Controller('log')
 export class LogController {
@@ -77,7 +78,7 @@ export class LogController {
     @ApiResponse({
         status: 200,
         description: '프로젝트 별 응답 성공률이 성공적으로 반환됨.',
-        type: GetSuccessRateByProjectDto,
+        type: GetSuccessRateByProjectResponseDTO,
     })
     async getResponseSuccessRateByProject(
         @Query() getSuccessRateByProjectDto: GetSuccessRateByProjectDto,
