@@ -6,6 +6,7 @@ export interface DAURecorderInterface {
 
 export class DAURecorder implements DAURecorderInterface {
     private clickhouseClient = ClickhouseDatabase.getInstance();
+
     public async recordAccess(domain: string): Promise<void> {
         const date = new Date().toISOString().slice(0, 10);
         const values = [{ domain, date, access: 1 }];
