@@ -7,6 +7,11 @@ import type { ErrorHandler } from '../../server/error.handler';
 import type { FastifyLogger } from '../../common/logger/fastify.logger';
 import type { ProjectService } from '../../domain/project/project.service';
 
+enum Protocol {
+    HTTP = 'http://',
+    HTTPS = 'https//'
+}
+
 export class ProxyHandler {
     constructor(
         private readonly projectService: ProjectService,
@@ -18,10 +23,11 @@ export class ProxyHandler {
         await this.executeProxyRequest(request, reply);
     }
 
-     async executeProxyRequest(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    async executeProxyRequest(request: FastifyRequest, reply: FastifyReply): Promise<void> {
         const host = validateHost(request.headers[HOST_HEADER]);
         const ip = await this.resolveDomain(host);
-        const targetUrl = buildTargetUrl(ip, request.url, 'https://'); // TODO: Protocol 별 arg 세팅
+        const protocol = request.protocol === 'https' ? Protocol.HTTPS : Protocol.HTTP;
+        const targetUrl = buildTargetUrl(ip, request.url, protocol);
 
         await this.sendProxyRequest(targetUrl, request, reply);
     }
