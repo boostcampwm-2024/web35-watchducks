@@ -1,6 +1,6 @@
 import { db } from '../mysql/mysql-database';
 import type { RowDataPacket } from 'mysql2/promise';
-import { ProjectQueryInterface } from './project.query.interface';
+import type { ProjectQueryInterface } from './project.query.interface';
 
 interface ProjectExists extends RowDataPacket {
     exists_flag: number;
