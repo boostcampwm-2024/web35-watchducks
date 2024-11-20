@@ -1,7 +1,6 @@
 import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import { LogService } from './log.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { ProjectResponseDto } from '../project/dto/create-project-response.dto';
 import { GetPathSpeedRankDto } from './dto/get-path-speed-rank.dto';
 import { GetPathSpeedRankResponseDto } from './dto/get-path-speed-rank-response.dto';
 import { GetTrafficByProjectResponseDto } from './dto/get-traffic-by-project-response.dto';
@@ -18,8 +17,6 @@ import { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generati
 import { GetSuccessRateByProjectResponseDto } from './dto/get-success-rate-by-project-response.dto';
 import { GetTrafficDailyDifferenceResponseDto } from './dto/get-traffic-daily-difference-response.dto';
 import { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
-import { GetSuccessRateByProjectResponseDTO } from './dto/get-success-rate-by-project-response.dto';
-
 
 @Controller('log')
 export class LogController {
@@ -148,7 +145,6 @@ export class LogController {
         type: GetPathSpeedRankResponseDto,
     })
     async getPathSpeedRankByProject(@Query() getPathSpeedRankDto: GetPathSpeedRankDto) {
-
         return await this.logService.getPathSpeedRankByProject(getPathSpeedRankDto);
     }
 

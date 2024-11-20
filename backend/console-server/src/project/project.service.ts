@@ -26,11 +26,11 @@ export class ProjectService {
             const project = this.projectRepository.create(createProjectDto);
             const result = await this.projectRepository.save(project);
 
-            // new Promise((resolve, _reject) =>
-            //     this.mailService
-            //         .sendNameServerInfo(createProjectDto.email, createProjectDto.name)
-            //         .then(() => resolve),
-            // ); // TODO: 주석 삭제 필요!!!!!!!!!
+            new Promise((resolve, _reject) =>
+                this.mailService
+                    .sendNameServerInfo(createProjectDto.email, createProjectDto.name)
+                    .then(() => resolve),
+            );
             return plainToInstance(ProjectResponseDto, result);
         } catch (error) {
             if (isUniqueConstraintViolation(error))
