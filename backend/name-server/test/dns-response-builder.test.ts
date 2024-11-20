@@ -44,7 +44,7 @@ describe('DNSResponseBuilder의', () => {
             name: 'example.com',
             type: 'A',
             class: 'IN',
-            ttl: 300,
+            ttl: 86400,
             data: '127.0.0.1',
         });
     });
