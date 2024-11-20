@@ -1,7 +1,7 @@
 import { Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GetSuccessRateByProjectResponseDTO {
+export class GetSuccessRateByProjectResponseDto {
     @ApiProperty({
         description: '프로젝트의 이름',
         example: 'watchducks',

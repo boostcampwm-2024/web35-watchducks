@@ -7,6 +7,8 @@ import { FindByGenerationDto } from './dto/find-by-generation.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ProjectResponseDto } from './dto/create-project-response.dto';
 import { CountProjectByGenerationDto } from './dto/count-project-by-generation.dto';
+import { FindByGenerationResponseDto } from './dto/find-by-generation-response.dto';
+import { CountProjectByGenerationResponseDto } from './dto/count-project-by-generation-response.dto';
 
 @Controller('project')
 export class ProjectController {
@@ -35,7 +37,7 @@ export class ProjectController {
     @ApiResponse({
         status: 200,
         description: '프로젝트 목록이 성공적으로 반환됨',
-        type: ProjectResponseDto,
+        type: FindByGenerationResponseDto,
     })
     findByGeneration(@Query() findGenerationProjectDto: FindByGenerationDto) {
         return this.projectService.findByGeneration(findGenerationProjectDto);
@@ -50,7 +52,7 @@ export class ProjectController {
     @ApiResponse({
         status: 200,
         description: '기수의 전체 프로젝트 개수가 정상적으로 반환됨',
-        type: ProjectResponseDto,
+        type: CountProjectByGenerationResponseDto,
     })
     async countProjectByGeneration(
         @Query() countProjectByGenerationDto: CountProjectByGenerationDto,

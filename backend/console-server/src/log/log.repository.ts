@@ -1,22 +1,18 @@
 import { Clickhouse } from '../clickhouse/clickhouse';
 import { Injectable } from '@nestjs/common';
 import { TimeSeriesQueryBuilder } from '../clickhouse/query-builder/time-series.query-builder';
+import { TrafficRankMetric } from './metric/traffic-rank.metric';
+import { AvgElapsedTimeMetric } from './metric/avg-elapsed-time.metric';
+import { plainToInstance } from 'class-transformer';
+import { TrafficRankTop5Metric } from './metric/traffic-rank-top5.metric';
+import { TrafficCountMetric } from './metric/traffic-count.metric';
+import { ErrorRateMetric } from './metric/error-rate.metric';
+import { SuccessRateMetric } from './metric/success-rate.metric';
+import { ElapsedTimeByPathMetric } from './metric/elapsed-time-by-path.metric';
 
 @Injectable()
 export class LogRepository {
     constructor(private readonly clickhouse: Clickhouse) {}
-
-    async findHttpLog() {
-        const sql = `SELECT toDate(timestamp) as date,
-                            avg(elapsed_time) as avg_elapsed_time,
-                            count()           as request_count
-                     FROM http_log
-                     WHERE timestamp >= toStartOfDay(now() - INTERVAL 7 DAY)
-                       AND timestamp < toStartOfDay(now())
-                     GROUP BY date
-                     ORDER BY date;`;
-        return await this.clickhouse.query(sql);
-    }
 
     async findAvgElapsedTime() {
         const { query, params } = new TimeSeriesQueryBuilder()
@@ -24,12 +20,12 @@ export class LogRepository {
             .from('http_log')
             .build();
 
-        const result = await this.clickhouse.query(query, params);
+        const [result] = await this.clickhouse.query<AvgElapsedTimeMetric>(query, params);
 
-        return result[0];
+        return plainToInstance(AvgElapsedTimeMetric, result);
     }
 
-    async findCountByHost() {
+    async findTop5CountByHost() {
         const { query, params } = new TimeSeriesQueryBuilder()
             .metrics([
                 {
@@ -43,9 +39,15 @@ export class LogRepository {
             .from('http_log')
             .groupBy(['host'])
             .orderBy(['count'], true)
+            .limit(5)
             .build();
 
-        return await this.clickhouse.query(query, params);
+        const results = await this.clickhouse.query<TrafficRankMetric>(query, params);
+
+        return plainToInstance(
+            TrafficRankTop5Metric,
+            results.map((result) => plainToInstance(TrafficRankMetric, result)),
+        );
     }
 
     async findResponseSuccessRate() {
@@ -59,10 +61,11 @@ export class LogRepository {
             .from('http_log')
             .build();
 
-        const result = await this.clickhouse.query(query);
-        return {
-            success_rate: 100 - (result as Array<{ is_error_rate: number }>)[0].is_error_rate,
-        };
+        const [result] = await this.clickhouse.query<ErrorRateMetric>(query);
+
+        return plainToInstance(SuccessRateMetric, {
+            success_rate: 100 - result.is_error_rate,
+        });
     }
 
     async findResponseSuccessRateByProject(domain: string) {
@@ -84,10 +87,14 @@ export class LogRepository {
             .from(`(${subQueryBuilder.query}) as subquery`)
             .build();
 
-        const result = await this.clickhouse.query(mainQueryBuilder.query, subQueryBuilder.params);
-        return {
-            success_rate: 100 - (result as Array<{ is_error_rate: number }>)[0].is_error_rate,
-        };
+        const [result] = await this.clickhouse.query<ErrorRateMetric>(
+            mainQueryBuilder.query,
+            subQueryBuilder.params,
+        );
+
+        return plainToInstance(SuccessRateMetric, {
+            success_rate: 100 - result.is_error_rate,
+        });
     }
 
     async findTrafficByGeneration() {
@@ -101,12 +108,13 @@ export class LogRepository {
             .from('http_log')
             .build();
 
-        const result = await this.clickhouse.query(query, params);
-        return [{ count: ((result as unknown[])[0] as { count: number }).count }];
+        const [result] = await this.clickhouse.query<TrafficCountMetric>(query, params);
+
+        return plainToInstance(TrafficCountMetric, result);
     }
 
-    async getPathSpeedRankByProject(domain: string) {
-        const fastestQueryBuilder = new TimeSeriesQueryBuilder()
+    async getFastestPathsByDomain(domain: string) {
+        const { query, params } = new TimeSeriesQueryBuilder()
             .metrics([{ name: 'elapsed_time', aggregation: 'avg' }, { name: 'path' }])
             .from('http_log')
             .filter({ host: domain })
@@ -115,7 +123,13 @@ export class LogRepository {
             .limit(3)
             .build();
 
-        const slowestQueryBuilder = new TimeSeriesQueryBuilder()
+        const results = await this.clickhouse.query<ElapsedTimeByPathMetric>(query, params);
+
+        return results.map((result) => plainToInstance(ElapsedTimeByPathMetric, result));
+    }
+
+    async getSlowestPathsByDomain(domain: string) {
+        const { query, params } = new TimeSeriesQueryBuilder()
             .metrics([{ name: 'elapsed_time', aggregation: 'avg' }, { name: 'path' }])
             .from('http_log')
             .filter({ host: domain })
@@ -124,15 +138,9 @@ export class LogRepository {
             .limit(3)
             .build();
 
-        const [fastestPaths, slowestPaths] = await Promise.all([
-            this.clickhouse.query(fastestQueryBuilder.query, fastestQueryBuilder.params),
-            this.clickhouse.query(slowestQueryBuilder.query, slowestQueryBuilder.params),
-        ]);
+        const results = await this.clickhouse.query<ElapsedTimeByPathMetric>(query, params);
 
-        return {
-            fastestPaths,
-            slowestPaths,
-        };
+        return results.map((result) => plainToInstance(ElapsedTimeByPathMetric, result));
     }
 
     async getTrafficByProject(domain: string, timeUnit: string) {
@@ -147,7 +155,9 @@ export class LogRepository {
             .orderBy(['timestamp'], false)
             .build();
 
-        return await this.clickhouse.query(query, params);
+        const results = await this.clickhouse.query<TrafficCountMetric>(query, params);
+
+        return results.map((result) => plainToInstance(TrafficCountMetric, result));
     }
 
     async getDAUByProject(domain: string, date: string) {
@@ -156,11 +166,9 @@ export class LogRepository {
             .from('dau')
             .filter({ domain: domain, date: date })
             .build();
-        const result = await this.clickhouse.query<{ dau: number }>(query, params);
-        if (result.length > 0 && result[0].dau !== null) {
-            return result[0].dau;
-        } else {
-            return 0;
-        }
+
+        const [result] = await this.clickhouse.query<{ dau: number }>(query, params);
+
+        return result?.dau ? result.dau : 0;
     }
 }

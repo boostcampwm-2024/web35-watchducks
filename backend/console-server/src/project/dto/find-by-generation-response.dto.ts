@@ -8,5 +8,5 @@ export class FindByGenerationResponseDto {
     })
     @IsNotEmpty()
     @Expose()
-    name: string;
+    value: string;
 }

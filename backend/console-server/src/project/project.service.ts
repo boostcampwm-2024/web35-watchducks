@@ -26,11 +26,11 @@ export class ProjectService {
             const project = this.projectRepository.create(createProjectDto);
             const result = await this.projectRepository.save(project);
 
-            new Promise((resolve, _reject) =>
-                this.mailService
-                    .sendNameServerInfo(createProjectDto.email, createProjectDto.name)
-                    .then(() => resolve),
-            );
+            // new Promise((resolve, _reject) =>
+            //     this.mailService
+            //         .sendNameServerInfo(createProjectDto.email, createProjectDto.name)
+            //         .then(() => resolve),
+            // ); // TODO: 주석 삭제 필요!!!!!!!!!
             return plainToInstance(ProjectResponseDto, result);
         } catch (error) {
             if (isUniqueConstraintViolation(error))
@@ -49,7 +49,7 @@ export class ProjectService {
             where: { generation: generation },
         });
 
-        return projects.map((p) => plainToInstance(FindByGenerationResponseDto, p.name));
+        return projects.map((p) => plainToInstance(FindByGenerationResponseDto, { value: p.name }));
     }
 
     async countProjectByGeneration(countProjectByGenerationDto: CountProjectByGenerationDto) {

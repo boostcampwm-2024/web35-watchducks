@@ -7,7 +7,7 @@ import { Project } from '../project/entities/project.entity';
 import { NotFoundException } from '@nestjs/common';
 import type { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generation-response.dto';
 import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
-import { GetSuccessRateByProjectResponseDTO } from './dto/get-success-rate-by-project-response.dto';
+import { GetSuccessRateByProjectResponseDto } from './dto/get-success-rate-by-project-response.dto';
 
 describe('LogService 테스트', () => {
     let service: LogService;
@@ -50,38 +50,12 @@ describe('LogService 테스트', () => {
         expect(service).toBeDefined();
     });
 
-    describe('httpLog()는 ', () => {
-        it('레포지토리에서 로그를 올바르게 반환할 수 있어야 있다.', async () => {
-            const mockLogs = [{ date: '2024-03-01', avg_elapsed_time: 100, request_count: 1000 }];
-            mockLogRepository.findHttpLog.mockResolvedValue(mockLogs);
-
-            const result = await service.httpLog();
-
-            expect(result).toEqual(mockLogs);
-            expect(repository.findHttpLog).toHaveBeenCalled();
-        });
-
-        it('빈 결과를 잘 처리할 수 있어야 한다.', async () => {
-            mockLogRepository.findHttpLog.mockResolvedValue([]);
-
-            const result = await service.httpLog();
-
-            expect(result).toEqual([]);
-        });
-
-        it('레포지토리 에러를 처리할 수 있어야 한다.', async () => {
-            mockLogRepository.findHttpLog.mockRejectedValue(new Error('Database error'));
-
-            await expect(service.httpLog()).rejects.toThrow('Database error');
-        });
-    });
-
     describe('elapsedTime()는 ', () => {
         it('평균 응답 시간을 반환할 수 있어야 한다.', async () => {
             const mockTime = { avg_elapsed_time: 150 };
             mockLogRepository.findAvgElapsedTime.mockResolvedValue(mockTime);
 
-            const result = await service.elapsedTime();
+            const result = await service.getAvgElapsedTime();
 
             expect(result).toEqual(mockTime);
             expect(repository.findAvgElapsedTime).toHaveBeenCalled();
@@ -100,11 +74,11 @@ describe('LogService 테스트', () => {
             ];
             mockLogRepository.findCountByHost.mockResolvedValue(mockRanks);
 
-            const result = await service.trafficRank();
+            const result = await service.getTrafficRank();
 
             expect(result).toHaveLength(5);
             expect(result).toEqual(mockRanks.slice(0, 5));
-            expect(repository.findCountByHost).toHaveBeenCalled();
+            expect(repository.findTop5CountByHost).toHaveBeenCalled();
         });
 
         it('5개 이하의 결과에 대해서 올바르게 처리할 수 있어야 한다.', async () => {
@@ -114,7 +88,7 @@ describe('LogService 테스트', () => {
             ];
             mockLogRepository.findCountByHost.mockResolvedValue(mockRanks);
 
-            const result = await service.trafficRank();
+            const result = await service.getTrafficRank();
 
             expect(result).toHaveLength(2);
             expect(result).toEqual(mockRanks);
@@ -175,7 +149,7 @@ describe('LogService 테스트', () => {
 
             const result = await service.getResponseSuccessRateByProject(mockRequestDto);
 
-            expect(result).toBeInstanceOf(GetSuccessRateByProjectResponseDTO);
+            expect(result).toBeInstanceOf(GetSuccessRateByProjectResponseDto);
             expect(Object.keys(result)).toContain('projectName');
             expect(Object.keys(result)).toContain('success_rate');
             expect(Object.keys(result).length).toBe(2);
