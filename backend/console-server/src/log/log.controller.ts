@@ -12,6 +12,9 @@ import { GetSuccessRateResponseDto } from './dto/get-success-rate-response.dto';
 import { GetSuccessRateDto } from './dto/get-success-rate.dto';
 import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
 import { GetSuccessRateByProjectDto } from './dto/get-success-rate-by-project.dto';
+import { GetTrafficDailyDifferenceResponseDto } from './dto/get-traffic-daily-difference-response.dto';
+import { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
+import { GetSuccessRateByProjectResponseDTO } from './dto/get-success-rate-by-project-response.dto';
 
 
 @Controller('log')
@@ -78,7 +81,7 @@ export class LogController {
     @ApiResponse({
         status: 200,
         description: '프로젝트 별 응답 성공률이 성공적으로 반환됨.',
-        type: GetSuccessRateByProjectDto,
+        type: GetSuccessRateByProjectResponseDTO,
     })
     async getResponseSuccessRateByProject(
         @Query() getSuccessRateByProjectDto: GetSuccessRateByProjectDto,
@@ -114,6 +117,25 @@ export class LogController {
     })
     async getTrafficByGeneration(@Query() getTrafficByGenerationDto: GetTrafficByGenerationDto) {
         return await this.logService.getTrafficByGeneration(getTrafficByGenerationDto);
+    }
+
+    @Get('/traffic/daily-difference')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({
+        summary: '기수 별 프로젝트 전일 대비 트래픽',
+        description: '요청받은 기수의 프로젝트 전일 대비 트래픽을 반환합니다.',
+    })
+    @ApiResponse({
+        status: 200,
+        description: '기수별 프로젝트 전일 대비 트래픽이 정상적으로 반환됨',
+        type: GetTrafficDailyDifferenceResponseDto,
+    })
+    async getTrafficDailyDifferenceByGeneration(
+        getTrafficDailyDifferenceDto: GetTrafficDailyDifferenceDto,
+    ) {
+        return await this.logService.getTrafficDailyDifferenceByGeneration(
+            getTrafficDailyDifferenceDto,
+        );
     }
 
     @Get('/elapsed-time/path-rank')

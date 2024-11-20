@@ -101,8 +101,18 @@ export class LogRepository {
             .from('http_log')
             .build();
 
-        const result = await this.clickhouse.query(query, params);
-        return [{ count: ((result as unknown[])[0] as { count: number }).count }];
+        const result = await this.clickhouse.query<{ count: number }>(query, params);
+        return [{ count: result[0].count }];
+    }
+
+    async findTrafficForTimeRange(start: Date, end: Date) {
+        const queryBuilder = new TimeSeriesQueryBuilder()
+            .metrics([{ name: '*', aggregation: 'count' }])
+            .from('http_log')
+            .timeBetween(start, end)
+            .build();
+
+        return this.clickhouse.query<{ count: number }>(queryBuilder.query, queryBuilder.params);
     }
 
     async getPathSpeedRankByProject(domain: string) {
