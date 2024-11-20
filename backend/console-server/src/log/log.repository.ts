@@ -105,22 +105,7 @@ export class LogRepository {
         return [{ count: result[0].count }];
     }
 
-    async findTrafficDailyDifferenceByGeneration(timeRanges: {
-        today: { start: Date; end: Date };
-        yesterday: { start: Date; end: Date };
-    }) {
-        const [todayResult, yesterdayResult] = await Promise.all([
-            this.getTrafficForTimeRange(timeRanges.today.start, timeRanges.today.end),
-            this.getTrafficForTimeRange(timeRanges.yesterday.start, timeRanges.yesterday.end),
-        ]);
-
-        return {
-            today: todayResult[0].count,
-            yesterday: yesterdayResult[0].count,
-        };
-    }
-
-    private getTrafficForTimeRange(start: Date, end: Date) {
+    async findTrafficForTimeRange(start: Date, end: Date) {
         const queryBuilder = new TimeSeriesQueryBuilder()
             .metrics([{ name: '*', aggregation: 'count' }])
             .from('http_log')

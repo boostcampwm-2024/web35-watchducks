@@ -76,9 +76,7 @@ export class LogService {
         return plainToInstance(GetTrafficByGenerationDto, result[0]);
     }
 
-    async getTrafficDailyDifferenceByGeneration(
-        _getTrafficDailyDifferenceDto: GetTrafficDailyDifferenceDto,
-    ) {
+    private calculateTimeRanges() {
         const todayStart = new Date();
         todayStart.setHours(0, 0, 0, 0);
 
@@ -88,17 +86,40 @@ export class LogService {
 
         const yesterdayEnd = new Date(todayStart);
 
-        const { today, yesterday } =
-            await this.logRepository.findTrafficDailyDifferenceByGeneration({
-                today: { start: todayStart, end: new Date() },
-                yesterday: { start: yesterdayStart, end: yesterdayEnd },
-            });
+        return {
+            today: { start: todayStart, end: new Date() },
+            yesterday: { start: yesterdayStart, end: yesterdayEnd },
+        };
+    }
 
-        const result = today - yesterday;
+    private async fetchTrafficData(timeRange: { start: Date; end: Date }) {
+        const result = await this.logRepository.findTrafficForTimeRange(
+            timeRange.start,
+            timeRange.end,
+        );
+        return result[0].count;
+    }
 
-        return plainToInstance(GetTrafficDailyDifferenceResponseDto, {
-            traffic_daily_difference: result > 0 ? `+${result}` : `${result}`,
-        });
+    private formatTrafficDifference(difference: number): string {
+        return difference > 0 ? `+${difference}` : `${difference}`;
+    }
+
+    async getTrafficDailyDifferenceByGeneration(
+        _getTrafficDailyDifferenceDto: GetTrafficDailyDifferenceDto,
+    ) {
+        const timeRanges = this.calculateTimeRanges();
+
+        const [today, yesterday] = await Promise.all([
+            this.fetchTrafficData(timeRanges.today),
+            this.fetchTrafficData(timeRanges.yesterday),
+        ]);
+
+        const difference = today - yesterday;
+        const result = {
+            traffic_daily_difference: this.formatTrafficDifference(difference),
+        };
+
+        return plainToInstance(GetTrafficDailyDifferenceResponseDto, result);
     }
 
     async getPathSpeedRankByProject(getPathSpeedRankDto: GetPathSpeedRankDto) {
