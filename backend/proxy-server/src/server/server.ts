@@ -10,6 +10,7 @@ import type { ErrorLogRepository } from '../common/logger/error-log.repository';
 import { createSystemErrorLog } from '../common/error/create-system.error';
 import { ProxyHandler } from '../domain/proxy/proxy.handler';
 import { LogHandler } from '../domain/log/log.handler';
+import type { ProxyService } from 'domain/proxy/proxy.service';
 
 export class Server {
     private readonly server: FastifyInstance;
@@ -22,11 +23,12 @@ export class Server {
         private readonly logService: LogService,
         private readonly projectService: ProjectService,
         private readonly errorLogRepository: ErrorLogRepository,
+        private readonly proxyService: ProxyService,
     ) {
         this.server = fastify(fastifyConfig);
         this.logger = new FastifyLogger(this.server);
         this.errorHandler = new ErrorHandler({ logger: this.logger }, errorLogRepository);
-        this.proxyHandler = new ProxyHandler(projectService, this.logger, this.errorHandler);
+        this.proxyHandler = new ProxyHandler(proxyService, this.errorHandler);
         this.logHandler = new LogHandler(logService, this.logger);
 
         this.initializePlugins();
