@@ -2,14 +2,15 @@ import type { Socket } from 'dgram';
 import { createSocket, type RemoteInfo } from 'dgram';
 import { decode, encode } from 'dns-packet';
 import type { DecodedPacket, Question } from 'dns-packet';
-import type { ServerConfig } from '../common/utils/validator/configuration.validator';
+import type { ServerConfig } from 'common/utils/validator/configuration.validator';
 import { PacketValidator } from './utils/packet.validator';
 import { DNSResponseBuilder } from './utils/dns-response-builder';
-import { ResponseCode } from './constant/dns-packet.constant';
-import { logger } from '../common/utils/logger/console.logger';
+import { RESPONSE_CODE } from './constant/dns-packet.constant';
+import { logger } from 'common/utils/logger/console.logger';
 import { ServerError } from './error/server.error';
-import type { ProjectQueryInterface } from '../database/query/project.query.interface';
+import type { ProjectQueryInterface } from 'database/query/project.query.interface';
 import type { DAURecorderInterface } from 'database/query/dau-recorder';
+import { MESSAGE_TYPE } from 'server/constant/message-type.constants';
 
 export class Server {
     private server: Socket;
@@ -31,22 +32,41 @@ export class Server {
 
     private async handleMessage(msg: Buffer, remoteInfo: RemoteInfo): Promise<void> {
         try {
+            const messageType = PacketValidator.validateMessageType(msg);
+
+            if (messageType === MESSAGE_TYPE.HEALTH_CHECK) {
+                await this.handleHealthCheck(remoteInfo);
+                return;
+            }
+
             const query = decode(msg);
             const question = this.parseQuery(query);
+
             logger.logQuery(question.name, remoteInfo);
+
             await this.validateRequest(question.name);
             this.dauRecorder.recordAccess(question.name).catch((err) => {
                 logger.error(`DAU recording failed for ${question.name}: ${err.message}`);
             });
 
             const response = new DNSResponseBuilder(this.config, query)
-                .addAnswer(ResponseCode.NOERROR, question)
+                .addAnswer(RESPONSE_CODE.NOERROR, question)
                 .build();
             const responseMsg = encode(response);
 
             await this.sendResponse(responseMsg, remoteInfo);
         } catch (error) {
             await this.handleQueryError(error as Error, msg, remoteInfo);
+        }
+    }
+
+    private async handleHealthCheck(remoteInfo: RemoteInfo): Promise<void> {
+        try {
+            const healthCheckResponse = Buffer.from([]);
+
+            await this.sendResponse(healthCheckResponse, remoteInfo);
+        } catch (error) {
+            logger.error(`Health check response failed: ${(error as Error).message}`);
         }
     }
 
@@ -89,7 +109,7 @@ export class Server {
 
         const errorMessage = `Failed to process DNS query from ${remoteInfo.address}:${remoteInfo.port}`;
         const response = new DNSResponseBuilder(this.config, query)
-            .addAnswer(ResponseCode.NXDOMAIN)
+            .addAnswer(RESPONSE_CODE.NXDOMAIN)
             .build();
 
         const responseMsg = encode(response);

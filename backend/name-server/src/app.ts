@@ -1,10 +1,10 @@
 import { config } from 'dotenv';
-import type { ServerConfig } from './common/utils/validator/configuration.validator';
-import { ConfigurationValidator } from './common/utils/validator/configuration.validator';
-import { Server } from './server/server';
-import { db } from './database/mysql/mysql-database';
-import { logger } from './common/utils/logger/console.logger';
-import { ProjectQuery } from './database/query/project.query';
+import type { ServerConfig } from 'common/utils/validator/configuration.validator';
+import { ConfigurationValidator } from 'common/utils/validator/configuration.validator';
+import { Server } from 'server/server';
+import { db } from 'database/mysql/mysql-database';
+import { logger } from 'common/utils/logger/console.logger';
+import { ProjectQuery } from 'database/query/project.query';
 import { DAURecorder } from 'database/query/dau-recorder';
 
 config();
