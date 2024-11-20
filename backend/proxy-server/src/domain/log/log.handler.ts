@@ -2,6 +2,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { HttpLogEntity } from '../../domain/log/http-log.entity';
 import type { LogService } from 'domain/log/log.service';
 import type { FastifyLogger } from 'common/logger/fastify.logger';
+import { createSystemErrorLog } from 'common/error/create-system.error';
 
 export class LogHandler {
     constructor(
@@ -18,7 +19,15 @@ export class LogHandler {
             responseTime: reply.elapsedTime,
         };
 
-        this.logger.info(httpLog);
-        await this.logService.saveHttpLog(httpLog);
-    }
+         try {
+             this.logger.info(httpLog);
+             await this.logService.saveHttpLog(httpLog);
+         } catch (error) {
+             this.logger.error(createSystemErrorLog(
+                 error as Error,
+                 '/log/response',
+                 'Failed to save http log'
+             ));
+         }
+     }
 }

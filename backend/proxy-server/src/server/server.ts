@@ -112,7 +112,7 @@ export class Server {
                 '/server/stop',
                 'Error while stopping server'
             ));
-            process.exit(1);
+            throw error;
         }
     }
 }
