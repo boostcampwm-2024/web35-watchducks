@@ -22,6 +22,7 @@ describe('LogController 테스트', () => {
         getTrafficByGeneration: jest.fn(),
         getPathSpeedRankByProject: jest.fn(),
         getTrafficByProject: jest.fn(),
+        getDAUByProject: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -291,6 +292,38 @@ describe('LogController 테스트', () => {
             expect(result.trafficData).toHaveLength(0);
             expect(service.getTrafficByProject).toHaveBeenCalledWith(mockRequestDto);
             expect(service.getTrafficByProject).toHaveBeenCalledTimes(1);
+        });
+    });
+    describe('getDAUByProject()는', () => {
+        const mockRequestDto = { projectName: 'example-project', date: '2024-11-01' };
+
+        const mockResponseDto = {
+            projectName: 'example-project',
+            date: '2024-11-01',
+            dau: 125,
+        };
+
+        it('프로젝트명과 날짜가 들어왔을 때 DAU 데이터를 반환해야 한다', async () => {
+            mockLogService.getDAUByProject.mockResolvedValue(mockResponseDto);
+
+            const result = await controller.getDAUByProject(mockRequestDto);
+
+            expect(result).toEqual(mockResponseDto);
+            expect(result).toHaveProperty('projectName', mockRequestDto.projectName);
+            expect(result).toHaveProperty('date', mockRequestDto.date);
+            expect(result).toHaveProperty('dau', 125);
+            expect(service.getDAUByProject).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getDAUByProject).toHaveBeenCalledTimes(1);
+        });
+
+        it('서비스 에러 시 예외를 throw 해야 한다', async () => {
+            const error = new Error('Database error');
+            mockLogService.getDAUByProject.mockRejectedValue(error);
+
+            await expect(controller.getDAUByProject(mockRequestDto)).rejects.toThrow(error);
+
+            expect(service.getDAUByProject).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getDAUByProject).toHaveBeenCalledTimes(1);
         });
     });
 });

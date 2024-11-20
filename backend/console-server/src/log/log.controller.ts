@@ -6,10 +6,13 @@ import { GetPathSpeedRankDto } from './dto/get-path-speed-rank.dto';
 import { GetPathSpeedRankResponseDto } from './dto/get-path-speed-rank-response.dto';
 import { GetTrafficByProjectResponseDto } from './dto/get-traffic-by-project-response.dto';
 import { GetTrafficByProjectDto } from './dto/get-traffic-by-project.dto';
+import { GetDAUByProjectResponseDto } from './dto/get-dau-by-project-response.dto';
+import { GetDAUByProjectDto } from './dto/get-dau-by-project.dto';
 import { GetSuccessRateResponseDto } from './dto/get-success-rate-response.dto';
 import { GetSuccessRateDto } from './dto/get-success-rate.dto';
 import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
 import { GetSuccessRateByProjectDto } from './dto/get-success-rate-by-project.dto';
+
 
 @Controller('log')
 export class LogController {
@@ -126,5 +129,20 @@ export class LogController {
     })
     async getPathSpeedRankByProject(@Query() getPathSpeedRankDto: GetPathSpeedRankDto) {
         return await this.logService.getPathSpeedRankByProject(getPathSpeedRankDto);
+    }
+
+    @Get('/dau')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({
+        summary: '프로젝트별 DAU 조회',
+        description: '프로젝트 이름과 날짜로 해당 프로젝트의 DAU를 반환합니다.',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: '프로젝트의 DAU가 정상적으로 반환됨.',
+        type: GetDAUByProjectResponseDto,
+    })
+    async getDAUByProject(@Query() getDAUByProjectDto: GetDAUByProjectDto) {
+        return await this.logService.getDAUByProject(getDAUByProjectDto);
     }
 }

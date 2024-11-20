@@ -136,7 +136,7 @@ export class LogRepository {
     }
 
     async getTrafficByProject(domain: string, timeUnit: string) {
-        const queryBuilder = new TimeSeriesQueryBuilder()
+        const { query, params } = new TimeSeriesQueryBuilder()
             .metrics([
                 { name: '*', aggregation: 'count' },
                 { name: `toStartOf${timeUnit}(timestamp) as timestamp` },
@@ -147,6 +147,20 @@ export class LogRepository {
             .orderBy(['timestamp'], false)
             .build();
 
-        return await this.clickhouse.query(queryBuilder.query, queryBuilder.params);
+        return await this.clickhouse.query(query, params);
+    }
+
+    async getDAUByProject(domain: string, date: string) {
+        const { query, params } = new TimeSeriesQueryBuilder()
+            .metrics([{ name: `SUM(access) as dau` }])
+            .from('dau')
+            .filter({ domain: domain, date: date })
+            .build();
+        const result = await this.clickhouse.query<{ dau: number }>(query, params);
+        if (result.length > 0 && result[0].dau !== null) {
+            return result[0].dau;
+        } else {
+            return 0;
+        }
     }
 }
