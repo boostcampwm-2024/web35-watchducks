@@ -1,23 +1,21 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import fastify from 'fastify';
 import replyFrom from '@fastify/reply-from';
-import { ProxyError } from '../common/core/proxy.error';
-import { buildTargetUrl, validateHost, validateIp } from './utils';
 import { fastifyConfig } from './config/fastify.config';
-import { HOST_HEADER } from '../common/constant/http.constant';
 import { ErrorHandler } from './error.handler';
 import { FastifyLogger } from '../common/logger/fastify.logger';
 import type { LogService } from '../domain/log/log.service';
 import type { HttpLogEntity } from '../domain/log/http-log.entity';
 import type { ProjectService } from '../domain/project/project.service';
-import { DatabaseQueryError } from '../common/error/database-query.error';
 import type { ErrorLogRepository } from '../common/logger/error-log.repository';
 import { createSystemErrorLog } from '../common/error/create-system.error';
+import { ProxyHandler } from '../domain/proxy/proxy.handler';
 
 export class Server {
     private readonly server: FastifyInstance;
     private readonly errorHandler: ErrorHandler;
     private readonly logger: FastifyLogger;
+    private readonly proxyHandler: ProxyHandler;
 
     constructor(
         private readonly logService: LogService,
@@ -27,6 +25,7 @@ export class Server {
         this.server = fastify(fastifyConfig);
         this.logger = new FastifyLogger(this.server);
         this.errorHandler = new ErrorHandler({ logger: this.logger }, errorLogRepository);
+        this.proxyHandler = new ProxyHandler(projectService, this.logger, this.errorHandler);
 
         this.initializePlugins();
         this.initializeHooks();
@@ -48,7 +47,13 @@ export class Server {
     }
 
     private initializeRoutes(): void {
-        this.server.all('*', this.handleProxyRequest.bind(this));
+        this.server.all('*', async (request: FastifyRequest, reply: FastifyReply) => {
+            try {
+                await this.proxyHandler.handleProxyRequest(request, reply);
+            } catch (error) {
+                throw this.errorHandler.handleError(error as Error, request);
+            }
+        });
     }
 
     private initializeHooks(): void {
@@ -78,55 +83,6 @@ export class Server {
             reply.status(proxyError.statusCode).send({
                 error: proxyError.message,
                 statusCode: proxyError.statusCode,
-            });
-        });
-    }
-
-    private async handleProxyRequest(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-        try {
-            await this.executeProxyRequest(request, reply);
-        } catch (error) {
-            throw this.errorHandler.handleError(error as Error, request);
-        }
-    }
-
-    private async executeProxyRequest(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-        const host = validateHost(request.headers[HOST_HEADER]);
-        const ip = await this.resolveDomain(host);
-        const targetUrl = buildTargetUrl(ip, request.url, 'https://'); // TODO: Protocol 별 arg 세팅
-
-        await this.sendProxyRequest(targetUrl, request, reply);
-    }
-
-    private async resolveDomain(host: string): Promise<string> {
-        try {
-            const ip = await this.projectService.getIpByDomain(host);
-            validateIp(ip, host);
-            return ip;
-        } catch (error) {
-            if (error instanceof ProxyError) {
-                throw error;
-            }
-            throw new DatabaseQueryError(error as Error);
-        }
-    }
-
-    private async sendProxyRequest(
-        targetUrl: string,
-        request: FastifyRequest,
-        reply: FastifyReply,
-    ): Promise<void> {
-        await new Promise<void>((resolve, reject) => {
-            reply.from(targetUrl, {
-                onError: (reply, error) => {
-                    reject(
-                        new ProxyError(
-                            '프록시 요청 처리 중 오류가 발생했습니다.',
-                            502,
-                            error.error,
-                        ),
-                    );
-                },
             });
         });
     }
