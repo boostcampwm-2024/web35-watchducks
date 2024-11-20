@@ -15,7 +15,6 @@ export class LogRepository {
                        AND timestamp < toStartOfDay(now())
                      GROUP BY date
                      ORDER BY date;`;
-
         return await this.clickhouse.query(sql);
     }
 
@@ -61,6 +60,31 @@ export class LogRepository {
             .build();
 
         const result = await this.clickhouse.query(query);
+        return {
+            success_rate: 100 - (result as Array<{ is_error_rate: number }>)[0].is_error_rate,
+        };
+    }
+
+    async findResponseSuccessRateByProject(domain: string) {
+        const subQueryBuilder = new TimeSeriesQueryBuilder()
+            .metrics([{ name: 'is_error' }, { name: 'timestamp' }])
+            .from('http_log')
+            .filter({ host: domain })
+            .orderBy(['timestamp'], true)
+            .limit(1000)
+            .build();
+
+        const mainQueryBuilder = new TimeSeriesQueryBuilder()
+            .metrics([
+                {
+                    name: 'is_error',
+                    aggregation: 'rate',
+                },
+            ])
+            .from(`(${subQueryBuilder.query}) as subquery`)
+            .build();
+
+        const result = await this.clickhouse.query(mainQueryBuilder.query, subQueryBuilder.params);
         return {
             success_rate: 100 - (result as Array<{ is_error_rate: number }>)[0].is_error_rate,
         };
