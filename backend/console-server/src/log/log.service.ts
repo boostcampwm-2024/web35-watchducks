@@ -79,9 +79,26 @@ export class LogService {
     async getTrafficDailyDifferenceByGeneration(
         _getTrafficDailyDifferenceDto: GetTrafficDailyDifferenceDto,
     ) {
-        const result = await this.logRepository.findTrafficDailyDifferenceByGeneration();
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
 
-        return plainToInstance(GetTrafficDailyDifferenceResponseDto, result);
+        const yesterdayStart = new Date();
+        yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+        yesterdayStart.setHours(0, 0, 0, 0);
+
+        const yesterdayEnd = new Date(todayStart);
+
+        const { today, yesterday } =
+            await this.logRepository.findTrafficDailyDifferenceByGeneration({
+                today: { start: todayStart, end: new Date() },
+                yesterday: { start: yesterdayStart, end: yesterdayEnd },
+            });
+
+        const result = today - yesterday;
+
+        return plainToInstance(GetTrafficDailyDifferenceResponseDto, {
+            traffic_daily_difference: result > 0 ? `+${result}` : `${result}`,
+        });
     }
 
     async getPathSpeedRankByProject(getPathSpeedRankDto: GetPathSpeedRankDto) {

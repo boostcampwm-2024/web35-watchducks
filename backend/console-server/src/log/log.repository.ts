@@ -105,42 +105,29 @@ export class LogRepository {
         return [{ count: result[0].count }];
     }
 
-    async findTrafficDailyDifferenceByGeneration() {
-        const todayStart = new Date();
-        todayStart.setHours(0, 0, 0, 0);
-
-        const yesterdayStart = new Date();
-        yesterdayStart.setDate(yesterdayStart.getDate() - 1);
-        yesterdayStart.setHours(0, 0, 0, 0);
-
-        const yesterdayEnd = new Date(todayStart);
-
-        const todayBuilder = new TimeSeriesQueryBuilder()
-            .metrics([{ name: '*', aggregation: 'count' }])
-            .from('http_log')
-            .timeBetween(todayStart, new Date());
-
-        const yesterdayBuilder = new TimeSeriesQueryBuilder()
-            .metrics([{ name: '*', aggregation: 'count' }])
-            .from('http_log')
-            .timeBetween(yesterdayStart, yesterdayEnd);
-
+    async findTrafficDailyDifferenceByGeneration(timeRanges: {
+        today: { start: Date; end: Date };
+        yesterday: { start: Date; end: Date };
+    }) {
         const [todayResult, yesterdayResult] = await Promise.all([
-            this.clickhouse.query<{ count: number }>(
-                todayBuilder.build().query,
-                todayBuilder.build().params,
-            ),
-            this.clickhouse.query<{ count: number }>(
-                yesterdayBuilder.build().query,
-                yesterdayBuilder.build().params,
-            ),
+            this.getTrafficForTimeRange(timeRanges.today.start, timeRanges.today.end),
+            this.getTrafficForTimeRange(timeRanges.yesterday.start, timeRanges.yesterday.end),
         ]);
 
-        const difference = todayResult[0].count - yesterdayResult[0].count;
-
         return {
-            traffic_daily_difference: difference >= 0 ? `+${difference}` : `${difference}`,
+            today: todayResult[0].count,
+            yesterday: yesterdayResult[0].count,
         };
+    }
+
+    private getTrafficForTimeRange(start: Date, end: Date) {
+        const queryBuilder = new TimeSeriesQueryBuilder()
+            .metrics([{ name: '*', aggregation: 'count' }])
+            .from('http_log')
+            .timeBetween(start, end)
+            .build();
+
+        return this.clickhouse.query<{ count: number }>(queryBuilder.query, queryBuilder.params);
     }
 
     async getPathSpeedRankByProject(domain: string) {

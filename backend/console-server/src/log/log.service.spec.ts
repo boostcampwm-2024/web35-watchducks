@@ -432,7 +432,10 @@ describe('LogService 테스트', () => {
         });
 
         it('전일 대비 총 트래픽 증감량을 반환해야 한다', async () => {
-            const mockRepositoryResponse = { traffic_daily_difference: '+9100' };
+            const mockRepositoryResponse = {
+                today: 10000,
+                yesterday: 900,
+            };
             mockLogRepository.findTrafficDailyDifferenceByGeneration.mockResolvedValue(
                 mockRepositoryResponse,
             );
@@ -447,14 +450,18 @@ describe('LogService 테스트', () => {
         });
 
         it('트래픽의 차이가 0인 경우에도 올바르게 처리해야 한다', async () => {
-            const mockRepositoryResponse = { traffic_daily_difference: '0' };
+            const mockRepositoryResponse = {
+                today: 500,
+                yesterday: 500,
+            };
             mockLogRepository.findTrafficDailyDifferenceByGeneration.mockResolvedValue(
                 mockRepositoryResponse,
             );
 
             const result = await service.getTrafficDailyDifferenceByGeneration(mockRequestDto);
 
-            expect(result).toEqual(mockRepositoryResponse);
+            expect(result).toBeInstanceOf(GetTrafficDailyDifferenceResponseDto);
+            expect(result.traffic_daily_difference).toBe('0');
         });
 
         it('레포지토리 호출 시, 발생하는 에러를 throw 해야 한다', async () => {

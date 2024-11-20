@@ -294,19 +294,31 @@ describe('LogRepository 테스트', () => {
             jest.useRealTimers();
         });
 
-        it('총 트래픽의 차이를 계산하여 리턴할 수 있어야 한다.', async () => {
+        it('오늘과 어제의 트래픽을 리턴할 수 있어야 한다.', async () => {
             const todayTraffic = [{ count: 500 }];
             const yesterdayTraffic = [{ count: 400 }];
 
-            const expectedResult = { traffic_daily_difference: '+100' };
+            const timeRanges = {
+                today: {
+                    start: new Date('2024-01-02T00:00:00Z'),
+                    end: new Date('2024-01-02T23:59:59Z'),
+                },
+                yesterday: {
+                    start: new Date('2024-01-01T00:00:00Z'),
+                    end: new Date('2024-01-01T23:59:59Z'),
+                },
+            };
 
             mockClickhouse.query
                 .mockResolvedValueOnce(todayTraffic)
                 .mockResolvedValueOnce(yesterdayTraffic);
 
-            const result = await repository.findTrafficDailyDifferenceByGeneration();
+            const result = await repository.findTrafficDailyDifferenceByGeneration(timeRanges);
 
-            expect(result).toEqual(expectedResult);
+            expect(result).toEqual({
+                today: 500,
+                yesterday: 400,
+            });
             expect(clickhouse.query).toHaveBeenCalledTimes(2);
         });
     });
