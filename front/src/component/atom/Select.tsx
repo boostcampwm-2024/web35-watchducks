@@ -1,13 +1,13 @@
 type Props<T> = {
   cssOption?: string;
-  options: ReadonlyArray<{ readonly value: T; readonly label: string }>;
+  options?: ReadonlyArray<{ readonly value: T; readonly label: string }>;
   value: string;
   onChange?: (value: T) => void;
 };
 
 export default function Select<T extends string>({
   cssOption,
-  options = [] as ReadonlyArray<{ value: T; label: string }>,
+  options = [],
   value,
   onChange = () => {}
 }: Props<T>) {

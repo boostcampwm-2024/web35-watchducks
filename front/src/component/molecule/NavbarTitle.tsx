@@ -10,7 +10,7 @@ export default function NavbarTitle() {
   };
 
   return (
-    <div className='w-full overflow-hidden'>
+    <div className='w-full'>
       <div
         className='flex min-w-0 cursor-pointer items-center gap-2 md:gap-4'
         onClick={navigateMain}>

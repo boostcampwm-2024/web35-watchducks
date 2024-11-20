@@ -25,7 +25,7 @@ export default function useRegisterForm({ successCallback, errorCallback }: Prop
     isValidIp: false,
     isValidEmail: false
   });
-  const [isAllValid, setIsAllValid] = useState(false);
+  const [isAllValid, setIsAllValid] = useState<boolean>(false);
 
   useEffect(() => {
     setValidation({
@@ -73,7 +73,6 @@ export default function useRegisterForm({ successCallback, errorCallback }: Prop
 
   const handleSubmit = () => {
     if (isAllValid) {
-      console.log(formData);
       mutation.mutate(formData);
     }
   };
