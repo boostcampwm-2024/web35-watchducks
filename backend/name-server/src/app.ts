@@ -1,10 +1,11 @@
 import { config } from 'dotenv';
-import type { ServerConfig } from './common/utils/validator/configuration.validator';
-import { ConfigurationValidator } from './common/utils/validator/configuration.validator';
-import { Server } from './server/server';
-import { db } from './database/mysql/mysql-database';
-import { logger } from './common/utils/logger/console.logger';
-import { ProjectQuery } from './database/query/project.query';
+import type { ServerConfig } from 'common/utils/validator/configuration.validator';
+import { ConfigurationValidator } from 'common/utils/validator/configuration.validator';
+import { Server } from 'server/server';
+import { db } from 'database/mysql/mysql-database';
+import { logger } from 'common/utils/logger/console.logger';
+import { ProjectQuery } from 'database/query/project.query';
+import { DAURecorder } from 'database/query/dau-recorder';
 
 config();
 
@@ -15,9 +16,10 @@ export class Application {
         await this.initializeDatabase();
 
         const config = await this.initializeConfig();
+        const dauRecorder = new DAURecorder();
         const projectQuery = new ProjectQuery();
 
-        return new Server(config, projectQuery);
+        return new Server(config, dauRecorder, projectQuery);
     }
 
     public async cleanup(): Promise<void> {
@@ -36,6 +38,6 @@ export class Application {
 
     private async initializeDatabase(): Promise<void> {
         await db.connect();
-        logger.info('Database connection established');
+        logger.info('MySql Database connection established');
     }
 }

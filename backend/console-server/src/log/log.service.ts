@@ -8,6 +8,8 @@ import { GetPathSpeedRankDto } from './dto/get-path-speed-rank.dto';
 import { GetPathSpeedRankResponseDto } from './dto/get-path-speed-rank-response.dto';
 import { GetTrafficByProjectDto } from './dto/get-traffic-by-project.dto';
 import { GetTrafficByProjectResponseDto } from './dto/get-traffic-by-project-response.dto';
+import { GetDAUByProjectDto } from './dto/get-dau-by-project.dto';
+import { GetDAUByProjectResponseDto } from './dto/get-dau-by-project-response.dto';
 import { GetSuccessRateResponseDto } from './dto/get-success-rate-response.dto';
 import { GetSuccessRateDto } from './dto/get-success-rate.dto';
 import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
@@ -151,6 +153,24 @@ export class LogService {
             projectName,
             timeUnit,
             trafficData,
+        });
+    }
+
+    async getDAUByProject(getDAUByProjectDto: GetDAUByProjectDto) {
+        const { projectName, date } = getDAUByProjectDto;
+
+        const project = await this.projectRepository.findOne({
+            where: { name: projectName },
+            select: ['domain'],
+        });
+        if (!project) {
+            throw new NotFoundException(`Project with name ${projectName} not found`);
+        }
+        const dau = await this.logRepository.getDAUByProject(project.domain, date);
+        return plainToInstance(GetDAUByProjectResponseDto, {
+            projectName,
+            date,
+            dau,
         });
     }
 }

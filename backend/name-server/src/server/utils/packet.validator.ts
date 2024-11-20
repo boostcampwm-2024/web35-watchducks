@@ -1,4 +1,9 @@
 import type { Packet, Question } from 'dns-packet';
+import {
+    MESSAGE_TYPE,
+    MessageType,
+    MIN_DNS_MESSAGE_LENGTH,
+} from 'server/constant/message-type.constants';
 
 type TypeGuardResult<T> = T extends Packet ? T & { questions: Question[] } : never;
 
@@ -13,5 +18,21 @@ export class PacketValidator {
 
     static validatePacket(packet: Packet): boolean {
         return this.hasQuestions(packet) && this.hasFlags(packet);
+    }
+
+    static validateMessageType(msg: Buffer): MessageType {
+        if (msg.length >= MIN_DNS_MESSAGE_LENGTH) {
+            const flags = msg.readUInt16BE(2);
+            const isQuery = (flags & 0x8000) === 0;
+
+            if (isQuery) {
+                const questionCount = msg.readUInt16BE(4);
+                if (questionCount > 0) {
+                    return MESSAGE_TYPE.DNS;
+                }
+            }
+        }
+
+        return MESSAGE_TYPE.HEALTH_CHECK;
     }
 }
