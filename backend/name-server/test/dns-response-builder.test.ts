@@ -1,7 +1,7 @@
 import { DNSResponseBuilder } from '../src/server/utils/dns-response-builder';
 import type { Packet } from 'dns-packet';
 import { PacketValidator } from '../src/server/utils/packet.validator';
-import { DNSFlags, ResponseCode } from '../src/server/constant/dns-packet.constant';
+import { DNS_FLAGS, RESPONSE_CODE } from '../src/server/constant/dns-packet.constant';
 
 describe('DNSResponseBuilder의', () => {
     const mockConfig = {
@@ -12,7 +12,7 @@ describe('DNSResponseBuilder의', () => {
     const mockQuery: Packet = {
         type: 'query',
         id: 1234,
-        flags: DNSFlags.RECURSION_DESIRED,
+        flags: DNS_FLAGS.RECURSION_DESIRED,
         questions: [
             {
                 name: 'example.com',
@@ -29,14 +29,14 @@ describe('DNSResponseBuilder의', () => {
 
         expect(response.id).toBe(mockQuery.id);
         expect(response.type).toBe('response');
-        expect(response.flags).toBe(DNSFlags.AUTHORITATIVE_ANSWER | DNSFlags.RECURSION_DESIRED);
+        expect(response.flags).toBe(DNS_FLAGS.AUTHORITATIVE_ANSWER | DNS_FLAGS.RECURSION_DESIRED);
     });
 
     test('addAnswer()는 올바른 정보를 담은 answer를 추가해야 합니다.', () => {
         const builder = new DNSResponseBuilder(mockConfig, mockQuery);
 
         if (!PacketValidator.hasQuestions(mockQuery)) return;
-        builder.addAnswer(ResponseCode.NOERROR, mockQuery.questions[0]);
+        builder.addAnswer(RESPONSE_CODE.NOERROR, mockQuery.questions[0]);
         const response = builder.build();
 
         expect(response.answers).toHaveLength(1);
