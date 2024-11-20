@@ -1,7 +1,7 @@
 import { Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-class TrafficDataPoint {
+export class TrafficCountByTimeunit {
     @ApiProperty({
         example: '2024-11-07 23:07:28',
         description: '시간 단위 별 타임스탬프',
@@ -34,10 +34,10 @@ export class GetTrafficByProjectResponseDto {
     timeUnit: string;
 
     @ApiProperty({
-        type: [TrafficDataPoint],
+        type: [TrafficCountByTimeunit],
         description: '시간 단위 별 트래픽 데이터',
     })
     @Expose()
-    @Type(() => TrafficDataPoint)
-    trafficData: TrafficDataPoint[];
+    @Type(() => TrafficCountByTimeunit)
+    trafficData: TrafficCountByTimeunit[];
 }
