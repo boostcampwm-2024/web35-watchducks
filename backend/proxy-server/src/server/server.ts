@@ -12,8 +12,9 @@ import type { HttpLogEntity } from '../domain/log/http-log.entity';
 import type { ProjectService } from '../domain/project/project.service';
 import { DatabaseQueryError } from '../common/error/database-query.error';
 import type { ErrorLogRepository } from '../common/logger/error-log.repository';
+import { createSystemErrorLog } from '../common/error/create-system.error';
 
-export class ProxyServer {
+export class Server {
     private readonly server: FastifyInstance;
     private readonly errorHandler: ErrorHandler;
     private readonly logger: FastifyLogger;
@@ -100,9 +101,7 @@ export class ProxyServer {
     private async resolveDomain(host: string): Promise<string> {
         try {
             const ip = await this.projectService.getIpByDomain(host);
-
             validateIp(ip, host);
-
             return ip;
         } catch (error) {
             if (error instanceof ProxyError) {
@@ -132,6 +131,15 @@ export class ProxyServer {
         });
     }
 
+    private handleError(error: Error): void {
+        this.logger.error(createSystemErrorLog(
+            error,
+            '/server',
+            'Server error occurred'
+        ));
+        this.stop();
+    }
+
     public async start(): Promise<void> {
         try {
             await this.server.listen({
@@ -140,8 +148,11 @@ export class ProxyServer {
             });
             this.logger.info({ message: `Proxy server is running on port ${process.env.PORT}` });
         } catch (error) {
-            this.server.log.error('Failed to start server server:', error);
-            console.error('Detailed error:', error);
+            this.logger.error(createSystemErrorLog(
+                error,
+                '/server/start',
+                'Failed to start server'
+            ));
             process.exit(1);
         }
     }
@@ -151,7 +162,11 @@ export class ProxyServer {
             await this.server.close();
             this.logger.info({ message: 'Proxy server stopped' });
         } catch (error) {
-            this.server.log.error('Error while stopping server server:', error);
+            this.logger.error(createSystemErrorLog(
+                error,
+                '/server/stop',
+                'Error while stopping server'
+            ));
             process.exit(1);
         }
     }
