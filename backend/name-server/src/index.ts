@@ -1,5 +1,5 @@
-import { Application } from './app';
-import { logger } from './common/utils/logger/console.logger';
+import { Application } from 'app';
+import { logger } from 'common/utils/logger/console.logger';
 
 async function main(): Promise<void> {
     const initializer = new Application();
