@@ -2,13 +2,13 @@ import type { Socket } from 'dgram';
 import { createSocket, type RemoteInfo } from 'dgram';
 import { decode, encode } from 'dns-packet';
 import type { DecodedPacket, Question } from 'dns-packet';
-import type { ServerConfig } from '../common/utils/validator/configuration.validator';
+import type { ServerConfig } from 'common/utils/validator/configuration.validator';
 import { PacketValidator } from './utils/packet.validator';
 import { DNSResponseBuilder } from './utils/dns-response-builder';
 import { ResponseCode } from './constant/dns-packet.constant';
-import { logger } from '../common/utils/logger/console.logger';
+import { logger } from 'common/utils/logger/console.logger';
 import { ServerError } from './error/server.error';
-import type { ProjectQueryInterface } from '../database/query/project.query.interface';
+import type { ProjectQueryInterface } from 'database/query/project.query.interface';
 import type { DAURecorderInterface } from 'database/query/dau-recorder';
 
 export class Server {
@@ -33,7 +33,11 @@ export class Server {
         try {
             const query = decode(msg);
             const question = this.parseQuery(query);
+
+            console.log(query); // TODO: 삭제
+
             logger.logQuery(question.name, remoteInfo);
+
             await this.validateRequest(question.name);
             this.dauRecorder.recordAccess(question.name).catch((err) => {
                 logger.error(`DAU recording failed for ${question.name}: ${err.message}`);
