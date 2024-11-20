@@ -2,7 +2,7 @@ import type { Packet, Question, RecordClass } from 'dns-packet';
 import type { ServerConfig } from '../../common/utils/validator/configuration.validator';
 import { PacketValidator } from './packet.validator';
 import type { ResponseCodeType } from '../constant/dns-packet.constant';
-import { DNSFlags, ResponseCode } from '../constant/dns-packet.constant';
+import { DNS_FLAGS, RESPONSE_CODE } from '../constant/dns-packet.constant';
 
 interface DNSResponse extends Packet {
     answers: Array<{
@@ -30,10 +30,10 @@ export class DNSResponseBuilder {
     }
 
     private createFlags(query: Packet): number {
-        const flags = DNSFlags.AUTHORITATIVE_ANSWER;
+        const flags = DNS_FLAGS.AUTHORITATIVE_ANSWER;
 
-        if (PacketValidator.hasFlags(query) && query.flags & DNSFlags.RECURSION_DESIRED) {
-            return flags | DNSFlags.RECURSION_DESIRED;
+        if (PacketValidator.hasFlags(query) && query.flags & DNS_FLAGS.RECURSION_DESIRED) {
+            return flags | DNS_FLAGS.RECURSION_DESIRED;
         }
 
         return flags;
@@ -42,11 +42,11 @@ export class DNSResponseBuilder {
     addAnswer(rcode: ResponseCodeType, question?: Question): this {
         this.response.flags = 0x8000;
 
-        if (this.response.flags && rcode === ResponseCode.NXDOMAIN) {
-            this.response.flags |= ResponseCode.NXDOMAIN;
+        if (this.response.flags && rcode === RESPONSE_CODE.NXDOMAIN) {
+            this.response.flags |= RESPONSE_CODE.NXDOMAIN;
         }
 
-        if (rcode === ResponseCode.NOERROR && question) {
+        if (rcode === RESPONSE_CODE.NOERROR && question) {
             this.response.answers = [
                 {
                     name: question.name,
