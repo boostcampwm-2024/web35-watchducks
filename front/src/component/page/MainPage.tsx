@@ -24,7 +24,7 @@ export default function MainPage() {
 
       <div className='h-2/3 flex-1'>
         <CustomErrorBoundary>
-          <MainTrafficChart />
+          <MainTrafficChart generation={generation} />
         </CustomErrorBoundary>
       </div>
     </div>
