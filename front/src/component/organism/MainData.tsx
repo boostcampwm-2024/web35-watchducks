@@ -22,10 +22,10 @@ export default function MainData({ generation }: Props) {
     : { symbol: '▼', color: 'text-red' };
 
   return (
-    <DataLayout cssOption='p-8 rounded-lg shadow-md w-full'>
+    <DataLayout cssOption='p-8 rounded-lg shadow-md w-full justify-center flex-col flex'>
       <h2 className='text-navy mb-8 text-center text-2xl font-bold'>9기 Total Data</h2>
 
-      <div className='mt-4 grid grid-cols-2 gap-10'>
+      <div className='mt-4 grid grid-cols-2 place-items-center gap-10'>
         <div className='flex flex-col items-center text-center'>
           <TextMotionDiv
             content={`${totalProjectCount}개`}
@@ -44,7 +44,7 @@ export default function MainData({ generation }: Props) {
 
         <div className='flex flex-col items-center text-center'>
           <TextMotionDiv
-            content={elapsedTime.toString() + 'ms'}
+            content={elapsedTime?.toFixed(0) + 'ms'}
             cssOption='text-navy text-2xl font-bold'
           />
           <p className='mt-2 text-sm text-gray-500'>평균 응답시간</p>
