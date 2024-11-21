@@ -1,4 +1,11 @@
-import { ResponseRate, Traffic, Ranking } from '@type/api';
+import {
+  ResponseRate,
+  Traffic,
+  Ranking,
+  DailyDifferenceTraffic,
+  ElapsedTime,
+  ResponseTime
+} from '@type/api';
 import { GroupOption } from '@type/Navbar';
 
 import { api } from './axios';
@@ -16,8 +23,8 @@ const getRakings = async () => {
   return response.data;
 };
 
-const getTotalTraffic = async () => {
-  const response = await api.get<Traffic>(`/log/traffic`);
+const getTotalTraffic = async (generation: string) => {
+  const response = await api.get<Traffic>(`/log/traffic?generation=${generation}`);
   return response.data;
 };
 
@@ -26,9 +33,35 @@ const getTotalProjectCount = async (generation: string) => {
   return response.data;
 };
 
-const getTotalResponseRate = async () => {
-  const response = await api.get<ResponseRate>(`/log/response-rate`);
+const getTotalResponseRate = async (generation: string) => {
+  const response = await api.get<ResponseRate>(`/log/success-rate?generation=${generation}`);
   return response.data;
 };
 
-export { getGroupNames, getRakings, getTotalTraffic, getTotalProjectCount, getTotalResponseRate };
+const getDailyDifferenceTraffic = async (generation: string) => {
+  const reseponse = await api.get<DailyDifferenceTraffic>(
+    `/log/traffic/daily-difference?generation=${generation}`
+  );
+  return reseponse.data;
+};
+
+const getTotalElapsedTime = async (generation: string) => {
+  const response = await api.get<ElapsedTime>(`/log/elapsed-time?generation=${generation}`);
+  return response.data;
+};
+
+const getTop5ResponseTime = async (generation: string) => {
+  const response = await api.get<ResponseTime[]>(`/log/elapsed-time/top5/generation=${generation}`);
+  return response.data;
+};
+
+export {
+  getGroupNames,
+  getRakings,
+  getTotalTraffic,
+  getTotalProjectCount,
+  getTotalResponseRate,
+  getDailyDifferenceTraffic,
+  getTotalElapsedTime,
+  getTop5ResponseTime
+};
