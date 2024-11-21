@@ -139,8 +139,6 @@ export class LogService {
 
         if (!project) throw new NotFoundException(`Project with name ${projectName} not found`);
 
-        console.log('??');
-
         const fastestPaths = await this.logRepository.getFastestPathsByDomain(project.domain);
         const slowestPaths = await this.logRepository.getSlowestPathsByDomain(project.domain);
 
