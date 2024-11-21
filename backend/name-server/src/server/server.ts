@@ -8,6 +8,7 @@ import { DNSResponseBuilder } from './utils/dns-response-builder';
 import { RESPONSE_CODE } from './constant/dns-packet.constant';
 import { logger } from 'common/utils/logger/console.logger';
 import { ServerError } from './error/server.error';
+import type { ProjectQueryInterface } from '../database/query/project.query.interface';
 import type { ProjectQueryInterface } from 'database/query/project.query.interface';
 import type { DAURecorderInterface } from 'database/query/dau-recorder';
 import { MESSAGE_TYPE } from 'server/constant/message-type.constants';
@@ -109,7 +110,7 @@ export class Server {
 
         const errorMessage = `Failed to process DNS query from ${remoteInfo.address}:${remoteInfo.port}`;
         const response = new DNSResponseBuilder(this.config, query)
-            .addAnswer(RESPONSE_CODE.NXDOMAIN)
+            .addAnswer(ResponseCode.NXDOMAIN)
             .build();
 
         const responseMsg = encode(response);

@@ -3,6 +3,10 @@ import { HttpStatus } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { LogController } from './log.controller';
 import { LogService } from './log.service';
+import { GetTrafficRankDto } from './dto/get-traffic-rank.dto';
+import { plainToInstance } from 'class-transformer';
+import { GetAvgElapsedTimeDto } from './dto/get-avg-elapsed-time.dto';
+
 interface TrafficRankResponseType {
     status: number;
     data: Array<{ host: string; count: number }>;
@@ -56,7 +60,10 @@ describe('LogController 테스트', () => {
         it('평균 응답 시간을 ProjectResponseDto 형식으로 반환해야 한다', async () => {
             mockLogService.getAvgElapsedTime.mockResolvedValue(mockResult);
 
-            const result = await controller.getElapsedTime();
+
+            const result = await controller.getElapsedTime(
+                plainToInstance(GetAvgElapsedTimeDto, { generation: 1 }),
+            );
 
             expect(result).toEqual(mockResult);
             expect(result).toHaveProperty('status', HttpStatus.OK);
@@ -80,8 +87,9 @@ describe('LogController 테스트', () => {
         it('TOP 5 트래픽 순위를 ProjectResponseDto 형식으로 반환해야 한다', async () => {
             mockLogService.trafficRank.mockResolvedValue(mockResult);
 
-            const result =
-                (await controller.getTrafficRank()) as unknown as TrafficRankResponseType;
+            const result = (await controller.getTrafficRank(
+                plainToInstance(GetTrafficRankDto, { generation: 1 }),
+            )) as unknown as TrafficRankResponseType;
 
             expect(result).toEqual(mockResult);
             expect(result).toHaveProperty('status', HttpStatus.OK);
