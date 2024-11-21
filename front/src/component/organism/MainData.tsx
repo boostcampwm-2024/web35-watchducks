@@ -7,7 +7,19 @@ type Props = {
 };
 
 export default function MainData({ generation }: Props) {
-  const { totalProjectCount, totalResponseRate, totalTraffic } = useTotalDatas(generation);
+  const {
+    totalProjectCount,
+    totalResponseRate,
+    totalTraffic,
+    dailyDifferenceTraffic,
+    elapsedTime
+  } = useTotalDatas(generation);
+
+  const isTrafficIncrease = !dailyDifferenceTraffic.startsWith('-');
+
+  const arrowStyle = isTrafficIncrease
+    ? { symbol: '▲', color: 'text-green' }
+    : { symbol: '▼', color: 'text-red' };
 
   return (
     <DataLayout cssOption='p-8 rounded-lg shadow-md w-full'>
@@ -31,7 +43,10 @@ export default function MainData({ generation }: Props) {
         </div>
 
         <div className='flex flex-col items-center text-center'>
-          <TextMotionDiv content='321ms' cssOption='text-navy text-2xl font-bold' />
+          <TextMotionDiv
+            content={elapsedTime.toString() + 'ms'}
+            cssOption='text-navy text-2xl font-bold'
+          />
           <p className='mt-2 text-sm text-gray-500'>평균 응답시간</p>
         </div>
 
@@ -46,9 +61,12 @@ export default function MainData({ generation }: Props) {
 
       <div className='mt-6 flex justify-center'>
         <div className='flex items-center gap-2'>
-          <span className='text-sm text-green-500'>▲</span>
-          <TextMotionDiv content='9.1K' cssOption='text-sm font-bold text-green-500' />
-          <span className='text-sm text-gray-500'>전월 대비 트래픽 증가량</span>
+          <span className={`text-sm ${arrowStyle.color}`}>{arrowStyle.symbol}</span>
+          <TextMotionDiv
+            content={dailyDifferenceTraffic}
+            cssOption={`text-sm font-bold ${arrowStyle.color}`}
+          />
+          <span className='text-sm'>전월 대비 트래픽 증가량</span>
         </div>
       </div>
     </DataLayout>
