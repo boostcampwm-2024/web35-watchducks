@@ -207,7 +207,7 @@ describe('LogRepository 테스트', () => {
         it('올바른 도메인과 시간 단위를 기준으로 트래픽 데이터를 반환해야 한다.', async () => {
             mockClickhouse.query.mockResolvedValue(mockTrafficData);
 
-            const result = await repository.getTrafficByProject(domain, timeUnit);
+            const result = await repository.findTrafficByProject(domain, timeUnit);
 
             expect(result).toEqual(mockTrafficData);
             expect(clickhouse.query).toHaveBeenCalledWith(
@@ -221,7 +221,7 @@ describe('LogRepository 테스트', () => {
         it('트래픽 데이터가 없을 경우 빈 배열을 반환해야 한다.', async () => {
             mockClickhouse.query.mockResolvedValue([]);
 
-            const result = await repository.getTrafficByProject(domain, timeUnit);
+            const result = await repository.findTrafficByProject(domain, timeUnit);
 
             expect(result).toEqual([]);
             expect(clickhouse.query).toHaveBeenCalledWith(
@@ -234,7 +234,7 @@ describe('LogRepository 테스트', () => {
             const error = new Error('Clickhouse query failed');
             mockClickhouse.query.mockRejectedValue(error);
 
-            await expect(repository.getTrafficByProject(domain, timeUnit)).rejects.toThrow(
+            await expect(repository.findTrafficByProject(domain, timeUnit)).rejects.toThrow(
                 'Clickhouse query failed',
             );
 
@@ -281,7 +281,7 @@ describe('LogRepository 테스트', () => {
             const mockResult = [{ dau: 150 }];
             mockClickhouse.query.mockResolvedValue(mockResult);
 
-            const result = await repository.getDAUByProject(domain, date);
+            const result = await repository.findDAUByProject(domain, date);
 
             expect(result).toBe(150);
             expect(clickhouse.query).toHaveBeenCalledWith(
@@ -295,7 +295,7 @@ describe('LogRepository 테스트', () => {
         it('DAU 데이터가 없을 경우 0을 반환해야 한다.', async () => {
             mockClickhouse.query.mockResolvedValue([]);
 
-            const result = await repository.getDAUByProject(domain, date);
+            const result = await repository.findDAUByProject(domain, date);
 
             expect(result).toBe(0);
             expect(clickhouse.query).toHaveBeenCalledWith(
@@ -310,7 +310,7 @@ describe('LogRepository 테스트', () => {
             const mockResult = [{ dau: null }];
             mockClickhouse.query.mockResolvedValue(mockResult);
 
-            const result = await repository.getDAUByProject(domain, date);
+            const result = await repository.findDAUByProject(domain, date);
 
             expect(result).toBe(0);
             expect(clickhouse.query).toHaveBeenCalledWith(
@@ -325,7 +325,7 @@ describe('LogRepository 테스트', () => {
             const error = new Error('Clickhouse query failed');
             mockClickhouse.query.mockRejectedValue(error);
 
-            await expect(repository.getDAUByProject(domain, date)).rejects.toThrow(
+            await expect(repository.findDAUByProject(domain, date)).rejects.toThrow(
                 'Clickhouse query failed',
             );
 

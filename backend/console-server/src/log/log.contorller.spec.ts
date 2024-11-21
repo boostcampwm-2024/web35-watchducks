@@ -300,9 +300,9 @@ describe('LogController 테스트', () => {
                 mockRequestDto,
             );
             expect(service.getTrafficDailyDifferenceByGeneration).toHaveBeenCalledTimes(1);
-        }
-    )}
-             
+        });
+    });
+
     describe('getDAUByProject()는', () => {
         const mockRequestDto = { projectName: 'example-project', date: '2024-11-01' };
 
