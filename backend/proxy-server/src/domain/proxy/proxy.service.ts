@@ -5,7 +5,7 @@ import type { FastifyLogger } from 'common/logger/fastify.logger';
 import type { ProjectService } from 'domain/project/project.service';
 
 enum Protocol {
-    HTTP = 'http://',
+    HTTP = 'https://',
     HTTPS = 'https://',
 }
 
