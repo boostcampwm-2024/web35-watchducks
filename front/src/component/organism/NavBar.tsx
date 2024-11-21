@@ -11,19 +11,23 @@ type Props = NavbarSelectProps;
 
 export default function Navbar(props: Props) {
   return (
-    <aside className='flex h-screen flex-col gap-16 bg-white px-24 pt-24'>
-      <NavbarTitle />
-      <NavbarSelectWrapper {...props} />
-      <NavbarMenu />
-      <CustomErrorBoundary>
-        <NavbarRanking />
-      </CustomErrorBoundary>
-      <NavigateButton
-        path='/register'
-        content='프로젝트 등록하러가기'
-        cssOption='bg-blue rounded-10 text-white text-10 md:text-12 p-16 flex items-center whitespace-nowrap hover:text-black'
-      />
-      <NavbarContact />
+    <aside className='bg-lightblue dark:bg-darkblue flex h-screen flex-col px-24'>
+      <div className='flex flex-col gap-16 pt-24'>
+        <NavbarTitle />
+        <NavbarSelectWrapper {...props} />
+        <NavbarMenu />
+        <CustomErrorBoundary>
+          <NavbarRanking />
+        </CustomErrorBoundary>
+        <NavigateButton
+          path='/register'
+          content='프로젝트 등록하러가기'
+          cssOption='flex items-center mt-24 whitespace-nowrap rounded-10 bg-blue p-16 text-10 text-white hover:text-black md:text-12'
+        />
+      </div>
+      <div className='mt-auto pb-24'>
+        <NavbarContact />
+      </div>
     </aside>
   );
 }

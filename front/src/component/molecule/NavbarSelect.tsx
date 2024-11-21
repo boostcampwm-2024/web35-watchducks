@@ -17,10 +17,10 @@ export default function NavbarSelect({
   const isProjectPath = pathname === PATH.PROJECT;
 
   return (
-    <div className='mt-8 flex w-full min-w-0 items-center justify-between rounded-1.5 border-1.5 border-solid border-gray p-4 md:mt-16 md:gap-[4px] md:p-8'>
+    <div className='flex w-full min-w-0 items-center justify-between rounded-1.5 border-1.5 border-solid border-gray p-4 md:gap-[4px] md:p-8'>
       {isProjectPath && (
         <Select
-          cssOption='text-12 md:text-14 md:px-2 text-ellipsis cursor-pointer hover:font-semibold truncate'
+          cssOption='text-12 md:text-14 md:px-2 text-ellipsis cursor-pointer hover:font-semibold truncate dark:text-white'
           options={GENERATION_OPTION}
           value={generation}
           onChange={setGeneration}

@@ -8,7 +8,7 @@ export default function RegisterPage() {
 
   return (
     <>
-      <div className='relative my-auto flex h-full w-full flex-col items-center justify-center gap-50 pl-50 md:flex-row'>
+      <div className='dark:bg-lightblack relative my-auto flex h-full w-full flex-col items-center justify-center gap-50 pl-50 md:flex-row'>
         <RegisterForm showAlert={showAlert} />
         <RegisterDescription />
       </div>

@@ -15,7 +15,10 @@ export default function NavbarTitle() {
         className='flex min-w-0 cursor-pointer items-center gap-2 md:gap-4'
         onClick={navigateMain}>
         <P cssOption='text-16 md:text-20 lg:text-24 shrink-0' content='🐥' />
-        <H1 cssOption='font-bold text-16 md:text-20 lg:text-24 truncate' content='WatchDucks' />
+        <H1
+          cssOption='font-bold text-16 md:text-20 lg:text-24 truncate dark:text-white'
+          content='WatchDucks'
+        />
       </div>
     </div>
   );
