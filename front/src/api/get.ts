@@ -4,7 +4,8 @@ import {
   Ranking,
   DailyDifferenceTraffic,
   ElapsedTime,
-  ResponseTime
+  ResponseTime,
+  Top5Traffic
 } from '@type/api';
 import { GroupOption } from '@type/Navbar';
 
@@ -55,6 +56,13 @@ const getTop5ResponseTime = async (generation: string) => {
   return response.data;
 };
 
+const getTop5Traffic = async (generation: string) => {
+  const response = await api.get<Top5Traffic[]>(
+    `/log/traffic/top5/line-chart?generation=${generation}`
+  );
+  return response.data;
+};
+
 export {
   getGroupNames,
   getRankings,
@@ -63,5 +71,6 @@ export {
   getTotalResponseRate,
   getDailyDifferenceTraffic,
   getTotalElapsedTime,
-  getTop5ResponseTime
+  getTop5ResponseTime,
+  getTop5Traffic
 };
