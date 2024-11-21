@@ -13,7 +13,6 @@ import { GetSuccessRateDto } from './dto/get-success-rate.dto';
 import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
 import { GetSuccessRateByProjectDto } from './dto/get-success-rate-by-project.dto';
 
-
 @Controller('log')
 export class LogController {
     constructor(private readonly logService: LogService) {}

@@ -10,13 +10,22 @@ import mailerConfig from './config/mailer.config';
 import { ClickhouseModule } from './clickhouse/clickhouse.module';
 import { LogModule } from './log/log.module';
 import clickhouseConfig from './config/clickhouse.config';
+import { CacheModule } from '@nestjs/cache-manager';
+import redisConfig from './config/redis.config';
 
 @Module({
     imports: [
-        ConfigModule.forRoot({ isGlobal: true, load: [mailerConfig, clickhouseConfig] }),
+        ConfigModule.forRoot({
+            isGlobal: true,
+            load: [mailerConfig, clickhouseConfig],
+        }),
         TypeOrmModule.forRootAsync(typeOrmConfig.asProvider()),
-        ProjectModule,
+        CacheModule.registerAsync({
+            isGlobal: true,
+            ...redisConfig.asProvider(),
+        }),
         ClickhouseModule,
+        ProjectModule,
         LogModule,
         MailModule,
     ],

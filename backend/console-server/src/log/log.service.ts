@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from '../project/entities/project.entity';
@@ -15,27 +15,28 @@ import { GetSuccessRateDto } from './dto/get-success-rate.dto';
 import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
 import { GetSuccessRateByProjectResponseDTO } from './dto/get-success-rate-by-project-response.dto';
 import { GetSuccessRateByProjectDto } from './dto/get-success-rate-by-project.dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class LogService {
+    private readonly logger = new Logger(LogService.name);
+
     constructor(
         @InjectRepository(Project)
         private readonly projectRepository: Repository<Project>,
         private readonly logRepository: LogRepository,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
     ) {}
 
     async httpLog() {
         const result = await this.logRepository.findHttpLog();
-
-        console.log(result);
 
         return result;
     }
 
     async elapsedTime() {
         const result = await this.logRepository.findAvgElapsedTime();
-
-        console.log(result);
 
         return result;
     }
@@ -92,6 +93,9 @@ export class LogService {
 
     async getTrafficByProject(getTrafficByProjectDto: GetTrafficByProjectDto) {
         const { projectName, timeUnit } = getTrafficByProjectDto;
+        const cacheKey = `traffic:${projectName}:${timeUnit}`;
+        const cachedData = await this.cacheManager.get(cacheKey);
+        if (cachedData) return cachedData;
 
         const project = await this.projectRepository.findOne({
             where: { name: projectName },
@@ -101,11 +105,13 @@ export class LogService {
 
         const trafficData = await this.logRepository.getTrafficByProject(project.domain, timeUnit);
 
-        return plainToInstance(GetTrafficByProjectResponseDto, {
+        const response = plainToInstance(GetTrafficByProjectResponseDto, {
             projectName,
             timeUnit,
             trafficData,
         });
+        await this.cacheManager.set(cacheKey, response, 5 * 1000);
+        return response;
     }
 
     async getDAUByProject(getDAUByProjectDto: GetDAUByProjectDto) {
