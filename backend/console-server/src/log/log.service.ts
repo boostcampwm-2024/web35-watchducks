@@ -26,6 +26,9 @@ import { GetTrafficRankResponseDto } from './dto/get-traffic-rank-response.dto';
 import { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generation-response.dto';
 import { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
 import { GetTrafficDailyDifferenceResponseDto } from './dto/get-traffic-daily-difference-response.dto';
+import { GetTrafficRankDto } from './dto/get-traffic-rank.dto';
+import { GetAvgElapsedTimeDto } from './dto/get-avg-elapsed-time.dto';
+import { GetTrafficTop5ChartResponseDto } from './dto/get-traffic-top5-chart-response.dto';
 
 @Injectable()
 export class LogService {
@@ -35,13 +38,13 @@ export class LogService {
         private readonly logRepository: LogRepository,
     ) {}
 
-    async getAvgElapsedTime() {
+    async getAvgElapsedTime(_getAvgElapsedTime: GetAvgElapsedTimeDto) {
         const result = await this.logRepository.findAvgElapsedTime();
 
         return plainToInstance(GetAvgElapsedTimeResponseDto, result);
     }
 
-    async getTrafficRank() {
+    async getTrafficRank(_getTrafficRankDto: GetTrafficRankDto) {
         const result = await this.logRepository.findTop5CountByHost();
 
         return plainToInstance(GetTrafficRankResponseDto, result);
@@ -188,5 +191,11 @@ export class LogService {
             date,
             dau,
         });
+    }
+
+    async getTrafficTop5Chart() {
+        const result = await this.logRepository.findTrafficTop5Chart();
+
+        return plainToInstance(GetTrafficTop5ChartResponseDto, result);
     }
 }

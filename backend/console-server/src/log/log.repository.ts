@@ -9,6 +9,7 @@ import { TrafficCountMetric } from './metric/traffic-count.metric';
 import { ErrorRateMetric } from './metric/error-rate.metric';
 import { SuccessRateMetric } from './metric/success-rate.metric';
 import { ElapsedTimeByPathMetric } from './metric/elapsed-time-by-path.metric';
+import { TrafficChartMetric } from './metric/trafficChart.metric';
 
 @Injectable()
 export class LogRepository {
@@ -180,5 +181,51 @@ export class LogRepository {
         const [result] = await this.clickhouse.query<{ dau: number }>(query, params);
 
         return result?.dau ? result.dau : 0;
+    }
+
+    async findTrafficTop5Chart() {
+        const now = new Date();
+        const today = new Date(now.setHours(0, 0, 0, 0));
+        const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+
+        const query = `WITH top_hosts AS (
+            SELECT host
+            FROM http_log
+            WHERE timestamp >= {startTime: DateTime64(3)}
+              AND timestamp < {endTime: DateTime64(3)}
+            GROUP BY host
+            ORDER BY count() DESC
+            LIMIT 5
+        )
+                       SELECT
+                           host,
+                           groupArray(
+                                   (
+                                    toDateTime64(toStartOfInterval(timestamp, INTERVAL 1 MINUTE), 0),
+                                    requests_count
+                                       )
+                           ) as traffic
+                       FROM (
+                                SELECT
+                                    host,
+                                    toDateTime64(toStartOfInterval(timestamp, INTERVAL 1 MINUTE), 0) as timestamp,
+                                    count() as requests_count
+                                FROM http_log
+                                WHERE timestamp >= {startTime: DateTime64(3)}
+                                  AND timestamp < {endTime: DateTime64(3)}
+                                  AND host IN (SELECT host FROM top_hosts)
+                                GROUP BY
+                                    host,
+                                    timestamp
+                                ORDER BY
+                                    timestamp
+                                )
+                       GROUP BY host;`;
+        const params = { startTime: yesterday, endTime: today };
+        const results = await this.clickhouse.query<TrafficChartMetric>(query, params);
+
+        return results.map((result) => {
+            return plainToInstance(TrafficChartMetric, result);
+        });
     }
 }
