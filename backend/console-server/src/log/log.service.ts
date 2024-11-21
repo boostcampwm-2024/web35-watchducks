@@ -26,6 +26,13 @@ import { GetTrafficRankResponseDto } from './dto/get-traffic-rank-response.dto';
 import { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generation-response.dto';
 import { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
 import { GetTrafficDailyDifferenceResponseDto } from './dto/get-traffic-daily-difference-response.dto';
+import { GetTrafficRankDto } from './dto/get-traffic-rank.dto';
+import { GetAvgElapsedTimeDto } from './dto/get-avg-elapsed-time.dto';
+import {
+    GetTrafficTop5ChartResponseDto,
+    TrafficTop5Chart,
+} from './dto/get-traffic-top5-chart-response.dto';
+import { GetTrafficTop5ChartDto } from './dto/get-traffic-top5-chart.dto';
 
 @Injectable()
 export class LogService {
@@ -35,13 +42,13 @@ export class LogService {
         private readonly logRepository: LogRepository,
     ) {}
 
-    async getAvgElapsedTime() {
+    async getAvgElapsedTime(_getAvgElapsedTime: GetAvgElapsedTimeDto) {
         const result = await this.logRepository.findAvgElapsedTime();
 
         return plainToInstance(GetAvgElapsedTimeResponseDto, result);
     }
 
-    async getTrafficRank() {
+    async getTrafficRank(_getTrafficRankDto: GetTrafficRankDto) {
         const result = await this.logRepository.findTop5CountByHost();
 
         return plainToInstance(GetTrafficRankResponseDto, result);
@@ -132,8 +139,6 @@ export class LogService {
 
         if (!project) throw new NotFoundException(`Project with name ${projectName} not found`);
 
-        console.log('??');
-
         const fastestPaths = await this.logRepository.getFastestPathsByDomain(project.domain);
         const slowestPaths = await this.logRepository.getSlowestPathsByDomain(project.domain);
 
@@ -188,5 +193,29 @@ export class LogService {
             date,
             dau,
         });
+    }
+
+    async getTrafficTop5Chart(_getTrafficTop5ChartDto: GetTrafficTop5ChartDto) {
+        const results = await this.logRepository.findTrafficTop5Chart();
+
+        const trafficCharts = await Promise.all(
+            results.map(async (result) => {
+                const host = result.host;
+                const project = await this.projectRepository
+                    .createQueryBuilder('project')
+                    .select('project.name')
+                    .where('project.domain = :domain', { domain: host })
+                    .getOne();
+
+                const projectName = project?.name;
+
+                return plainToInstance(TrafficTop5Chart, {
+                    name: projectName,
+                    traffic: result.traffic,
+                });
+            }),
+        );
+
+        return plainToInstance(GetTrafficTop5ChartResponseDto, trafficCharts);
     }
 }
