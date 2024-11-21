@@ -20,6 +20,7 @@ import { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference
 import { GetTrafficRankDto } from './dto/get-traffic-rank.dto';
 import { GetAvgElapsedTimeDto } from './dto/get-avg-elapsed-time.dto';
 import { GetTrafficTop5ChartResponseDto } from './dto/get-traffic-top5-chart-response.dto';
+import { GetTrafficTop5ChartDto } from './dto/get-traffic-top5-chart.dto';
 
 @Controller('log')
 export class LogController {
@@ -177,7 +178,7 @@ export class LogController {
         description: '프로젝트별 작일 데이터 전체 타임스탬프가 정상적으로 반환됨',
         type: GetTrafficTop5ChartResponseDto,
     })
-    async getTrafficTop5Chart() {
-        return await this.logService.getTrafficTop5Chart();
+    async getTrafficTop5Chart(@Query() getTrafficTop5ChartDto: GetTrafficTop5ChartDto) {
+        return await this.logService.getTrafficTop5Chart(getTrafficTop5ChartDto);
     }
 }

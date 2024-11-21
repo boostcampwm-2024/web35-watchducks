@@ -28,7 +28,11 @@ import { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference
 import { GetTrafficDailyDifferenceResponseDto } from './dto/get-traffic-daily-difference-response.dto';
 import { GetTrafficRankDto } from './dto/get-traffic-rank.dto';
 import { GetAvgElapsedTimeDto } from './dto/get-avg-elapsed-time.dto';
-import { GetTrafficTop5ChartResponseDto } from './dto/get-traffic-top5-chart-response.dto';
+import {
+    GetTrafficTop5ChartResponseDto,
+    TrafficTop5Chart,
+} from './dto/get-traffic-top5-chart-response.dto';
+import { GetTrafficTop5ChartDto } from './dto/get-traffic-top5-chart.dto';
 
 @Injectable()
 export class LogService {
@@ -193,9 +197,27 @@ export class LogService {
         });
     }
 
-    async getTrafficTop5Chart() {
-        const result = await this.logRepository.findTrafficTop5Chart();
+    async getTrafficTop5Chart(_getTrafficTop5ChartDto: GetTrafficTop5ChartDto) {
+        const results = await this.logRepository.findTrafficTop5Chart();
 
-        return plainToInstance(GetTrafficTop5ChartResponseDto, result);
+        const trafficCharts = await Promise.all(
+            results.map(async (result) => {
+                const host = result.host;
+                const project = await this.projectRepository
+                    .createQueryBuilder('project')
+                    .select('project.name')
+                    .where('project.domain = :domain', { domain: host })
+                    .getOne();
+
+                const projectName = project?.name;
+
+                return plainToInstance(TrafficTop5Chart, {
+                    name: projectName,
+                    traffic: result.traffic,
+                });
+            }),
+        );
+
+        return plainToInstance(GetTrafficTop5ChartResponseDto, trafficCharts);
     }
 }
