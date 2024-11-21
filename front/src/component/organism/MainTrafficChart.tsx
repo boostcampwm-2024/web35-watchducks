@@ -34,7 +34,7 @@ export default function MainTrafficChart() {
 
   return (
     <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full min-h-[350px]'>
-      <div className='mx-16 my-16'>
+      <div className='m-16'>
         <h2 className='text-navy text-center text-2xl font-bold'>TOP5 DAILY TRAFFIC</h2>
       </div>
       <div className='w-full flex-1'>
