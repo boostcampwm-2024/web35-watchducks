@@ -39,10 +39,10 @@ const getTotalResponseRate = async (generation: string) => {
 };
 
 const getDailyDifferenceTraffic = async (generation: string) => {
-  const reseponse = await api.get<DailyDifferenceTraffic>(
+  const response = await api.get<DailyDifferenceTraffic>(
     `/log/traffic/daily-difference?generation=${generation}`
   );
-  return reseponse.data;
+  return response.data;
 };
 
 const getTotalElapsedTime = async (generation: string) => {
