@@ -9,7 +9,7 @@ const MEDALS = {
   },
   1: {
     image: SecondMedal,
-    color: 'text-gray-400'
+    color: 'text-zinc-500'
   },
   2: {
     image: ThirdMedal,

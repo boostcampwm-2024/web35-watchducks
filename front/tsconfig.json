@@ -11,6 +11,7 @@
       "@hook/*": ["./src/hook/*"],
       "@type/*": ["./src/type/*"],
       "@constant/*": ["./src/constant/*"],
+      "@chart/*": ["./src/chart/*"],
       "@util/*": ["./src/util/*"],
       "@api/*": ["./src/api/*"],
       "@asset/*": ["./asset/*"]

@@ -1,34 +1,19 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        blue: {
-          DEFAULT: '#0079FF',
-          light: '#0079FF',
-          dark: '#0079FF'
-        },
-        gray: {
-          DEFAULT: '#91A3B7',
-          light: '#91A3B7',
-          dark: '#91A3B7'
-        },
-        green: {
-          DEFAULT: '#00DD4B',
-          light: '#00DD4B',
-          dark: '#00DD4B'
-        },
-        red: {
-          DEFAULT: '#FF7676',
-          light: '#FF7676',
-          dark: '#FF7676'
-        },
-        black: {
-          DEFAULT: '#001940',
-          light: '#001940',
-          dark: '#001940'
-        }
+        blue: '#0079FF',
+        gray: '#91A3B7',
+        green: '#00DD4B',
+        red: '#FF7676',
+        black: '#001940',
+        lightgray: '#FCFCFC',
+        lightblue: '#F3F8FC',
+        lightblack: '#00142B',
+        darkblue: '#001F42'
       },
       fontWeight: {
         light: '300',
@@ -70,6 +55,7 @@ export default {
       },
       fontSize: {
         8: '8px',
+        10: '10px',
         12: '12px',
         14: '14px',
         18: '18px',

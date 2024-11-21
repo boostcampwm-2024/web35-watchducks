@@ -11,4 +11,17 @@ type ResponseRate = {
   success_rate: number;
 };
 
-export type { Traffic, ResponseRate, Ranking };
+type DailyDifferenceTraffic = {
+  traffic_daily_difference: string;
+};
+
+type ElapsedTime = {
+  avg_elapsed_time: number;
+};
+
+type ResponseTime = {
+  projectName: string;
+  avgResponseTime: number;
+};
+
+export type { Traffic, ResponseRate, Ranking, DailyDifferenceTraffic, ElapsedTime, ResponseTime };

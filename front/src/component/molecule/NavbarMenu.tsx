@@ -13,7 +13,9 @@ export default function NavbarMenu() {
       <Link to={item.path}>
         <div
           className={`flex cursor-pointer items-center gap-4 md:gap-8 ${
-            isActive ? 'text-black' : 'text-gray hover:text-black'
+            isActive
+              ? 'dark:text-white dark:hover:text-white'
+              : 'text-gray hover:text-black dark:hover:text-white'
           }`}>
           <Img
             src={isActive ? item.activeIcon : item.inactiveIcon}
@@ -28,7 +30,7 @@ export default function NavbarMenu() {
 
   return (
     <div className='flex flex-col gap-8 md:gap-16'>
-      <H1 cssOption='mt-8 text-14 md:text-16 whitespace-nowrap' content='MENU' />
+      <H1 cssOption='mt-8 text-14 md:text-16 whitespace-nowrap dark:text-white' content='MENU' />
       {MENU_ITEMS.map((item) => (
         <MenuItem key={item.path} item={item} isActive={pathname === item.path} />
       ))}

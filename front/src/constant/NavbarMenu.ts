@@ -1,7 +1,7 @@
 import ProjectActiveImg from '@asset/image/ProjectActive.png';
 import ProjectInactiveImg from '@asset/image/ProjectInactive.png';
-import ProjectsActiveImg from '@asset/image/ProjectsActive.png';
-import ProjectsInactiveImg from '@asset/image/ProjectsInactive.png';
+import ProjectsActiveImg from '@asset/image/ProjectsActive.svg';
+import ProjectsInactiveImg from '@asset/image/ProjectsInactive.svg';
 import RankingActiveImg from '@asset/image/RankingActive.png';
 import RankingInactiveImg from '@asset/image/RankingInactive.png';
 import { MenuItem } from '@type/Navbar';

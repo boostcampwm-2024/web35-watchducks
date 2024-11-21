@@ -6,8 +6,12 @@ import useRankings from '@hook/api/useRankings';
 import { Ranking } from '@type/api';
 import { Fragment } from 'react';
 
-export default function NavbarRanking() {
-  const { data = [] } = useRankings();
+type Props = {
+  generation: string;
+};
+
+export default function NavbarRanking({ generation }: Props) {
+  const { data = [] } = useRankings(generation);
 
   const renderRankingItem = (item: Ranking, index: number) => {
     const rank = index;
@@ -26,17 +30,20 @@ export default function NavbarRanking() {
               </Fragment>
             ) : (
               <Fragment>
-                <Span cssOption='w-6 flex-shrink-0 font-medium' content={`${rank + 1}th`} />
-                <P cssOption='truncate' content={item.host} />
+                <Span
+                  cssOption='w-6 flex-shrink-0 font-medium dark:text-white'
+                  content={`${rank + 1}th`}
+                />
+                <P cssOption='truncate dark:text-white' content={item.host} />
               </Fragment>
             )}
           </div>
           <div className='flex min-w-0 items-center text-right'>
             <Span
-              cssOption='text-[clamp(12px,1.5vw,14px)] group-hover:hidden'
+              cssOption='text-[clamp(12px,1.5vw,14px)] group-hover:hidden dark:text-white'
               content={item.count}
             />
-            <Span cssOption='hidden font-medium group-hover:block' content='&gt;' />
+            <Span cssOption='hidden font-medium group-hover:block dark:text-white' content='&gt;' />
           </div>
         </div>
         <hr className='border-gray-300' />
@@ -46,7 +53,7 @@ export default function NavbarRanking() {
 
   return (
     <div className='mt-8 rounded-10 border-1.5 border-solid border-gray p-4'>
-      <P cssOption='text-12 mb-1 font-bold' content='TRAFFIC RANKING' />
+      <P cssOption='text-12 mb-1 font-bold dark:text-white' content='TRAFFIC RANKING' />
       {data.map((item, index) => renderRankingItem(item, index))}
     </div>
   );

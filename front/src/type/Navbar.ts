@@ -16,5 +16,9 @@ type NavbarSelectProps = {
   setSelectedGroup: (value: string) => void;
   groupOption?: GroupOption[];
 };
+type Dimensions = {
+  width: number;
+  height: number;
+};
 
-export type { Generation, GroupOption, MenuItem, NavbarSelectProps };
+export type { Generation, GroupOption, MenuItem, NavbarSelectProps, Dimensions };
