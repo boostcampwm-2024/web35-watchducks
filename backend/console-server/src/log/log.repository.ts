@@ -9,6 +9,8 @@ import { TrafficCountMetric } from './metric/traffic-count.metric';
 import { ErrorRateMetric } from './metric/error-rate.metric';
 import { SuccessRateMetric } from './metric/success-rate.metric';
 import { ElapsedTimeByPathMetric } from './metric/elapsed-time-by-path.metric';
+import { SpeedRankMetric } from './metric/speed-rank.metric';
+import { TrafficChartMetric } from './metric/trafficChart.metric';
 
 @Injectable()
 export class LogRepository {
@@ -138,7 +140,7 @@ export class LogRepository {
         return results.map((result) => plainToInstance(ElapsedTimeByPathMetric, result));
     }
 
-    async getSlowestPathsByDomain(domain: string) {
+    async findSlowestPathsByDomain(domain: string) {
         const { query, params } = new TimeSeriesQueryBuilder()
             .metrics([{ name: 'elapsed_time', aggregation: 'avg' }, { name: 'path' }])
             .from('http_log')
@@ -153,7 +155,7 @@ export class LogRepository {
         return results.map((result) => plainToInstance(ElapsedTimeByPathMetric, result));
     }
 
-    async getTrafficByProject(domain: string, timeUnit: string) {
+    async findTrafficByProject(domain: string, timeUnit: string) {
         const { query, params } = new TimeSeriesQueryBuilder()
             .metrics([
                 { name: '*', aggregation: 'count' },
@@ -170,7 +172,7 @@ export class LogRepository {
         return results.map((result) => plainToInstance(TrafficCountMetric, result));
     }
 
-    async getDAUByProject(domain: string, date: string) {
+    async findDAUByProject(domain: string, date: string) {
         const { query, params } = new TimeSeriesQueryBuilder()
             .metrics([{ name: `SUM(access) as dau` }])
             .from('dau')
@@ -178,7 +180,65 @@ export class LogRepository {
             .build();
 
         const [result] = await this.clickhouse.query<{ dau: number }>(query, params);
-
         return result?.dau ? result.dau : 0;
+    }
+
+
+    async findSpeedRank() {
+        const { query, params } = new TimeSeriesQueryBuilder()
+            .metrics([{ name: 'elapsed_time', aggregation: 'avg' }, { name: 'host' }])
+            .from('http_log')
+            .groupBy(['host'])
+            .orderBy(['avg_elapsed_time'], false)
+            .limit(5)
+            .build();
+        const results = await this.clickhouse.query<SpeedRankMetric>(query, params);
+        return results.map((result) => plainToInstance(SpeedRankMetric, result));
+    }
+  
+    async findTrafficTop5Chart() {
+        const now = new Date();
+        const today = new Date(now.setHours(0, 0, 0, 0));
+        const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+
+        const query = `WITH top_hosts AS (
+            SELECT host
+            FROM http_log
+            WHERE timestamp >= {startTime: DateTime64(3)}
+              AND timestamp < {endTime: DateTime64(3)}
+            GROUP BY host
+            ORDER BY count() DESC
+            LIMIT 5
+        )
+                       SELECT
+                           host,
+                           groupArray(
+                                   (
+                                    toDateTime64(toStartOfInterval(timestamp, INTERVAL 1 MINUTE), 0),
+                                    requests_count
+                                       )
+                           ) as traffic
+                       FROM (
+                                SELECT
+                                    host,
+                                    toDateTime64(toStartOfInterval(timestamp, INTERVAL 1 MINUTE), 0) as timestamp,
+                                    count() as requests_count
+                                FROM http_log
+                                WHERE timestamp >= {startTime: DateTime64(3)}
+                                  AND timestamp < {endTime: DateTime64(3)}
+                                  AND host IN (SELECT host FROM top_hosts)
+                                GROUP BY
+                                    host,
+                                    timestamp
+                                ORDER BY
+                                    timestamp
+                                )
+                       GROUP BY host;`;
+        const params = { startTime: yesterday, endTime: today };
+        const results = await this.clickhouse.query<TrafficChartMetric>(query, params);
+
+        return results.map((result) => {
+            return plainToInstance(TrafficChartMetric, result);
+        });
     }
 }

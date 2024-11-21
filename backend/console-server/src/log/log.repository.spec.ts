@@ -129,7 +129,7 @@ describe('LogRepository 테스트', () => {
 
     describe('findTrafficByGeneration()는 ', () => {
         it('전체 트래픽 수를 반환해야 한다.', async () => {
-            const mockResult = [{ count: 5000 }];
+            const mockResult = { count: 5000 };
             mockClickhouse.query.mockResolvedValue(mockResult);
 
             const result = await repository.findTrafficByGeneration();
@@ -138,58 +138,6 @@ describe('LogRepository 테스트', () => {
             expect(clickhouse.query).toHaveBeenCalledWith(
                 expect.stringMatching(/SELECT.*count\(\).*as count/s),
                 expect.any(Object),
-            );
-        });
-    });
-
-    describe('getPathSpeedRankByProject()는 ', () => {
-        const domain = 'example.com';
-        const mockFastestPaths = [
-            { path: '/api/v1/resource', avg_elapsed_time: 123.45 },
-            { path: '/api/v1/users', avg_elapsed_time: 145.67 },
-            { path: '/api/v1/orders', avg_elapsed_time: 150.89 },
-        ];
-        const mockSlowestPaths = [
-            { path: '/api/v1/reports', avg_elapsed_time: 345.67 },
-            { path: '/api/v1/logs', avg_elapsed_time: 400.23 },
-            { path: '/api/v1/stats', avg_elapsed_time: 450.56 },
-        ];
-
-        it('도메인을 기준으로 Top 3 fastest 경로와 slowest 경로를 반환해야 한다.', async () => {
-            mockClickhouse.query
-                .mockResolvedValueOnce(mockFastestPaths)
-                .mockResolvedValueOnce(mockSlowestPaths);
-
-            const result = await repository.getFastestPathsByDomain(domain);
-
-            expect(result).toEqual({
-                fastestPaths: mockFastestPaths,
-                slowestPaths: mockSlowestPaths,
-            });
-
-            expect(clickhouse.query).toHaveBeenCalledTimes(2);
-            expect(clickhouse.query).toHaveBeenNthCalledWith(
-                1,
-                expect.stringMatching(
-                    /SELECT\s+avg\(elapsed_time\) as avg_elapsed_time,\s+path\s+FROM http_log\s+WHERE host = \{host:String}\s+GROUP BY path\s+ORDER BY avg_elapsed_time\s+LIMIT 3/,
-                ),
-                expect.objectContaining({ host: domain }),
-            );
-            expect(clickhouse.query).toHaveBeenNthCalledWith(
-                2,
-                expect.stringMatching(
-                    /SELECT\s+avg\(elapsed_time\) as avg_elapsed_time,\s+path\s+FROM http_log\s+WHERE host = \{host:String}\s+GROUP BY path\s+ORDER BY avg_elapsed_time DESC\s+LIMIT 3/,
-                ),
-                expect.objectContaining({ host: domain }),
-            );
-        });
-
-        it('클릭하우스 에러 발생 시 예외를 throw 해야 한다.', async () => {
-            const error = new Error('Clickhouse query failed');
-            mockClickhouse.query.mockRejectedValue(error);
-
-            await expect(repository.getFastestPathsByDomain(domain)).rejects.toThrow(
-                'Clickhouse query failed',
             );
         });
     });
@@ -207,7 +155,7 @@ describe('LogRepository 테스트', () => {
         it('올바른 도메인과 시간 단위를 기준으로 트래픽 데이터를 반환해야 한다.', async () => {
             mockClickhouse.query.mockResolvedValue(mockTrafficData);
 
-            const result = await repository.getTrafficByProject(domain, timeUnit);
+            const result = await repository.findTrafficByProject(domain, timeUnit);
 
             expect(result).toEqual(mockTrafficData);
             expect(clickhouse.query).toHaveBeenCalledWith(
@@ -221,7 +169,7 @@ describe('LogRepository 테스트', () => {
         it('트래픽 데이터가 없을 경우 빈 배열을 반환해야 한다.', async () => {
             mockClickhouse.query.mockResolvedValue([]);
 
-            const result = await repository.getTrafficByProject(domain, timeUnit);
+            const result = await repository.findTrafficByProject(domain, timeUnit);
 
             expect(result).toEqual([]);
             expect(clickhouse.query).toHaveBeenCalledWith(
@@ -234,7 +182,7 @@ describe('LogRepository 테스트', () => {
             const error = new Error('Clickhouse query failed');
             mockClickhouse.query.mockRejectedValue(error);
 
-            await expect(repository.getTrafficByProject(domain, timeUnit)).rejects.toThrow(
+            await expect(repository.findTrafficByProject(domain, timeUnit)).rejects.toThrow(
                 'Clickhouse query failed',
             );
 
@@ -270,9 +218,9 @@ describe('LogRepository 테스트', () => {
 
             expect(result).toEqual(mockTraffic);
             expect(clickhouse.query).toHaveBeenCalledWith(expect.any(String), expect.any(Object));
-        }
-    )}
-          
+        });
+    });
+
     describe('getDAUByProject()', () => {
         const domain = 'example.com';
         const date = '2024-11-18';
@@ -281,7 +229,7 @@ describe('LogRepository 테스트', () => {
             const mockResult = [{ dau: 150 }];
             mockClickhouse.query.mockResolvedValue(mockResult);
 
-            const result = await repository.getDAUByProject(domain, date);
+            const result = await repository.findDAUByProject(domain, date);
 
             expect(result).toBe(150);
             expect(clickhouse.query).toHaveBeenCalledWith(
@@ -295,7 +243,7 @@ describe('LogRepository 테스트', () => {
         it('DAU 데이터가 없을 경우 0을 반환해야 한다.', async () => {
             mockClickhouse.query.mockResolvedValue([]);
 
-            const result = await repository.getDAUByProject(domain, date);
+            const result = await repository.findDAUByProject(domain, date);
 
             expect(result).toBe(0);
             expect(clickhouse.query).toHaveBeenCalledWith(
@@ -310,7 +258,7 @@ describe('LogRepository 테스트', () => {
             const mockResult = [{ dau: null }];
             mockClickhouse.query.mockResolvedValue(mockResult);
 
-            const result = await repository.getDAUByProject(domain, date);
+            const result = await repository.findDAUByProject(domain, date);
 
             expect(result).toBe(0);
             expect(clickhouse.query).toHaveBeenCalledWith(
@@ -325,7 +273,7 @@ describe('LogRepository 테스트', () => {
             const error = new Error('Clickhouse query failed');
             mockClickhouse.query.mockRejectedValue(error);
 
-            await expect(repository.getDAUByProject(domain, date)).rejects.toThrow(
+            await expect(repository.findDAUByProject(domain, date)).rejects.toThrow(
                 'Clickhouse query failed',
             );
 

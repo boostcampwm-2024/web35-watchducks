@@ -3,6 +3,10 @@ import { HttpStatus } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { LogController } from './log.controller';
 import { LogService } from './log.service';
+import { GetTrafficRankDto } from './dto/get-traffic-rank.dto';
+import { plainToInstance } from 'class-transformer';
+import { GetAvgElapsedTimeDto } from './dto/get-avg-elapsed-time.dto';
+
 interface TrafficRankResponseType {
     status: number;
     data: Array<{ host: string; count: number }>;
@@ -14,7 +18,7 @@ describe('LogController 테스트', () => {
 
     const mockLogService = {
         httpLog: jest.fn(),
-        elapsedTime: jest.fn(),
+        getAvgElapsedTime: jest.fn(),
         trafficRank: jest.fn(),
         getResponseSuccessRate: jest.fn(),
         getResponseSuccessRateByProject: jest.fn(),
@@ -23,6 +27,7 @@ describe('LogController 테스트', () => {
         getTrafficByProject: jest.fn(),
         getTrafficDailyDifferenceByGeneration: jest.fn(),
         getDAUByProject: jest.fn(),
+        getSpeedRank: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -53,9 +58,12 @@ describe('LogController 테스트', () => {
         };
 
         it('평균 응답 시간을 ProjectResponseDto 형식으로 반환해야 한다', async () => {
-            mockLogService.elapsedTime.mockResolvedValue(mockResult);
+            mockLogService.getAvgElapsedTime.mockResolvedValue(mockResult);
 
-            const result = await controller.elapsedTime();
+
+            const result = await controller.getElapsedTime(
+                plainToInstance(GetAvgElapsedTimeDto, { generation: 1 }),
+            );
 
             expect(result).toEqual(mockResult);
             expect(result).toHaveProperty('status', HttpStatus.OK);
@@ -79,7 +87,9 @@ describe('LogController 테스트', () => {
         it('TOP 5 트래픽 순위를 ProjectResponseDto 형식으로 반환해야 한다', async () => {
             mockLogService.trafficRank.mockResolvedValue(mockResult);
 
-            const result = (await controller.trafficRank()) as unknown as TrafficRankResponseType;
+            const result = (await controller.getTrafficRank(
+                plainToInstance(GetTrafficRankDto, { generation: 1 }),
+            )) as unknown as TrafficRankResponseType;
 
             expect(result).toEqual(mockResult);
             expect(result).toHaveProperty('status', HttpStatus.OK);
@@ -300,9 +310,9 @@ describe('LogController 테스트', () => {
                 mockRequestDto,
             );
             expect(service.getTrafficDailyDifferenceByGeneration).toHaveBeenCalledTimes(1);
-        }
-    )}
-             
+        });
+    });
+
     describe('getDAUByProject()는', () => {
         const mockRequestDto = { projectName: 'example-project', date: '2024-11-01' };
 
@@ -333,6 +343,53 @@ describe('LogController 테스트', () => {
 
             expect(service.getDAUByProject).toHaveBeenCalledWith(mockRequestDto);
             expect(service.getDAUByProject).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('getSpeedRank()는', () => {
+        const mockRequestDto = {
+            generation: 5,
+        };
+
+        const mockResponseDto = [
+            { projectName: 'project1', avgElapsedTime: 123.45 },
+            { projectName: 'project2', avgElapsedTime: 145.67 },
+            { projectName: 'project3', avgElapsedTime: 150.89 },
+            { projectName: 'project4', avgElapsedTime: 180.23 },
+            { projectName: 'project5', avgElapsedTime: 200.34 },
+        ];
+
+        it('응답 속도 TOP5 데이터를 반환해야 한다', async () => {
+            mockLogService.getSpeedRank.mockResolvedValue(mockResponseDto);
+
+            const result = await controller.getSpeedRank(mockRequestDto);
+
+            expect(result).toEqual(mockResponseDto);
+            expect(result).toHaveLength(5);
+            expect(result[0]).toHaveProperty('projectName', 'project1');
+            expect(result[0]).toHaveProperty('avgElapsedTime', 123.45);
+            expect(service.getSpeedRank).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getSpeedRank).toHaveBeenCalledTimes(1);
+        });
+
+        it('서비스 메소드 호출시 에러가 발생하면 예외를 throw 해야 한다', async () => {
+            const error = new Error('Database error');
+            mockLogService.getSpeedRank.mockRejectedValue(error);
+
+            await expect(controller.getSpeedRank(mockRequestDto)).rejects.toThrow(error);
+
+            expect(service.getSpeedRank).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getSpeedRank).toHaveBeenCalledTimes(1);
+        });
+
+        it('데이터가 없을 때 빈 배열을 반환한다', async () => {
+            mockLogService.getSpeedRank.mockResolvedValue([]);
+
+            const result = await controller.getSpeedRank(mockRequestDto);
+
+            expect(result).toEqual([]);
+            expect(service.getSpeedRank).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getSpeedRank).toHaveBeenCalledTimes(1);
         });
     });
 });
