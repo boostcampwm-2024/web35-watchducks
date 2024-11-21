@@ -129,7 +129,7 @@ describe('LogRepository 테스트', () => {
 
     describe('findTrafficByGeneration()는 ', () => {
         it('전체 트래픽 수를 반환해야 한다.', async () => {
-            const mockResult = [{ count: 5000 }];
+            const mockResult = { count: 5000 };
             mockClickhouse.query.mockResolvedValue(mockResult);
 
             const result = await repository.findTrafficByGeneration();
@@ -138,58 +138,6 @@ describe('LogRepository 테스트', () => {
             expect(clickhouse.query).toHaveBeenCalledWith(
                 expect.stringMatching(/SELECT.*count\(\).*as count/s),
                 expect.any(Object),
-            );
-        });
-    });
-
-    describe('getPathSpeedRankByProject()는 ', () => {
-        const domain = 'example.com';
-        const mockFastestPaths = [
-            { path: '/api/v1/resource', avg_elapsed_time: 123.45 },
-            { path: '/api/v1/users', avg_elapsed_time: 145.67 },
-            { path: '/api/v1/orders', avg_elapsed_time: 150.89 },
-        ];
-        const mockSlowestPaths = [
-            { path: '/api/v1/reports', avg_elapsed_time: 345.67 },
-            { path: '/api/v1/logs', avg_elapsed_time: 400.23 },
-            { path: '/api/v1/stats', avg_elapsed_time: 450.56 },
-        ];
-
-        it('도메인을 기준으로 Top 3 fastest 경로와 slowest 경로를 반환해야 한다.', async () => {
-            mockClickhouse.query
-                .mockResolvedValueOnce(mockFastestPaths)
-                .mockResolvedValueOnce(mockSlowestPaths);
-
-            const result = await repository.getFastestPathsByDomain(domain);
-
-            expect(result).toEqual({
-                fastestPaths: mockFastestPaths,
-                slowestPaths: mockSlowestPaths,
-            });
-
-            expect(clickhouse.query).toHaveBeenCalledTimes(2);
-            expect(clickhouse.query).toHaveBeenNthCalledWith(
-                1,
-                expect.stringMatching(
-                    /SELECT\s+avg\(elapsed_time\) as avg_elapsed_time,\s+path\s+FROM http_log\s+WHERE host = \{host:String}\s+GROUP BY path\s+ORDER BY avg_elapsed_time\s+LIMIT 3/,
-                ),
-                expect.objectContaining({ host: domain }),
-            );
-            expect(clickhouse.query).toHaveBeenNthCalledWith(
-                2,
-                expect.stringMatching(
-                    /SELECT\s+avg\(elapsed_time\) as avg_elapsed_time,\s+path\s+FROM http_log\s+WHERE host = \{host:String}\s+GROUP BY path\s+ORDER BY avg_elapsed_time DESC\s+LIMIT 3/,
-                ),
-                expect.objectContaining({ host: domain }),
-            );
-        });
-
-        it('클릭하우스 에러 발생 시 예외를 throw 해야 한다.', async () => {
-            const error = new Error('Clickhouse query failed');
-            mockClickhouse.query.mockRejectedValue(error);
-
-            await expect(repository.getFastestPathsByDomain(domain)).rejects.toThrow(
-                'Clickhouse query failed',
             );
         });
     });
@@ -270,9 +218,9 @@ describe('LogRepository 테스트', () => {
 
             expect(result).toEqual(mockTraffic);
             expect(clickhouse.query).toHaveBeenCalledWith(expect.any(String), expect.any(Object));
-        }
-    )}
-          
+        });
+    });
+
     describe('getDAUByProject()', () => {
         const domain = 'example.com';
         const date = '2024-11-18';

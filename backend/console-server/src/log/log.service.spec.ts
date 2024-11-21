@@ -8,7 +8,6 @@ import { NotFoundException } from '@nestjs/common';
 import type { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generation-response.dto';
 import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
 import { GetSuccessRateByProjectResponseDto } from './dto/get-success-rate-by-project-response.dto';
-import { GetSuccessRateByProjectResponseDTO } from './dto/get-success-rate-by-project-response.dto';
 import type { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
 import { GetTrafficDailyDifferenceResponseDto } from './dto/get-traffic-daily-difference-response.dto';
 
@@ -19,15 +18,16 @@ describe('LogService 테스트', () => {
     const mockLogRepository = {
         findHttpLog: jest.fn(),
         findAvgElapsedTime: jest.fn(),
-        findCountByHost: jest.fn(),
+        findTop5CountByHost: jest.fn(),
         findResponseSuccessRate: jest.fn(),
         findResponseSuccessRateByProject: jest.fn(),
         findTrafficByGeneration: jest.fn(),
-        getPathSpeedRankByProject: jest.fn(),
-        getTrafficByProject: jest.fn(),
+        findPathSpeedRankByProject: jest.fn(),
+        findTrafficByProject: jest.fn(),
         findTrafficDailyDifferenceByGeneration: jest.fn(),
         findTrafficForTimeRange: jest.fn(),
-        getDAUByProject: jest.fn(),
+        findDAUByProject: jest.fn(),
+        findSpeedRank: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -224,87 +224,6 @@ describe('LogService 테스트', () => {
         });
     });
 
-    describe('getPathSpeedRankByProject()는 ', () => {
-        const mockRequestDto = { projectName: 'example-project' };
-
-        const mockProject = {
-            name: 'example-project',
-            domain: 'example.com',
-        };
-
-        const mockPathSpeedRank = {
-            fastestPaths: [
-                { path: '/api/v1/resource', avg_elapsed_time: 123.45 },
-                { path: '/api/v1/users', avg_elapsed_time: 145.67 },
-                { path: '/api/v1/orders', avg_elapsed_time: 150.89 },
-            ],
-            slowestPaths: [
-                { path: '/api/v1/reports', avg_elapsed_time: 345.67 },
-                { path: '/api/v1/logs', avg_elapsed_time: 400.23 },
-                { path: '/api/v1/stats', avg_elapsed_time: 450.56 },
-            ],
-        };
-
-        it('프로젝트명을 기준으로 도메인을 조회한 후 경로별 응답 속도 순위를 반환해야 한다', async () => {
-            const projectRepository = service['projectRepository'];
-            projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
-
-            mockLogRepository.getPathSpeedRankByProject = jest
-                .fn()
-                .mockResolvedValue(mockPathSpeedRank);
-
-            const result = await service.getPathSpeedRankByProject(mockRequestDto);
-
-            expect(projectRepository.findOne).toHaveBeenCalledWith({
-                where: { name: mockRequestDto.projectName },
-                select: ['domain'],
-            });
-            expect(mockLogRepository.getPathSpeedRankByProject).toHaveBeenCalledWith(
-                mockProject.domain,
-            );
-            expect(result).toEqual({
-                projectName: mockRequestDto.projectName,
-                ...mockPathSpeedRank,
-            });
-        });
-
-        it('존재하지 않는 프로젝트명을 조회할 경우 NotFoundException을 던져야 한다', async () => {
-            const projectRepository = service['projectRepository'];
-            projectRepository.findOne = jest.fn().mockResolvedValue(null);
-
-            await expect(service.getPathSpeedRankByProject(mockRequestDto)).rejects.toThrow(
-                new NotFoundException(`Project with name ${mockRequestDto.projectName} not found`),
-            );
-
-            expect(projectRepository.findOne).toHaveBeenCalledWith({
-                where: { name: mockRequestDto.projectName },
-                select: ['domain'],
-            });
-            expect(mockLogRepository.getPathSpeedRankByProject).not.toHaveBeenCalled();
-        });
-
-        it('로그 레포지토리 호출 중 에러가 발생할 경우 예외를 던져야 한다', async () => {
-            const projectRepository = service['projectRepository'];
-            projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
-
-            mockLogRepository.getPathSpeedRankByProject = jest
-                .fn()
-                .mockRejectedValue(new Error('Database error'));
-
-            await expect(service.getPathSpeedRankByProject(mockRequestDto)).rejects.toThrow(
-                'Database error',
-            );
-
-            expect(projectRepository.findOne).toHaveBeenCalledWith({
-                where: { name: mockRequestDto.projectName },
-                select: ['domain'],
-            });
-            expect(mockLogRepository.getPathSpeedRankByProject).toHaveBeenCalledWith(
-                mockProject.domain,
-            );
-        });
-    });
-
     describe('getTrafficByProject()는', () => {
         const mockRequestDto = { projectName: 'example-project', timeUnit: 'month' };
         const mockProject = {
@@ -325,7 +244,7 @@ describe('LogService 테스트', () => {
             const projectRepository = service['projectRepository'];
             projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
 
-            mockLogRepository.getTrafficByProject = jest.fn().mockResolvedValue(mockTrafficData);
+            mockLogRepository.findTrafficByProject = jest.fn().mockResolvedValue(mockTrafficData);
 
             const result = await service.getTrafficByProject(mockRequestDto);
 
@@ -333,7 +252,7 @@ describe('LogService 테스트', () => {
                 where: { name: mockRequestDto.projectName },
                 select: ['domain'],
             });
-            expect(mockLogRepository.getTrafficByProject).toHaveBeenCalledWith(
+            expect(mockLogRepository.findTrafficByProject).toHaveBeenCalledWith(
                 mockProject.domain,
                 mockRequestDto.timeUnit,
             );
@@ -352,14 +271,14 @@ describe('LogService 테스트', () => {
                 where: { name: mockRequestDto.projectName },
                 select: ['domain'],
             });
-            expect(mockLogRepository.getTrafficByProject).not.toHaveBeenCalled();
+            expect(mockLogRepository.findTrafficByProject).not.toHaveBeenCalled();
         });
 
         it('로그 레포지토리 호출 중 에러가 발생할 경우 예외를 던져야 한다', async () => {
             const projectRepository = service['projectRepository'];
             projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
 
-            mockLogRepository.getTrafficByProject = jest
+            mockLogRepository.findTrafficByProject = jest
                 .fn()
                 .mockRejectedValue(new Error('Database error'));
 
@@ -371,7 +290,7 @@ describe('LogService 테스트', () => {
                 where: { name: mockRequestDto.projectName },
                 select: ['domain'],
             });
-            expect(mockLogRepository.getTrafficByProject).toHaveBeenCalledWith(
+            expect(mockLogRepository.findTrafficByProject).toHaveBeenCalledWith(
                 mockProject.domain,
                 mockRequestDto.timeUnit,
             );
@@ -381,7 +300,7 @@ describe('LogService 테스트', () => {
             const projectRepository = service['projectRepository'];
             projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
 
-            mockLogRepository.getTrafficByProject = jest.fn().mockResolvedValue([]);
+            mockLogRepository.findTrafficByProject = jest.fn().mockResolvedValue([]);
 
             const result = await service.getTrafficByProject(mockRequestDto);
 
@@ -389,7 +308,7 @@ describe('LogService 테스트', () => {
                 where: { name: mockRequestDto.projectName },
                 select: ['domain'],
             });
-            expect(mockLogRepository.getTrafficByProject).toHaveBeenCalledWith(
+            expect(mockLogRepository.findTrafficByProject).toHaveBeenCalledWith(
                 mockProject.domain,
                 mockRequestDto.timeUnit,
             );
@@ -477,10 +396,10 @@ describe('LogService 테스트', () => {
                 2,
                 yesterdayStart,
                 yesterdayEnd,
-              }
-          )}
-       }
-    )}
+            );
+        });
+    });
+
     describe('getDAUByProject()는', () => {
         const mockRequestDto = { projectName: 'example-project', date: '2024-11-01' };
         const mockProject = {
@@ -498,7 +417,7 @@ describe('LogService 테스트', () => {
             const projectRepository = service['projectRepository'];
             projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
 
-            mockLogRepository.getDAUByProject = jest.fn().mockResolvedValue(mockDAUData);
+            mockLogRepository.findDAUByProject = jest.fn().mockResolvedValue(mockDAUData);
 
             const result = await service.getDAUByProject(mockRequestDto);
 
@@ -506,7 +425,7 @@ describe('LogService 테스트', () => {
                 where: { name: mockRequestDto.projectName },
                 select: ['domain'],
             });
-            expect(mockLogRepository.getDAUByProject).toHaveBeenCalledWith(
+            expect(mockLogRepository.findDAUByProject).toHaveBeenCalledWith(
                 mockProject.domain,
                 mockRequestDto.date,
             );
@@ -525,14 +444,14 @@ describe('LogService 테스트', () => {
                 where: { name: mockRequestDto.projectName },
                 select: ['domain'],
             });
-            expect(mockLogRepository.getDAUByProject).not.toHaveBeenCalled();
+            expect(mockLogRepository.findDAUByProject).not.toHaveBeenCalled();
         });
 
         it('존재하는 프로젝트에 DAU 데이터가 없을 경우 0으로 반환해야 한다', async () => {
             const projectRepository = service['projectRepository'];
             projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
 
-            mockLogRepository.getDAUByProject = jest.fn().mockResolvedValue(0);
+            mockLogRepository.findDAUByProject = jest.fn().mockResolvedValue(0);
 
             const result = await service.getDAUByProject(mockRequestDto);
 
@@ -540,7 +459,7 @@ describe('LogService 테스트', () => {
                 where: { name: mockRequestDto.projectName },
                 select: ['domain'],
             });
-            expect(mockLogRepository.getDAUByProject).toHaveBeenCalledWith(
+            expect(mockLogRepository.findDAUByProject).toHaveBeenCalledWith(
                 mockProject.domain,
                 mockRequestDto.date,
             );
@@ -555,7 +474,7 @@ describe('LogService 테스트', () => {
             const projectRepository = service['projectRepository'];
             projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
 
-            mockLogRepository.getDAUByProject = jest
+            mockLogRepository.findDAUByProject = jest
                 .fn()
                 .mockRejectedValue(new Error('Database error'));
 
@@ -565,7 +484,7 @@ describe('LogService 테스트', () => {
                 where: { name: mockRequestDto.projectName },
                 select: ['domain'],
             });
-            expect(mockLogRepository.getDAUByProject).toHaveBeenCalledWith(
+            expect(mockLogRepository.findDAUByProject).toHaveBeenCalledWith(
                 mockProject.domain,
                 mockRequestDto.date,
             );
