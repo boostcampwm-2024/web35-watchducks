@@ -10,7 +10,7 @@ export class GetTrafficTop5ChartResponseDto {
     @ApiProperty({
         example: [
             {
-                host: 'watchducks01',
+                name: 'watchducks',
                 traffic: [
                     ['2024-01-01 11:12:00', '100'],
                     ['2024-01-02 11:13:00', '100'],
@@ -19,7 +19,7 @@ export class GetTrafficTop5ChartResponseDto {
                 ],
             },
         ],
-        description: '해당 기수의 전체 트래픽 평균 응답시간',
+        description: '해당 기수의 트래픽 Top5 프로젝트에 대한 작일 차트 데이터',
     })
     @Expose()
     trafficCharts: TrafficTop5Chart[];
