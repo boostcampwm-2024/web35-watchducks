@@ -9,9 +9,16 @@ type MenuItem = {
   activeIcon: string;
   inactiveIcon: string;
 };
-type Ranking = {
-  host: string;
-  count: string;
+type NavbarSelectProps = {
+  generation: string;
+  selectedGroup: string;
+  setGeneration: (value: string) => void;
+  setSelectedGroup: (value: string) => void;
+  groupOption?: GroupOption[];
+};
+type Dimensions = {
+  width: number;
+  height: number;
 };
 
-export type { Generation, GroupOption, MenuItem, Ranking };
+export type { Generation, GroupOption, MenuItem, NavbarSelectProps, Dimensions };

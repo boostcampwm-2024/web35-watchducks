@@ -1,43 +1,35 @@
 import CustomErrorBoundary from '@boundary/CustomErrorBoundary';
+import DarkModeButton from '@component/molecule/DarkModeButton';
 import NavbarCustomSelect from '@component/molecule/NavbarCustomSelect';
 import NavbarDefaultSelect from '@component/molecule/NavbarDefaultSelect';
+import { PATH } from '@constant/Path';
+import { useDuckAnimation } from '@hook/useDarkModeAnimation';
+import { NavbarSelectProps } from '@type/Navbar';
+import { useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
-type Props = {
-  generation: string;
-  selectedGroup: string;
-  setGeneration: (value: string) => void;
-  setSelectedGroup: (value: string) => void;
-};
+type Props = NavbarSelectProps;
 
-export default function NavbarSelectWrapper({
-  generation,
-  selectedGroup,
-  setGeneration,
-  setSelectedGroup
-}: Props) {
+export default function NavbarSelectWrapper(props: Props) {
   const { pathname } = useLocation();
-  const isProjectPath = pathname === '/project';
-
-  if (isProjectPath) {
-    return (
-      <CustomErrorBoundary>
-        <NavbarCustomSelect
-          generation={generation}
-          selectedGroup={selectedGroup}
-          setGeneration={setGeneration}
-          setSelectedGroup={setSelectedGroup}
-        />
-      </CustomErrorBoundary>
-    );
-  }
+  const isProjectPath = pathname === PATH.PROJECT;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const duckAnimation = useDuckAnimation({ containerRef });
 
   return (
-    <NavbarDefaultSelect
-      generation={generation}
-      selectedGroup={selectedGroup}
-      setGeneration={setGeneration}
-      setSelectedGroup={setSelectedGroup}
-    />
+    <div className='relative mt-8 w-full'>
+      <div ref={containerRef}>
+        {!isProjectPath ? (
+          <NavbarDefaultSelect {...props} />
+        ) : (
+          <CustomErrorBoundary>
+            <NavbarCustomSelect {...props} />
+          </CustomErrorBoundary>
+        )}
+      </div>
+      <div className='pointer-events-none absolute left-0 top-0 h-full w-full'>
+        <DarkModeButton animate={duckAnimation} />
+      </div>
+    </div>
   );
 }

@@ -34,7 +34,7 @@ export default function RegisterForm({ showAlert }: Props) {
   }, []);
 
   return (
-    <div className='mx-auto flex w-full max-w-[600px] flex-col items-center gap-16 rounded-lg bg-white/25 p-6 shadow-[4px_9px_50px_-1px_rgba(0,0,0,0.25)] backdrop-blur-[30px] md:gap-24 md:rounded-31 md:p-50'>
+    <div className='mx-auto flex w-full max-w-[600px] flex-col items-center gap-16 rounded-lg bg-white/25 p-6 shadow-[4px_9px_50px_-1px_rgba(0,0,0,0.25)] backdrop-blur-[30px] md:gap-24 md:rounded-31 md:p-50 dark:shadow-[4px_9px_50px_-1px_rgba(255,255,255,0.2)]'>
       <H1 cssOption='text-blue font-bold text-24 md:text-50' content='Register' />
       <H2 cssOption='text-gray text-18 md:text-24' content='그룹 프로젝트를 등록해 주세요' />
 
