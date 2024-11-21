@@ -26,6 +26,8 @@ import { GetTrafficRankResponseDto } from './dto/get-traffic-rank-response.dto';
 import { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generation-response.dto';
 import { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
 import { GetTrafficDailyDifferenceResponseDto } from './dto/get-traffic-daily-difference-response.dto';
+import { GetSpeedRankDto } from './dto/get-speed-rank.dto';
+import { GetSpeedRankResponseDto } from './dto/get-speed-rank-response.dto';
 
 @Injectable()
 export class LogService {
@@ -132,10 +134,8 @@ export class LogService {
 
         if (!project) throw new NotFoundException(`Project with name ${projectName} not found`);
 
-        console.log('??');
-
         const fastestPaths = await this.logRepository.getFastestPathsByDomain(project.domain);
-        const slowestPaths = await this.logRepository.getSlowestPathsByDomain(project.domain);
+        const slowestPaths = await this.logRepository.findSlowestPathsByDomain(project.domain);
 
         return plainToInstance(GetPathSpeedRankResponseDto, {
             projectName,
@@ -163,7 +163,7 @@ export class LogService {
         });
         if (!project) throw new NotFoundException(`Project with name ${projectName} not found`);
 
-        const results = await this.logRepository.getTrafficByProject(project.domain, timeUnit);
+        const results = await this.logRepository.findTrafficByProject(project.domain, timeUnit);
 
         return plainToInstance(GetTrafficByProjectResponseDto, {
             projectName,
@@ -182,11 +182,29 @@ export class LogService {
         if (!project) {
             throw new NotFoundException(`Project with name ${projectName} not found`);
         }
-        const dau = await this.logRepository.getDAUByProject(project.domain, date);
+        const dau = await this.logRepository.findDAUByProject(project.domain, date);
         return plainToInstance(GetDAUByProjectResponseDto, {
             projectName,
             date,
             dau,
         });
+    }
+
+    async getSpeedRank(_getSpeedRankDto: GetSpeedRankDto) {
+        const speedRankData = await this.logRepository.findSpeedRank();
+        const response = await Promise.all(
+            speedRankData.map(async (data) => {
+                const project = await this.projectRepository.findOne({
+                    where: { domain: data.host },
+                    select: ['name'],
+                });
+                return {
+                    projectName: project?.name || 'Unknown',
+                    avgResponseTime: data.avg_elapsed_time,
+                };
+            }),
+        );
+
+        return plainToInstance(GetSpeedRankResponseDto, response);
     }
 }

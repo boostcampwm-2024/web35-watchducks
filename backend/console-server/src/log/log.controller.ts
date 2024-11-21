@@ -17,6 +17,8 @@ import { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generati
 import { GetSuccessRateByProjectResponseDto } from './dto/get-success-rate-by-project-response.dto';
 import { GetTrafficDailyDifferenceResponseDto } from './dto/get-traffic-daily-difference-response.dto';
 import { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
+import { GetSpeedRankDto } from './dto/get-speed-rank.dto';
+import { GetSpeedRankResponseDto } from './dto/get-speed-rank-response.dto';
 
 @Controller('log')
 export class LogController {
@@ -33,7 +35,7 @@ export class LogController {
         description: '평균 응답시간이 성공적으로 반환됨.',
         type: GetAvgElapsedTimeResponseDto,
     })
-    async elapsedTime() {
+    async getElapsedTime() {
         return await this.logService.getAvgElapsedTime();
     }
 
@@ -48,8 +50,23 @@ export class LogController {
         description: '트래픽 랭킹 TOP 5가 정상적으로 반환됨.',
         type: GetTrafficRankResponseDto,
     })
-    async trafficRank() {
+    async getTrafficRank() {
         return await this.logService.getTrafficRank();
+    }
+
+    @Get('/elapsed-time/top5')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({
+        summary: '기수 내 응답 속도 TOP5',
+        description: '요청받은 기수의 응답 속도 랭킹 TOP 5를 반환합니다.',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: '응답 속도 랭킹 TOP5가 정상적으로 반환됨.',
+        type: GetSpeedRankResponseDto,
+    })
+    async getSpeedRank(@Query() getSpeedRankDto: GetSpeedRankDto) {
+        return await this.logService.getSpeedRank(getSpeedRankDto);
     }
 
     @Get('/success-rate')
