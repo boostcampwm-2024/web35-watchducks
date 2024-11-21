@@ -13,6 +13,7 @@ export default defineConfig({
       { find: '@constant', replacement: '/src/constant' },
       { find: '@util', replacement: '/src/util' },
       { find: '@api', replacement: '/src/api' },
+      { find: '@chart', replacement: '/src/chart' },
       { find: '@asset', replacement: '/asset' }
     ]
   },
