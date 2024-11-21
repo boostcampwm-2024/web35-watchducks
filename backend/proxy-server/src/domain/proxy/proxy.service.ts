@@ -6,7 +6,7 @@ import type { ProjectService } from 'domain/project/project.service';
 
 enum Protocol {
     HTTP = 'http://',
-    HTTPS = 'https//'
+    HTTPS = 'https://',
 }
 
 export class ProxyService {
