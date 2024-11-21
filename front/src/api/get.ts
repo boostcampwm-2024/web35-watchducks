@@ -18,8 +18,8 @@ const getGroupNames = async (generation: string) => {
   }));
 };
 
-const getRakings = async () => {
-  const response = await api.get<Ranking[]>(`/log/traffic/rank`);
+const getRankings = async (generation: string) => {
+  const response = await api.get<Ranking[]>(`/log/traffic/rank?generation=${generation}`);
   return response.data;
 };
 
@@ -51,13 +51,13 @@ const getTotalElapsedTime = async (generation: string) => {
 };
 
 const getTop5ResponseTime = async (generation: string) => {
-  const response = await api.get<ResponseTime[]>(`/log/elapsed-time/top5/generation=${generation}`);
+  const response = await api.get<ResponseTime[]>(`/log/elapsed-time/top5?generation=${generation}`);
   return response.data;
 };
 
 export {
   getGroupNames,
-  getRakings,
+  getRankings,
   getTotalTraffic,
   getTotalProjectCount,
   getTotalResponseRate,

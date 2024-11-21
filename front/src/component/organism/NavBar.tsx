@@ -17,7 +17,7 @@ export default function Navbar(props: Props) {
         <NavbarSelectWrapper {...props} />
         <NavbarMenu />
         <CustomErrorBoundary>
-          <NavbarRanking />
+          <NavbarRanking generation={props.generation} />
         </CustomErrorBoundary>
         <NavigateButton
           path='/register'

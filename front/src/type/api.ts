@@ -16,7 +16,7 @@ type DailyDifferenceTraffic = {
 };
 
 type ElapsedTime = {
-  avgResponseTime: number;
+  avg_elapsed_time: number;
 };
 
 type ResponseTime = {

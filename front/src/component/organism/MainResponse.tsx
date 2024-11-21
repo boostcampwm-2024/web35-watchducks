@@ -11,7 +11,7 @@ export default function MainResponse({ generation }: Props) {
 
   const series = [
     {
-      data: data.map((item) => item.avgResponseTime)
+      data: data.map((item) => Number(item.avgResponseTime.toFixed(1)))
     }
   ];
 

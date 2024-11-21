@@ -6,8 +6,12 @@ import useRankings from '@hook/api/useRankings';
 import { Ranking } from '@type/api';
 import { Fragment } from 'react';
 
-export default function NavbarRanking() {
-  const { data = [] } = useRankings();
+type Props = {
+  generation: string;
+};
+
+export default function NavbarRanking({ generation }: Props) {
+  const { data = [] } = useRankings(generation);
 
   const renderRankingItem = (item: Ranking, index: number) => {
     const rank = index;

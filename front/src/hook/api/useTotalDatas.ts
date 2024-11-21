@@ -38,6 +38,6 @@ export default function useTotalDatas(generation: string) {
     totalProjectCount: projectData.count,
     totalResponseRate: responseData.success_rate,
     dailyDifferenceTraffic: dailyDifferenceTraffic.traffic_daily_difference,
-    elapsedTime: elapsedTime.avgResponseTime
+    elapsedTime: elapsedTime.avg_elapsed_time
   };
 }
