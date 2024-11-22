@@ -24,4 +24,17 @@ type ResponseTime = {
   avgResponseTime: number;
 };
 
-export type { Traffic, ResponseRate, Ranking, DailyDifferenceTraffic, ElapsedTime, ResponseTime };
+type Top5Traffic = {
+  name: string;
+  traffic: string[];
+};
+
+export type {
+  Traffic,
+  ResponseRate,
+  Ranking,
+  DailyDifferenceTraffic,
+  ElapsedTime,
+  ResponseTime,
+  Top5Traffic
+};

@@ -1,21 +1,21 @@
 import { LineChart } from '@chart/LineChart';
 import DataLayout from '@component/template/DataLayout';
+import useTop5Traffic from '@hook/api/useTop5Traffic';
 
-export default function MainTrafficChart() {
-  const series = [
-    {
-      name: '프로젝트 A',
-      data: [
-        { x: '2024-03-01T13:30:30', y: 15000 },
-        { x: '2024-03-02T13:30:30', y: 18500 },
-        { x: '2024-03-03T14:31:30', y: 12300 },
-        { x: '2024-03-04T14:32:30', y: 25000 },
-        { x: '2024-03-04T14:33:30', y: 22000 },
-        { x: '2024-03-04T14:34:30', y: 19500 },
-        { x: '2024-03-04T14:35:30', y: 28000 }
-      ]
-    }
-  ];
+type Props = {
+  generation: string;
+};
+
+export default function MainTrafficChart({ generation }: Props) {
+  const { data } = useTop5Traffic(generation);
+
+  const series = data.map((item) => ({
+    name: item.name,
+    data: item.traffic.map((traffic) => ({
+      x: new Date(traffic[0]),
+      y: Number(traffic[1])
+    }))
+  }));
   const options: ApexCharts.ApexOptions = {
     xaxis: {
       labels: {

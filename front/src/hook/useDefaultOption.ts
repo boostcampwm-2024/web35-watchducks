@@ -42,20 +42,5 @@ const defaultOptions: ApexCharts.ApexOptions = {
         value: 0.8
       }
     }
-  },
-  responsive: [
-    {
-      breakpoint: 768,
-      options: {
-        chart: {
-          toolbar: {
-            show: false
-          },
-          zoom: {
-            enabled: false
-          }
-        }
-      }
-    }
-  ]
+  }
 };
