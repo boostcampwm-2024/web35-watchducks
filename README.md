@@ -1,5 +1,3 @@
-<div align="center">
-
 # WatchDucks 🐥
 
 <img width="1063" alt="image" src="https://github.com/user-attachments/assets/3845c953-5d2a-4c95-9610-14a67ce85d38">
@@ -16,7 +14,7 @@
 
 </div>
 
-## 주요 기능
+## 🚀 주요 기능
 
 ### 1. 프로젝트 등록
 ![image](https://github.com/user-attachments/assets/121ec705-edda-437f-8b4c-24b3f60f9b56)
@@ -54,10 +52,13 @@
 - 선택한 기수의 등록된 프로젝트 관련 메트릭을 토대로 전체 순위를 표시합니다.
     - 총 트래픽, 요청 성공률, 평균 응답 시간, DAU를 선택해 기준으로 확인할 수 있습니다.
 
-## 프로젝트 설계
+## 📃 프로젝트 설계
 
-### 동작 원리 흐름도
+### 📈 동작 원리 흐름도 (초안)
 ![image](https://github.com/user-attachments/assets/141cd28d-f5c5-4df8-bf2e-4b2a45ab2800)
+
+### 📈 시퀀스 다이어그램
+<img width="960" alt="스크린샷 2024-11-21 오후 10 10 05" src="https://github.com/user-attachments/assets/fe264935-df48-417f-89be-7f1c08ec44ed">
 
 #### 용어 설명
 `Client` : ‘WatchDucks‘서비스를 이용하는 고객이자 서비스를 제공하는 캠퍼
@@ -90,8 +91,8 @@
 1. 대시보드에서 `Client` 서버들로부터 수집된 로그를 확인할 수 있습니다.
 2. 다른 `Client`(캠퍼)들의 현황을 실시간으로 모니터링 가능
 
-### 아키텍처 구조도
-(추가 예정)
+### 📈 아키텍처
+![아키텍처](https://github.com/user-attachments/assets/0d957b0f-e240-49ad-a41f-f28bd92af7d3)
 
 
 ## 🙇 팀원소개
