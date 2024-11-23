@@ -76,7 +76,7 @@ describe('LogRepository 테스트', () => {
 
             expect(result).toEqual({ success_rate: 98.5 });
             expect(clickhouse.query).toHaveBeenCalledWith(
-                'SELECT (sum(is_error) / count(*)) * 100 as is_error_rate\n    FROM http_log',
+                'SELECT (sum(is_error) / count(*)) * 100 as is_error_rate\nFROM http_log',
             );
         });
 
@@ -99,8 +99,8 @@ describe('LogRepository 테스트', () => {
             const result = await repository.findResponseSuccessRateByProject(domain);
 
             const expectedQuery = `SELECT (sum(is_error) / count(*)) * 100 as is_error_rate
-    FROM (SELECT is_error, timestamp
-    FROM http_log WHERE host = {host:String} ORDER BY timestamp DESC LIMIT 1000) as subquery`;
+FROM (SELECT is_error, timestamp
+FROM http_log WHERE host = {host:String} ORDER BY timestamp DESC LIMIT 1000) as subquery`;
 
             expect(result).toEqual({ success_rate: 98.5 });
             expect(clickhouse.query).toHaveBeenCalledWith(

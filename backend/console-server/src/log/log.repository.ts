@@ -183,7 +183,6 @@ export class LogRepository {
         return result?.dau ? result.dau : 0;
     }
 
-
     async findSpeedRank() {
         const { query, params } = new TimeSeriesQueryBuilder()
             .metrics([{ name: 'elapsed_time', aggregation: 'avg' }, { name: 'host' }])
@@ -195,7 +194,7 @@ export class LogRepository {
         const results = await this.clickhouse.query<SpeedRankMetric>(query, params);
         return results.map((result) => plainToInstance(SpeedRankMetric, result));
     }
-  
+
     async findTrafficTop5Chart() {
         const now = new Date();
         const today = new Date(now.setHours(0, 0, 0, 0));
