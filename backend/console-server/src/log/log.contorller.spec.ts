@@ -17,9 +17,8 @@ describe('LogController 테스트', () => {
     let service: LogService;
 
     const mockLogService = {
-        httpLog: jest.fn(),
         getAvgElapsedTime: jest.fn(),
-        trafficRank: jest.fn(),
+        getTrafficRank: jest.fn(),
         getResponseSuccessRate: jest.fn(),
         getResponseSuccessRateByProject: jest.fn(),
         getTrafficByGeneration: jest.fn(),
@@ -60,7 +59,6 @@ describe('LogController 테스트', () => {
         it('평균 응답 시간을 ProjectResponseDto 형식으로 반환해야 한다', async () => {
             mockLogService.getAvgElapsedTime.mockResolvedValue(mockResult);
 
-
             const result = await controller.getElapsedTime(
                 plainToInstance(GetAvgElapsedTimeDto, { generation: 1 }),
             );
@@ -85,7 +83,7 @@ describe('LogController 테스트', () => {
         };
 
         it('TOP 5 트래픽 순위를 ProjectResponseDto 형식으로 반환해야 한다', async () => {
-            mockLogService.trafficRank.mockResolvedValue(mockResult);
+            mockLogService.getTrafficRank.mockResolvedValue(mockResult);
 
             const result = (await controller.getTrafficRank(
                 plainToInstance(GetTrafficRankDto, { generation: 1 }),

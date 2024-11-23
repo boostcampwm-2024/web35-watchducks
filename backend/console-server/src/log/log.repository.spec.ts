@@ -130,8 +130,8 @@ describe('LogRepository 테스트', () => {
     describe('findTrafficByGeneration()는 ', () => {
         it('전체 트래픽 수를 반환해야 한다.', async () => {
             const mockResult = { count: 5000 };
-            mockClickhouse.query.mockResolvedValue(mockResult);
 
+            mockClickhouse.query.mockResolvedValue([mockResult]);
             const result = await repository.findTrafficByGeneration();
 
             expect(result).toEqual(mockResult);

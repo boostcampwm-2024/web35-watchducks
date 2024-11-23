@@ -10,13 +10,15 @@ import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
 import { GetSuccessRateByProjectResponseDto } from './dto/get-success-rate-by-project-response.dto';
 import type { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
 import { GetTrafficDailyDifferenceResponseDto } from './dto/get-traffic-daily-difference-response.dto';
+import { plainToInstance } from 'class-transformer';
+import { GetAvgElapsedTimeDto } from './dto/get-avg-elapsed-time.dto';
+import { GetTrafficRankDto } from './dto/get-traffic-rank.dto';
 
 describe('LogService 테스트', () => {
     let service: LogService;
     let repository: LogRepository;
 
     const mockLogRepository = {
-        findHttpLog: jest.fn(),
         findAvgElapsedTime: jest.fn(),
         findTop5CountByHost: jest.fn(),
         findResponseSuccessRate: jest.fn(),
@@ -60,7 +62,9 @@ describe('LogService 테스트', () => {
             const mockTime = { avg_elapsed_time: 150 };
             mockLogRepository.findAvgElapsedTime.mockResolvedValue(mockTime);
 
-            const result = await service.getAvgElapsedTime();
+            const result = await service.getAvgElapsedTime(
+                plainToInstance(GetAvgElapsedTimeDto, { generation: 9 }),
+            );
 
             expect(result).toEqual(mockTime);
             expect(repository.findAvgElapsedTime).toHaveBeenCalled();
@@ -68,18 +72,19 @@ describe('LogService 테스트', () => {
     });
 
     describe('trafficRank()는 ', () => {
-        it('top 5 traffic ranks를 리턴할 수 있어야 한다.', async () => {
+        it('top 5 traffic rank를 리턴할 수 있어야 한다.', async () => {
             const mockRanks = [
                 { host: 'api1.example.com', count: 1000 },
                 { host: 'api2.example.com', count: 800 },
                 { host: 'api3.example.com', count: 600 },
                 { host: 'api4.example.com', count: 400 },
                 { host: 'api5.example.com', count: 200 },
-                { host: 'api6.example.com', count: 110 },
             ];
-            mockLogRepository.findCountByHost.mockResolvedValue(mockRanks);
+            mockLogRepository.findTop5CountByHost.mockResolvedValue(mockRanks);
 
-            const result = await service.getTrafficRank();
+            const result = await service.getTrafficRank(
+                plainToInstance(GetTrafficRankDto, { generation: 9 }),
+            );
 
             expect(result).toHaveLength(5);
             expect(result).toEqual(mockRanks.slice(0, 5));
@@ -91,9 +96,11 @@ describe('LogService 테스트', () => {
                 { host: 'api1.example.com', count: 1000 },
                 { host: 'api2.example.com', count: 800 },
             ];
-            mockLogRepository.findCountByHost.mockResolvedValue(mockRanks);
+            mockLogRepository.findTop5CountByHost.mockResolvedValue(mockRanks);
 
-            const result = await service.getTrafficRank();
+            const result = await service.getTrafficRank(
+                plainToInstance(GetTrafficRankDto, { generation: 9 }),
+            );
 
             expect(result).toHaveLength(2);
             expect(result).toEqual(mockRanks);
@@ -201,22 +208,15 @@ describe('LogService 테스트', () => {
 
     describe('trafficByGeneration()는 ', () => {
         it('기수별 트래픽의 총합을 올바르게 반환할 수 있어야 한다.', async () => {
-            const mockStats = [
-                { generation: '10s', count: 500 },
-                { generation: '20s', count: 300 },
-                { generation: '30s', count: 200 },
-            ];
-            const expectedTotalCount = mockStats.reduce((sum, stat) => sum + stat.count, 0);
-            const dto = new GetTrafficByGenerationDto();
-            dto.generation = 9;
-
-            const mockRepositoryResponse = [{ count: expectedTotalCount }];
+            const mockRepositoryResponse = { count: 1000 };
             const expectedResponse: GetTrafficByGenerationResponseDto = {
-                count: expectedTotalCount,
+                count: 1000,
             };
             mockLogRepository.findTrafficByGeneration.mockResolvedValue(mockRepositoryResponse);
 
-            const result = await service.getTrafficByGeneration(dto);
+            const result = await service.getTrafficByGeneration(
+                plainToInstance(GetTrafficByGenerationDto, { generation: 9 }),
+            );
 
             expect(result).toEqual(expectedResponse);
             expect(mockLogRepository.findTrafficByGeneration).toHaveBeenCalledTimes(1);
