@@ -1,7 +1,7 @@
-import { Exclude, Expose, Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ProjectSpeedData {
+export class ProjectElapsedTime {
     @ApiProperty({
         example: 'watchducks',
         description: '해당 프로젝트명',
@@ -18,11 +18,11 @@ export class ProjectSpeedData {
     avgResponseTime: number;
 }
 
-export class GetSpeedRankResponseDto {
+export class GetTop5ElapsedTime {
     @ApiProperty({
-        type: [ProjectSpeedData],
+        type: [ProjectElapsedTime],
         description: '프로젝트별 응답 속도 배열',
     })
-    @Type(() => ProjectSpeedData)
-    projectSpeedRank: ProjectSpeedData[];
+    @Type(() => ProjectElapsedTime)
+    projectSpeedRank: ProjectElapsedTime[];
 }

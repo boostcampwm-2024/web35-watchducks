@@ -1,7 +1,7 @@
 import { Exclude, Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ResponseTimeByPath {
+export class PathResponseTime {
     @ApiProperty({
         example: '/api/v1/resource',
         description: '사용자의 요청 경로',
@@ -18,7 +18,7 @@ export class ResponseTimeByPath {
 }
 
 @Exclude()
-export class GetPathSpeedRankResponseDto {
+export class GetPathElapsedTimeResponseDto {
     @ApiProperty({
         example: 'watchducks',
         description: '프로젝트 이름',
@@ -27,18 +27,18 @@ export class GetPathSpeedRankResponseDto {
     projectName: string;
 
     @ApiProperty({
-        type: [ResponseTimeByPath],
+        type: [PathResponseTime],
         description: '프로젝트의 가장 빠른 응답 경로 배열',
     })
     @Expose()
-    @Type(() => ResponseTimeByPath)
-    fastestPaths: ResponseTimeByPath[];
+    @Type(() => PathResponseTime)
+    fastestPaths: PathResponseTime[];
 
     @ApiProperty({
-        type: [ResponseTimeByPath],
+        type: [PathResponseTime],
         description: '프로젝트의 가장 느린 응답 경로 배열',
     })
     @Expose()
-    @Type(() => ResponseTimeByPath)
-    slowestPaths: ResponseTimeByPath[];
+    @Type(() => PathResponseTime)
+    slowestPaths: PathResponseTime[];
 }
