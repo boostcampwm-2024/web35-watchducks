@@ -9,7 +9,7 @@ import { QueryFailedError } from 'typeorm';
 import type { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectResponseDto } from './dto/create-project-response.dto';
 import { ConflictException } from '@nestjs/common';
-import type { FindByGenerationDto } from './dto/find-by-generation.dto';
+import { FindByGenerationDto } from './dto/find-by-generation.dto';
 import { FindByGenerationResponseDto } from './dto/find-by-generation-response.dto';
 import { plainToInstance } from 'class-transformer';
 
@@ -100,9 +100,7 @@ describe('ProjectService 클래스의', () => {
         it('특정 기수의 프로젝트 이름 목록을 반환합니다.', async () => {
             // Given
             const generation = 1;
-            const findGenerationProjectDto: FindByGenerationDto = {
-                generation,
-            };
+            const findByGenerationDto = plainToInstance(FindByGenerationDto, { generation });
 
             const mockProjects = [
                 { name: 'Project A' },
@@ -110,13 +108,13 @@ describe('ProjectService 클래스의', () => {
                 { name: 'Project C' },
             ] as Project[];
             const expectedResponse = mockProjects.map((p) =>
-                plainToInstance(FindByGenerationResponseDto, p.name),
+                plainToInstance(FindByGenerationResponseDto, { value: p.name }),
             );
 
             (projectRepository.find as jest.Mock).mockResolvedValue(mockProjects);
 
             // When
-            const result = await projectService.findByGeneration(findGenerationProjectDto);
+            const result = await projectService.findByGeneration(findByGenerationDto);
 
             // Then
             expect(projectRepository.find).toHaveBeenCalledWith({

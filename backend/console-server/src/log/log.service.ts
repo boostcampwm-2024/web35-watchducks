@@ -214,7 +214,7 @@ export class LogService {
 
         return plainToInstance(GetSpeedRankResponseDto, response);
     }
-  
+
     async getTrafficTop5Chart(_getTrafficTop5ChartDto: GetTrafficTop5ChartDto) {
         const results = await this.logRepository.findTrafficTop5Chart();
 
