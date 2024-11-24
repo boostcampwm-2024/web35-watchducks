@@ -10,7 +10,7 @@ import { GetProjectSuccessRateDto } from './dto/get-project-success-rate.dto';
 export class SuccessRateController {
     constructor(private readonly successRateService: SuccessRateService) {}
 
-    @Get('/success-rate')
+    @Get('')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: '기수 내 응답 성공률',
@@ -25,7 +25,7 @@ export class SuccessRateController {
         return await this.successRateService.getSuccessRate(getSuccessRateDto);
     }
 
-    @Get('/success-rate/project')
+    @Get('/project')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: '프로젝트 별 응답 성공률',
