@@ -7,10 +7,10 @@ export default registerAs('redisConfig', async () => {
             host: process.env.REDIS_HOST || 'localhost',
             port: Number(process.env.REDIS_PORT) || 6379,
         },
+        ttl: 60 * 1000,
     });
 
     return {
         store: store,
-        ttl: 3 * 60 * 1000,
     };
 });
