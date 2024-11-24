@@ -12,13 +12,14 @@ import { LogModule } from './log/log.module';
 import clickhouseConfig from './config/clickhouse.config';
 import { CacheModule } from '@nestjs/cache-manager';
 import redisConfig from './config/redis.config';
+import { RedisClientOptions } from 'redis';
 
 @Module({
     imports: [
         ConfigModule.forRoot({ isGlobal: true, load: [mailerConfig, clickhouseConfig] }),
         TypeOrmModule.forRootAsync(typeOrmConfig.asProvider()),
         ClickhouseModule,
-        CacheModule.registerAsync({
+        CacheModule.registerAsync<RedisClientOptions>({
             isGlobal: true,
             ...redisConfig.asProvider(),
         }),
