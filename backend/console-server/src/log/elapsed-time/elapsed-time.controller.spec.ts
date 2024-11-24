@@ -5,6 +5,7 @@ import { Test } from '@nestjs/testing';
 import { HttpStatus } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { GetAvgElapsedTimeDto } from './dto/get-avg-elapsed-time.dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('ElapsedTimeController 테스트', () => {
     let controller: ElapsedTimeController;
@@ -16,6 +17,12 @@ describe('ElapsedTimeController 테스트', () => {
         getTop5ElapsedTime: jest.fn(),
     };
 
+    const mockCacheManager = {
+        get: jest.fn(),
+        set: jest.fn(),
+        del: jest.fn(),
+    };
+
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             controllers: [ElapsedTimeController],
@@ -23,6 +30,10 @@ describe('ElapsedTimeController 테스트', () => {
                 {
                     provide: ElapsedTimeService,
                     useValue: mockElapsedTimeService,
+                },
+                {
+                    provide: CACHE_MANAGER,
+                    useValue: mockCacheManager,
                 },
             ],
         }).compile();
