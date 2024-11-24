@@ -1,10 +1,10 @@
-import { Test } from '@nestjs/testing';
-import { LogRepository } from './log.repository';
-import { Clickhouse } from '../clickhouse/clickhouse';
+import { Clickhouse } from '../../clickhouse/clickhouse';
 import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import { AnalyticRepository } from './analytic.repository';
 
-describe('LogRepository 테스트', () => {
-    let repository: LogRepository;
+describe('AnalyticRepository 테스트', () => {
+    let repository: AnalyticRepository;
     let clickhouse: Clickhouse;
 
     const mockClickhouse = {
@@ -14,7 +14,7 @@ describe('LogRepository 테스트', () => {
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
-                LogRepository,
+                AnalyticRepository,
                 {
                     provide: Clickhouse,
                     useValue: mockClickhouse,
@@ -22,7 +22,7 @@ describe('LogRepository 테스트', () => {
             ],
         }).compile();
 
-        repository = module.get<LogRepository>(LogRepository);
+        repository = module.get<AnalyticRepository>(AnalyticRepository);
         clickhouse = module.get<Clickhouse>(Clickhouse);
     });
 

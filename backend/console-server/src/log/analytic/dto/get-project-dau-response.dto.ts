@@ -2,7 +2,7 @@ import { Exclude, Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Exclude()
-export class GetDAUByProjectResponseDto {
+export class GetProjectDauResponseDto {
     @ApiProperty({
         example: 'my-project',
         description: '프로젝트 이름',

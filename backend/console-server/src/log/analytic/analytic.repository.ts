@@ -1,9 +1,10 @@
-import { Clickhouse } from '../clickhouse/clickhouse';
 import { Injectable } from '@nestjs/common';
-import { TimeSeriesQueryBuilder } from '../clickhouse/query-builder/time-series.query-builder';
+import { Clickhouse } from '../../clickhouse/clickhouse';
+import { TimeSeriesQueryBuilder } from '../../clickhouse/query-builder/time-series.query-builder';
+import { DauMetric } from './metric/dau.metric';
 
 @Injectable()
-export class LogRepository {
+export class AnalyticRepository {
     constructor(private readonly clickhouse: Clickhouse) {}
 
     async findDAUByProject(domain: string, date: string) {
@@ -13,7 +14,8 @@ export class LogRepository {
             .filter({ domain: domain, date: date })
             .build();
 
-        const [result] = await this.clickhouse.query<{ dau: number }>(query, params);
+        const [result] = await this.clickhouse.query<DauMetric>(query, params);
+
         return result?.dau ? result.dau : 0;
     }
 }

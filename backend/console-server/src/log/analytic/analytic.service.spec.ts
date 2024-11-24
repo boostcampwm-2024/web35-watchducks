@@ -1,42 +1,24 @@
-import { Test } from '@nestjs/testing';
+import { AnalyticService } from './analytic.service';
+import { AnalyticRepository } from './analytic.repository';
 import type { TestingModule } from '@nestjs/testing';
-import { LogService } from './log.service';
-import { LogRepository } from './log.repository';
+import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Project } from '../project/entities/project.entity';
+import { Project } from '../../project/entities/project.entity';
 import { NotFoundException } from '@nestjs/common';
-import type { GetTrafficByGenerationResponseDto } from './traffic/dto/get-traffic-by-generation-response.dto';
-import { GetTrafficByGenerationDto } from './traffic/dto/get-traffic-by-generation.dto';
-import { GetProjectSuccessRateResponseDto } from './success-rate/dto/get-project-success-rate-response.dto';
-import type { GetTrafficDailyDifferenceDto } from './traffic/dto/get-traffic-daily-difference.dto';
-import { GetTrafficDailyDifferenceResponseDto } from './traffic/dto/get-traffic-daily-difference-response.dto';
-import { plainToInstance } from 'class-transformer';
-import { GetTrafficTop5Dto } from './traffic/dto/get-traffic-top5.dto';
 
-describe('LogService 테스트', () => {
-    let service: LogService;
-    let repository: LogRepository;
+describe('AnalyticService 테스트', () => {
+    let service: AnalyticService;
 
     const mockLogRepository = {
-        findAvgElapsedTime: jest.fn(),
-        findTop5CountByHost: jest.fn(),
-        findResponseSuccessRate: jest.fn(),
-        findResponseSuccessRateByProject: jest.fn(),
-        findTrafficByGeneration: jest.fn(),
-        findPathSpeedRankByProject: jest.fn(),
-        findTrafficByProject: jest.fn(),
-        findTrafficDailyDifferenceByGeneration: jest.fn(),
-        findTrafficForTimeRange: jest.fn(),
         findDAUByProject: jest.fn(),
-        findSpeedRank: jest.fn(),
     };
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
-                LogService,
+                AnalyticService,
                 {
-                    provide: LogRepository,
+                    provide: AnalyticRepository,
                     useValue: mockLogRepository,
                 },
                 {
@@ -46,8 +28,7 @@ describe('LogService 테스트', () => {
             ],
         }).compile();
 
-        service = module.get<LogService>(LogService);
-        repository = module.get<LogRepository>(LogRepository);
+        service = module.get<AnalyticService>(AnalyticService);
 
         jest.clearAllMocks();
     });
@@ -56,7 +37,7 @@ describe('LogService 테스트', () => {
         expect(service).toBeDefined();
     });
 
-    describe('getDAUByProject()는', () => {
+    describe('getProjectDAU()는', () => {
         const mockRequestDto = { projectName: 'example-project', date: '2024-11-01' };
         const mockProject = {
             name: 'example-project',
@@ -75,7 +56,7 @@ describe('LogService 테스트', () => {
 
             mockLogRepository.findDAUByProject = jest.fn().mockResolvedValue(mockDAUData);
 
-            const result = await service.getDAUByProject(mockRequestDto);
+            const result = await service.getProjectDAU(mockRequestDto);
 
             expect(projectRepository.findOne).toHaveBeenCalledWith({
                 where: { name: mockRequestDto.projectName },
@@ -92,7 +73,7 @@ describe('LogService 테스트', () => {
             const projectRepository = service['projectRepository'];
             projectRepository.findOne = jest.fn().mockResolvedValue(null);
 
-            await expect(service.getDAUByProject(mockRequestDto)).rejects.toThrow(
+            await expect(service.getProjectDAU(mockRequestDto)).rejects.toThrow(
                 new NotFoundException(`Project with name ${mockRequestDto.projectName} not found`),
             );
 
@@ -109,7 +90,7 @@ describe('LogService 테스트', () => {
 
             mockLogRepository.findDAUByProject = jest.fn().mockResolvedValue(0);
 
-            const result = await service.getDAUByProject(mockRequestDto);
+            const result = await service.getProjectDAU(mockRequestDto);
 
             expect(projectRepository.findOne).toHaveBeenCalledWith({
                 where: { name: mockRequestDto.projectName },
@@ -134,7 +115,7 @@ describe('LogService 테스트', () => {
                 .fn()
                 .mockRejectedValue(new Error('Database error'));
 
-            await expect(service.getDAUByProject(mockRequestDto)).rejects.toThrow('Database error');
+            await expect(service.getProjectDAU(mockRequestDto)).rejects.toThrow('Database error');
 
             expect(projectRepository.findOne).toHaveBeenCalledWith({
                 where: { name: mockRequestDto.projectName },
