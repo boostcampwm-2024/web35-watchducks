@@ -1,12 +1,14 @@
-import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query, UseInterceptors } from '@nestjs/common';
 import { SuccessRateService } from './success-rate.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GetSuccessRateResponseDto } from './dto/get-success-rate-response.dto';
 import { GetSuccessRateDto } from './dto/get-success-rate.dto';
 import { GetProjectSuccessRateResponseDto } from './dto/get-project-success-rate-response.dto';
 import { GetProjectSuccessRateDto } from './dto/get-project-success-rate.dto';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('success-rate')
+@UseInterceptors(CacheInterceptor)
 export class SuccessRateController {
     constructor(private readonly successRateService: SuccessRateService) {}
 

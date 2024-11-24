@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GetAvgElapsedTimeResponseDto } from './dto/get-avg-elapsed-time-response.dto';
 import { GetAvgElapsedTimeDto } from './dto/get-avg-elapsed-time.dto';
@@ -7,8 +7,10 @@ import { GetTop5ElapsedTime } from './dto/get-top5-elapsed.time';
 import { GetTop5ElapsedTimeDto } from './dto/get-top5-elapsed-time.dto';
 import { GetPathElapsedTimeResponseDto } from './dto/get-path-elapsed-time-response.dto';
 import { GetPathElapsedTimeRank } from './dto/get-path-elapsed-time.rank';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('elapsed-time')
+@UseInterceptors(CacheInterceptor)
 export class ElapsedTimeController {
     constructor(private readonly elapsedTimeService: ElapsedTimeService) {}
 
