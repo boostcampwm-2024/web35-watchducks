@@ -1,5 +1,6 @@
 import { BarChart } from '@chart/BarChart';
 import DataLayout from '@component/template/DataLayout';
+import { CHART_COLORS } from '@constant/ChartColors';
 import useTop5ResponseTime from '@hook/api/useTop5ResponseTime';
 
 type Props = {
@@ -17,8 +18,6 @@ export default function MainResponse({ generation }: Props) {
 
   const categories = data.map((item) => item.projectName).map((projectName) => [projectName]);
 
-  const colors = ['#FF6B6B', '#FF9F43', '#FECA57', '#4ECB71', '#4B7BEC'];
-
   const options: ApexCharts.ApexOptions = {
     chart: {
       height: 350,
@@ -35,10 +34,10 @@ export default function MainResponse({ generation }: Props) {
         }
       }
     },
-    colors: colors,
+    colors: CHART_COLORS,
     tooltip: {
       custom: function ({ series, seriesIndex, dataPointIndex }) {
-        const color = colors[dataPointIndex];
+        const color = CHART_COLORS[dataPointIndex];
         return (
           '<div class="custom-tooltip" style="padding: 8px;">' +
           '<span style="color: ' +

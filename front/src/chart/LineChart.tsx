@@ -1,3 +1,6 @@
+import { CHART_COLORS } from '@constant/ChartColors';
+import { TIME_OFFSET } from '@constant/Time';
+import { formatKoreanDate, formatKoreanTime } from '@util/FormatTime';
 import { merge } from 'lodash-es';
 
 import { Chart } from './Chart';
@@ -19,9 +22,13 @@ export function LineChart({ series, options: additionalOptions }: Props) {
       },
       selection: {
         enabled: false
+      },
+      zoom: {
+        enabled: true,
+        type: 'x'
       }
     },
-    colors: ['#FF6B6B', '#FF9F43', '#FECA57', '#4ECB71', '#4B7BEC'],
+    colors: CHART_COLORS,
     tooltip: {
       fillSeriesColor: false,
       marker: {
@@ -32,15 +39,8 @@ export function LineChart({ series, options: additionalOptions }: Props) {
         format: 'yyyy-MM-dd HH:mm',
         formatter: function (val) {
           const utcDate = new Date(val);
-          const koreaDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
-          return koreaDate.toLocaleString('ko-KR', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          });
+          const koreanDate = new Date(utcDate.getTime() + TIME_OFFSET);
+          return formatKoreanDate(koreanDate);
         }
       },
       y: [
@@ -53,21 +53,14 @@ export function LineChart({ series, options: additionalOptions }: Props) {
       custom: function ({ series, seriesIndex, dataPointIndex, w }) {
         const value = series[seriesIndex][dataPointIndex];
         const utcDate = new Date(w.globals.seriesX[seriesIndex][dataPointIndex]);
-        const koreaDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
+        const koreanDate = new Date(utcDate.getTime() + TIME_OFFSET);
         const seriesName = w.globals.seriesNames[seriesIndex];
         const color = w.globals.colors[seriesIndex];
 
         return (
           '<div class="custom-tooltip" style="padding: 8px;">' +
           `<div style="color: ${color}; margin-bottom: 4px;">${seriesName}</div>` +
-          `<div style="color: #666;">Time: ${koreaDate.toLocaleString('ko-KR', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          })}</div>` +
+          `<div style="color: #666;">Time: ${formatKoreanDate(koreanDate)}</div>` +
           `<div style="color: #000; font-weight: bold;">Traffic: ${value.toFixed(1)}</div>` +
           '</div>'
         );
@@ -103,19 +96,18 @@ export function LineChart({ series, options: additionalOptions }: Props) {
     },
     xaxis: {
       type: 'datetime',
+      tickAmount: 12,
       labels: {
         formatter: function (value: string, timestamp: number) {
           if (!timestamp) return value;
           const date = new Date(timestamp);
-          const koreaDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
-          return koreaDate.toLocaleTimeString('ko-KR', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          });
-        }
+          const koreanDate = new Date(date.getTime() + TIME_OFFSET);
+          return formatKoreanTime(koreanDate);
+        },
+        rotateAlways: false,
+        hideOverlappingLabels: true
       }
-    },
+    }
   };
 
   const options = merge({}, lineChartOption, additionalOptions);
