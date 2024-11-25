@@ -3,6 +3,25 @@ import { FastifyLogger } from './common/logger/fastify.logger';
 import { createSystemErrorLog } from './common/error/create-system.error';
 import fastify from 'fastify';
 
+async function handleShutdown(
+    server: Awaited<ReturnType<Application['initialize']>>,
+    logger: FastifyLogger,
+    signal: string
+): Promise<void> {
+    try{
+        await server.stop();
+        logger.info({message: `Server stopped on ${signal}`});
+        process.exit(0);
+    }catch (error){
+        logger.error(createSystemErrorLog(
+        error,
+            '/shutdown',
+            `Error during shutdown on ${signal}`
+        ));
+        process.exit(1);
+    }
+}
+
 async function main(): Promise<void> {
     const initializer = new Application();
     const logger = new FastifyLogger(fastify());
@@ -11,32 +30,8 @@ async function main(): Promise<void> {
         const server = await initializer.initialize();
         await server.start();
 
-        process.on('SIGINT', async () => {
-            try {
-                await server.stop();
-                process.exit(0);
-            } catch (error) {
-                logger.error(createSystemErrorLog(
-                    error,
-                    '/shutdown',
-                    'Error during shutdown'
-                ));
-                process.exit(1);
-            }
-        });
-
-        process.on('SIGTERM', async () => {
-            try {
-                await server.stop();
-                process.exit(0);
-            } catch (error) {
-                logger.error(createSystemErrorLog(
-                    error,
-                    '/shutdown',
-                    'Error during shutdown'
-                ));
-                process.exit(1);
-            }
+        ['SIGINT', 'SIGTERM'].forEach((signal) => {
+            process.on(signal, () => handleShutdown(server, logger, signal));
         });
     } catch (error) {
         logger.error(createSystemErrorLog(
