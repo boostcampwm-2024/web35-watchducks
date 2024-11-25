@@ -104,7 +104,7 @@ describe('TrafficService 테스트', () => {
     });
 
     describe('getTrafficByProject()는', () => {
-        const mockRequestDto = { projectName: 'example-project', timeUnit: 'month' };
+        const mockRequestDto = { projectName: 'example-project', timeRange: '1month' as const };
         const mockProject = {
             name: 'example-project',
             domain: 'example.com',
@@ -115,13 +115,18 @@ describe('TrafficService 테스트', () => {
         ];
         const mockResponseDto = {
             projectName: 'example-project',
-            timeUnit: 'month',
+            timeRange: '1month',
             trafficData: mockTrafficData,
         };
 
-        it('프로젝트명을 기준으로 도메인을 조회한 후 트래픽 데이터를 반환해야 한다', async () => {
+        it('프로젝트명을 기준으로 도메인을 조회한 후 지정된 시간 단위(ex. 1month -> Hour)로 트래픽 데이터를 반환해야 한다', async () => {
             const projectRepository = service['projectRepository'];
             projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
+
+            service['calculateDateTimeRange'] = jest.fn().mockReturnValue({
+                start: new Date('2024-10-01'),
+                end: new Date('2024-11-01'),
+            });
 
             mockTrafficRepository.findTrafficByProject = jest
                 .fn()
@@ -133,9 +138,14 @@ describe('TrafficService 테스트', () => {
                 where: { name: mockRequestDto.projectName },
                 select: ['domain'],
             });
+            expect(service['calculateDateTimeRange']).toHaveBeenCalledWith(
+                mockRequestDto.timeRange,
+            );
             expect(mockTrafficRepository.findTrafficByProject).toHaveBeenCalledWith(
                 mockProject.domain,
-                mockRequestDto.timeUnit,
+                new Date('2024-10-01'),
+                new Date('2024-11-01'),
+                'Hour',
             );
             expect(result).toEqual(mockResponseDto);
         });
@@ -159,6 +169,11 @@ describe('TrafficService 테스트', () => {
             const projectRepository = service['projectRepository'];
             projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
 
+            service['calculateDateTimeRange'] = jest.fn().mockReturnValue({
+                start: new Date('2024-10-01'),
+                end: new Date('2024-11-01'),
+            });
+
             mockTrafficRepository.findTrafficByProject = jest
                 .fn()
                 .mockRejectedValue(new Error('Database error'));
@@ -173,13 +188,20 @@ describe('TrafficService 테스트', () => {
             });
             expect(mockTrafficRepository.findTrafficByProject).toHaveBeenCalledWith(
                 mockProject.domain,
-                mockRequestDto.timeUnit,
+                new Date('2024-10-01'),
+                new Date('2024-11-01'),
+                'Hour',
             );
         });
 
         it('트래픽 데이터가 없을 경우 빈 배열을 반환해야 한다', async () => {
             const projectRepository = service['projectRepository'];
             projectRepository.findOne = jest.fn().mockResolvedValue(mockProject);
+
+            service['calculateDateTimeRange'] = jest.fn().mockReturnValue({
+                start: new Date('2024-10-01'),
+                end: new Date('2024-11-01'),
+            });
 
             mockTrafficRepository.findTrafficByProject = jest.fn().mockResolvedValue([]);
 
@@ -189,13 +211,18 @@ describe('TrafficService 테스트', () => {
                 where: { name: mockRequestDto.projectName },
                 select: ['domain'],
             });
+            expect(service['calculateDateTimeRange']).toHaveBeenCalledWith(
+                mockRequestDto.timeRange,
+            );
             expect(mockTrafficRepository.findTrafficByProject).toHaveBeenCalledWith(
                 mockProject.domain,
-                mockRequestDto.timeUnit,
+                new Date('2024-10-01'),
+                new Date('2024-11-01'),
+                'Hour',
             );
             expect(result).toEqual({
                 projectName: mockRequestDto.projectName,
-                timeUnit: mockRequestDto.timeUnit,
+                timeRange: mockRequestDto.timeRange,
                 trafficData: [],
             });
         });
