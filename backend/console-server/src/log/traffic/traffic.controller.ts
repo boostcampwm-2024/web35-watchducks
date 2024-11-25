@@ -12,7 +12,7 @@ import { GetTrafficTop5ChartResponseDto } from './dto/get-traffic-top5-chart-res
 import { GetTrafficTop5ChartDto } from './dto/get-traffic-top5-chart.dto';
 import { TrafficService } from './traffic.service';
 
-@Controller('traffic')
+@Controller('log/traffic')
 export class TrafficController {
     constructor(private readonly trafficService: TrafficService) {}
 

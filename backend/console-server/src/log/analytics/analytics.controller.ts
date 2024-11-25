@@ -4,7 +4,7 @@ import { GetProjectDauResponseDto } from './dto/get-project-dau-response.dto';
 import { GetProjectDAU } from './dto/get-project-dau.dto';
 import { AnalyticsService } from './analytics.service';
 
-@Controller('analytics')
+@Controller('log/analytics')
 export class AnalyticsController {
     constructor(private readonly analyticService: AnalyticsService) {}
 
