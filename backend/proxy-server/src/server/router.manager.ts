@@ -19,7 +19,7 @@ export class RouterManager {
             try {
                 await this.proxyHandler.handleProxyRequest(request, reply);
             } catch (error) {
-                throw this.errorHandler.handleError(error as Error, request);
+                throw error;
             }
         });
     }
