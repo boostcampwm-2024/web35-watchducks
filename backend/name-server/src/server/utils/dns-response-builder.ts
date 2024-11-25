@@ -1,4 +1,4 @@
-import type { BaseAnswer, Packet, Question, RecordClass } from 'dns-packet';
+import type { BaseAnswer, Packet, Question } from 'dns-packet';
 import type { ServerConfig } from '../../common/utils/validator/configuration.validator';
 import { PacketValidator } from './packet.validator';
 import type { ResponseCodeType } from '../constant/dns-packet.constant';
