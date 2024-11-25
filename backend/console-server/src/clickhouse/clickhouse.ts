@@ -2,6 +2,7 @@ import { createClient } from '@clickhouse/client';
 import { NodeClickHouseClient } from '@clickhouse/client/dist/client';
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ClickhouseClientError } from './util/clickhouse-client.error';
 
 @Injectable()
 export class Clickhouse implements OnModuleInit, OnModuleDestroy {
@@ -49,7 +50,9 @@ export class Clickhouse implements OnModuleInit, OnModuleDestroy {
             const config = this.configService.get('clickhouse');
             this.client = createClient(config.clickhouse);
         } catch (error) {
-            throw new Error(`Failed to initialize ClickHouse client: ${error.message}`);
+            throw new ClickhouseClientError(
+                `Failed to initialize ClickHouse client: ${error.message}`,
+            );
         }
     }
 
@@ -97,8 +100,7 @@ export class Clickhouse implements OnModuleInit, OnModuleDestroy {
 
             return await resultSet.json<T>();
         } catch (error) {
-            this.logger.error(`Query failed: ${error.message}`);
-            throw error;
+            throw new ClickhouseClientError('Query failed:', error);
         }
     }
 }
