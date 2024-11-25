@@ -9,7 +9,7 @@ import { GetPathElapsedTimeResponseDto } from './dto/get-path-elapsed-time-respo
 import { GetPathElapsedTimeRank } from './dto/get-path-elapsed-time.rank';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 
-@Controller('elapsed-time')
+@Controller('log/elapsed-time')
 @UseInterceptors(CacheInterceptor)
 export class ElapsedTimeController {
     constructor(private readonly elapsedTimeService: ElapsedTimeService) {}
