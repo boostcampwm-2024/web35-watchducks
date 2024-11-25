@@ -25,7 +25,7 @@ export class Server {
         this.logger = new FastifyLogger(this.server);
 
         const errorHandler = new ErrorHandler({ logger: this.logger }, errorLogRepository);
-        const proxyHandler = new ProxyHandler(proxyService, errorHandler);
+        const proxyHandler = new ProxyHandler(proxyService);
 
         this.configuration = new ServerConfiguration(this.server);
         this.routerManager = new RouterManager(this.server, proxyHandler, errorHandler)

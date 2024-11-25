@@ -24,7 +24,7 @@ export class Application {
         try {
             const projectRepository = new ProjectRepositoryMysql();
             const projectService = new ProjectService(projectRepository);
-            const proxyService = new ProxyService(projectService, this.logger);
+            const proxyService = new ProxyService(projectService);
 
             const errorLogRepository = new ErrorLogRepository();
 
