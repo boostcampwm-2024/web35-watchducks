@@ -76,9 +76,7 @@ export class TrafficRepository {
             .orderBy(['timestamp'], false)
             .build();
 
-        const results = await this.clickhouse.query<TrafficCountMetric>(query, params);
-
-        return results.map((result) => plainToInstance(TrafficCountMetric, result));
+        return await this.clickhouse.query<TrafficCountMetric>(query, params);
     }
 
     async findTrafficTop5Chart() {
