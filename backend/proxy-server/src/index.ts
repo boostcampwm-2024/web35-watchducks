@@ -1,7 +1,7 @@
 import { Application } from './app';
 import { FastifyLogger } from './common/logger/fastify.logger';
-import { createSystemErrorLog } from './common/error/create-system.error';
 import fastify from 'fastify';
+import { SystemErrorFactory } from 'common/error/factories/system-error.factory';
 
 async function handleShutdown(
     server: Awaited<ReturnType<Application['initialize']>>,
@@ -12,12 +12,12 @@ async function handleShutdown(
         await server.stop();
         logger.info({message: `Server stopped on ${signal}`});
         process.exit(0);
-    }catch (error){
-        logger.error(createSystemErrorLog(
-        error,
-            '/shutdown',
-            `Error during shutdown on ${signal}`
-        ));
+    }catch (error) {
+        logger.error(SystemErrorFactory.createErrorLog({
+            originalError: error,
+            path: '/shutdown',
+            message: `Error during shutdown on ${signal}`
+        }));
         process.exit(1);
     }
 }
@@ -36,11 +36,11 @@ async function main(): Promise<void> {
             });
         });
     } catch (error) {
-        logger.error(createSystemErrorLog(
-            error,
-            '/startup',
-            'Fatal error during startup'
-        ));
+        logger.error(SystemErrorFactory.createErrorLog({
+            originalError: error,
+            path: '/startup',
+            message: 'Fatal error during startup'
+        }));
         process.exit(1);
     }
 }

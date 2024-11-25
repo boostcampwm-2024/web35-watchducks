@@ -4,11 +4,11 @@ import { fastifyConfig } from './config/fastify.config';
 import { ErrorHandler } from './error.handler';
 import { FastifyLogger } from '../common/logger/fastify.logger';
 import type { ErrorLogRepository } from '../common/logger/error-log.repository';
-import { createSystemErrorLog } from '../common/error/create-system.error';
 import { ProxyHandler } from '../domain/proxy/proxy.handler';
 import type { ProxyService } from 'domain/proxy/proxy.service';
 import { ServerConfiguration } from 'server/config/server.configuration';
 import { RouterManager } from 'server/router.manager';
+import { SystemErrorFactory } from 'common/error/factories/system-error.factory';
 
 export class Server {
     private readonly SHUTDOWN_TIMEOUT = 30000;
@@ -43,11 +43,11 @@ export class Server {
             await this.server.listen(this.configuration.getListenOptions());
             this.logger.info({ message: `Proxy server is running on port ${process.env.PORT}` });
         } catch (error) {
-            this.logger.error(createSystemErrorLog(
-                error,
-                '/server/start',
-                'Failed to start server'
-            ));
+            this.logger.error(SystemErrorFactory.createErrorLog({
+                originalError: error,
+                path: '/server/start',
+                message: 'Failed to start server'
+            }));
             process.exit(1);
         }
     }
@@ -64,11 +64,11 @@ export class Server {
             await Promise.race([closePromise, timeoutPromise]);
             this.logger.info({ message: 'Proxy server stopped' });
         } catch (error) {
-            this.logger.error(createSystemErrorLog(
-                error,
-                '/server/stop',
-                'Error while stopping server'
-            ));
+            this.logger.error(SystemErrorFactory.createErrorLog({
+                originalError: error,
+                path: '/server/stop',
+                message: 'Error while stopping server'
+            }));
             throw error;
         }
     }
