@@ -66,7 +66,7 @@ export default function MainData({ generation }: Props) {
             content={dailyDifferenceTraffic}
             cssOption={`text-sm font-bold ${arrowStyle.color}`}
           />
-          <span className='text-sm'>전월 대비 트래픽 증가량</span>
+          <span className='text-sm'>전일 대비 트래픽 증가량</span>
         </div>
       </div>
     </DataLayout>

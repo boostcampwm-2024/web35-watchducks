@@ -27,13 +27,16 @@ export default function MainTrafficChart({ generation }: Props) {
     },
     yaxis: {
       title: {
-        text: 'Traffic Count'
+        text: 'Traffic Count',
+        style: {
+          color: '#64748B'
+        }
       }
     }
   };
 
   return (
-    <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full min-h-[350px]'>
+    <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full h-full'>
       <div className='m-16'>
         <h2 className='text-navy text-center text-2xl font-bold'>TOP5 DAILY TRAFFIC</h2>
       </div>

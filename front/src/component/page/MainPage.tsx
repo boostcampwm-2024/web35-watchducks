@@ -22,7 +22,7 @@ export default function MainPage() {
         </CustomErrorBoundary>
       </div>
 
-      <div className='flex-1'>
+      <div className='min-h-0 flex-1'>
         <CustomErrorBoundary>
           <MainTrafficChart generation={generation} />
         </CustomErrorBoundary>
