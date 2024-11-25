@@ -7,6 +7,9 @@ describe('DNSResponseBuilder의', () => {
     const mockConfig = {
         proxyServerIp: '127.0.0.1',
         nameServerPort: 5353,
+        ttl: 86400,
+        authoritativeNameServers: ['ns1.test-ns.com', 'ns2.test-ns.com'],
+        nameServerIp: '192.0.0.1',
     };
 
     const mockQuery: Packet = {
