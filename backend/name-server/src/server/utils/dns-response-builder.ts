@@ -42,7 +42,7 @@ export class DNSResponseBuilder {
     }
 
     addAnswer(rcode: ResponseCodeType, question?: Question): this {
-        this.response.flags = 0x8000;
+        this.response.flags = DNS_FLAGS.QUERY_RESPONSE;
 
         if (this.response.flags && rcode === RESPONSE_CODE.NXDOMAIN) {
             this.response.flags |= RESPONSE_CODE.NXDOMAIN;
