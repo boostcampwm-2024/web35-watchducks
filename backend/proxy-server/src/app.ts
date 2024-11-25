@@ -7,6 +7,8 @@ import { FastifyLogger } from './common/logger/fastify.logger';
 import type { ErrorLog } from './common/logger/logger.interface';
 import fastify from 'fastify';
 import { ProxyService } from 'domain/proxy/proxy.service';
+import { LogRepositoryClickhouse } from 'database/query/log.repository.clickhouse';
+import { LogService } from 'domain/log/log.service';
 
 export class Application {
     private readonly logger: FastifyLogger;
@@ -25,12 +27,14 @@ export class Application {
             const projectRepository = new ProjectRepositoryMysql();
             const projectService = new ProjectService(projectRepository);
             const proxyService = new ProxyService(projectService);
+            const logRepository = new LogRepositoryClickhouse();
+            const logService = new LogService(logRepository);
 
             const errorLogRepository = new ErrorLogRepository();
 
             this.logger.info({ message: 'Services initialized successfully' });
 
-            return new Server( errorLogRepository, proxyService);
+            return new Server( errorLogRepository, proxyService, logService);
         } catch (error) {
             const errorLog: ErrorLog = {
                 method: 'SYSTEM',

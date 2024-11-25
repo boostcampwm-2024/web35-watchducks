@@ -9,6 +9,8 @@ import type { ProxyService } from 'domain/proxy/proxy.service';
 import { ServerConfiguration } from 'server/config/server.configuration';
 import { RouterManager } from 'server/router.manager';
 import { SystemErrorFactory } from 'common/error/factories/system-error.factory';
+import { LogHandler } from 'domain/log/log.handler';
+import type { LogService } from 'domain/log/log.service';
 
 export class Server {
     private readonly SHUTDOWN_TIMEOUT = 30000;
@@ -20,15 +22,17 @@ export class Server {
     constructor(
         private readonly errorLogRepository: ErrorLogRepository,
         private readonly proxyService: ProxyService,
+        private readonly logService:LogService,
     ) {
         this.server = fastify(fastifyConfig);
         this.logger = new FastifyLogger(this.server);
 
         const errorHandler = new ErrorHandler({ logger: this.logger }, errorLogRepository);
         const proxyHandler = new ProxyHandler(proxyService);
+        const logHandler = new LogHandler(logService, this.logger);
 
         this.configuration = new ServerConfiguration(this.server);
-        this.routerManager = new RouterManager(this.server, proxyHandler, errorHandler)
+        this.routerManager = new RouterManager(this.server, proxyHandler, errorHandler, logHandler)
 
         this.initialize();
     }
