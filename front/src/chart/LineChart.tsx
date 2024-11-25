@@ -10,29 +10,25 @@ type Props = {
 export function LineChart({ series, options: additionalOptions }: Props) {
   const lineChartOption: ApexCharts.ApexOptions = {
     chart: {
-      type: 'area',
       height: 350,
       toolbar: {
-        show: true
+        show: true,
+        tools: {
+          selection: false
+        }
+      },
+      selection: {
+        enabled: false
       }
     },
     colors: ['#FF6B6B', '#FF9F43', '#FECA57', '#4ECB71', '#4B7BEC'],
-    fill: {
-      type: 'gradient',
-      gradient: {
-        shadeIntensity: 1,
-        inverseColors: false,
-        opacityFrom: 0.5,
-        opacityTo: 0,
-        stops: [0, 90, 100]
-      }
-    },
     tooltip: {
-      enabled: true,
-      shared: true,
-      intersect: false,
-      followCursor: true,
+      fillSeriesColor: false,
+      marker: {
+        show: true
+      },
       x: {
+        show: true,
         format: 'yyyy-MM-dd HH:mm',
         formatter: function (val) {
           const utcDate = new Date(val);
@@ -48,11 +44,6 @@ export function LineChart({ series, options: additionalOptions }: Props) {
         }
       },
       y: [
-        {
-          formatter: function (val) {
-            return val.toFixed(1);
-          }
-        },
         {
           formatter: function (val) {
             return val.toFixed(1);
@@ -82,6 +73,34 @@ export function LineChart({ series, options: additionalOptions }: Props) {
         );
       }
     },
+    stroke: {
+      curve: 'smooth',
+      width: 3
+    },
+    markers: {
+      size: 1,
+      strokeWidth: 0,
+      hover: {
+        size: 6,
+        sizeOffset: 3
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    states: {
+      hover: {
+        filter: {
+          type: 'none'
+        }
+      },
+      active: {
+        allowMultipleDataPointsSelection: false,
+        filter: {
+          type: 'none'
+        }
+      }
+    },
     xaxis: {
       type: 'datetime',
       labels: {
@@ -97,25 +116,8 @@ export function LineChart({ series, options: additionalOptions }: Props) {
         }
       }
     },
-    yaxis: {
-      labels: {
-        formatter: function (val) {
-          return val.toFixed(1);
-        }
-      }
-    },
-    legend: {
-      labels: {
-        colors: '#64748B'
-      }
-    },
-    markers: {
-      hover: {
-        sizeOffset: 0
-      }
-    }
   };
 
-  const options = merge(lineChartOption, additionalOptions);
+  const options = merge({}, lineChartOption, additionalOptions);
   return <Chart type='area' series={series} options={options} />;
 }
