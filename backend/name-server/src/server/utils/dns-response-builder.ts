@@ -1,17 +1,19 @@
-import type { Packet, Question, RecordClass } from 'dns-packet';
+import type { BaseAnswer, Packet, Question, RecordClass } from 'dns-packet';
 import type { ServerConfig } from '../../common/utils/validator/configuration.validator';
 import { PacketValidator } from './packet.validator';
 import type { ResponseCodeType } from '../constant/dns-packet.constant';
-import { DNS_FLAGS, RESPONSE_CODE } from '../constant/dns-packet.constant';
+import {
+    DNS_FLAGS,
+    PACKET_TYPE,
+    RESPONSE_CODE,
+    RECORD_CLASS,
+    RECORD_TYPE,
+} from '../constant/dns-packet.constant';
 
 interface DNSResponse extends Packet {
-    answers: Array<{
-        name: string;
-        type: 'A';
-        class: RecordClass;
-        ttl: number;
-        data: string;
-    }>;
+    answers: BaseAnswer<typeof RECORD_TYPE.ADDRESS, string>[];
+    authorities: BaseAnswer<typeof RECORD_TYPE.NAME_SERVER, string>[];
+    additionals: BaseAnswer<typeof RECORD_TYPE.ADDRESS, string>[];
 }
 
 export class DNSResponseBuilder {
@@ -23,7 +25,7 @@ export class DNSResponseBuilder {
     ) {
         this.response = {
             id: query.id,
-            type: 'response',
+            type: PACKET_TYPE.RESPONSE,
             flags: this.createFlags(query),
             questions: query.questions,
         };
@@ -40,7 +42,7 @@ export class DNSResponseBuilder {
     }
 
     addAnswer(rcode: ResponseCodeType, question?: Question): this {
-        this.response.flags = 0x8000;
+        this.response.flags = 0x8400; // AA(Authoritative Answer) Flag 1로 변경
 
         if (this.response.flags && rcode === RESPONSE_CODE.NXDOMAIN) {
             this.response.flags |= RESPONSE_CODE.NXDOMAIN;
@@ -50,9 +52,9 @@ export class DNSResponseBuilder {
             this.response.answers = [
                 {
                     name: question.name,
-                    type: 'A',
-                    class: 'IN',
-                    ttl: 86400,
+                    type: RECORD_TYPE.ADDRESS,
+                    class: RECORD_CLASS.ITHERNET,
+                    ttl: this.config.ttl,
                     data: this.config.proxyServerIp,
                 },
             ];
@@ -60,6 +62,14 @@ export class DNSResponseBuilder {
         }
         this.response.answers = [];
 
+        return this;
+    }
+
+    addAuthorities(question?: Question): this {
+        return this;
+    }
+
+    addAdditionals(): this {
         return this;
     }
 

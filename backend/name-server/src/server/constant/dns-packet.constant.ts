@@ -13,4 +13,18 @@ export const RESPONSE_CODE = {
     SERVFAIL: 2, // 서버 에러
 } as const;
 
+export const RECORD_TYPE = {
+    ADDRESS: 'A',
+    IPV6_ADDRESS: 'AAAA',
+    NAME_SERVER: 'NS',
+} as const;
+
+export const RECORD_CLASS = {
+    ITHERNET: 'IN',
+} as const;
+
+export const PACKET_TYPE = {
+    RESPONSE: 'response',
+} as const;
+
 export type ResponseCodeType = (typeof RESPONSE_CODE)[keyof typeof RESPONSE_CODE];
