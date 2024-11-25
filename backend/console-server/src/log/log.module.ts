@@ -6,6 +6,7 @@ import { ElapsedTimeModule } from './elapsed-time/elapsed-time.module';
 import { TrafficModule } from './traffic/traffic.module';
 import { SuccessRateModule } from './success-rate/success-rate.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { RankModule } from './rank/rank.module';
 
 @Module({
     imports: [
@@ -15,6 +16,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
         TrafficModule,
         SuccessRateModule,
         AnalyticsModule,
+        RankModule,
     ],
 })
 export class LogModule {}

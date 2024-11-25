@@ -78,10 +78,13 @@ export class TrafficRepository {
 
         return results.map((result) => plainToInstance(TrafficCountMetric, result));
     }
+
     async findTrafficTop5Chart() {
         const now = new Date();
         const today = new Date(now.setHours(0, 0, 0, 0));
         const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+
+        console.log(today, yesterday);
 
         const query = `WITH top_hosts AS (
             SELECT host
