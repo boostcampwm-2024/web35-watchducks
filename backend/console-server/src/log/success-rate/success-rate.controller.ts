@@ -1,16 +1,18 @@
-import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query, UseInterceptors } from '@nestjs/common';
 import { SuccessRateService } from './success-rate.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GetSuccessRateResponseDto } from './dto/get-success-rate-response.dto';
 import { GetSuccessRateDto } from './dto/get-success-rate.dto';
 import { GetProjectSuccessRateResponseDto } from './dto/get-project-success-rate-response.dto';
 import { GetProjectSuccessRateDto } from './dto/get-project-success-rate.dto';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('success-rate')
+@UseInterceptors(CacheInterceptor)
 export class SuccessRateController {
     constructor(private readonly successRateService: SuccessRateService) {}
 
-    @Get('/success-rate')
+    @Get('')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: '기수 내 응답 성공률',
@@ -25,7 +27,7 @@ export class SuccessRateController {
         return await this.successRateService.getSuccessRate(getSuccessRateDto);
     }
 
-    @Get('/success-rate/project')
+    @Get('/project')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: '프로젝트 별 응답 성공률',

@@ -6,7 +6,7 @@ import { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generati
 import type { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
 import { GetTrafficDailyDifferenceResponseDto } from './dto/get-traffic-daily-difference-response.dto';
 import type { GetTrafficByProjectDto } from './dto/get-traffic-by-project.dto';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import {
     GetTrafficByProjectResponseDto,
     TrafficCountByTimeunit,

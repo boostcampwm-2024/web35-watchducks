@@ -1,28 +1,40 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AnalyticService } from './analytic.service';
-import { AnalyticController } from './analytic.controller';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import { AnalyticsService } from './analytics.service';
+import { AnalyticsController } from './analytics.controller';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
-describe('AnalyticController 테스트', () => {
-    let controller: AnalyticController;
-    let service: AnalyticService;
+describe('AnalyticsController 테스트', () => {
+    let controller: AnalyticsController;
+    let service: AnalyticsService;
 
     const mockLogService = {
         getProjectDAU: jest.fn(),
     };
 
+    const mockCacheManager = {
+        get: jest.fn(),
+        set: jest.fn(),
+        del: jest.fn(),
+    };
+
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            controllers: [AnalyticController],
+            controllers: [AnalyticsController],
             providers: [
                 {
-                    provide: AnalyticService,
+                    provide: AnalyticsService,
                     useValue: mockLogService,
+                },
+                {
+                    provide: CACHE_MANAGER,
+                    useValue: mockCacheManager,
                 },
             ],
         }).compile();
 
-        controller = module.get<AnalyticController>(AnalyticController);
-        service = module.get<AnalyticService>(AnalyticService);
+        controller = module.get<AnalyticsController>(AnalyticsController);
+        service = module.get<AnalyticsService>(AnalyticsService);
 
         jest.clearAllMocks();
     });

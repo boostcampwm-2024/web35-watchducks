@@ -1,4 +1,4 @@
-import { AnalyticRepository } from './analytic.repository';
+import { AnalyticsRepository } from './analytics.repository';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { GetProjectDAU } from './dto/get-project-dau.dto';
 import { plainToInstance } from 'class-transformer';
@@ -8,11 +8,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from '../../project/entities/project.entity';
 
 @Injectable()
-export class AnalyticService {
+export class AnalyticsService {
     constructor(
         @InjectRepository(Project)
         private readonly projectRepository: Repository<Project>,
-        private readonly analyticRepository: AnalyticRepository,
+        private readonly analyticRepository: AnalyticsRepository,
     ) {}
 
     async getProjectDAU(getProjectDAU: GetProjectDAU) {

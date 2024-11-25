@@ -2,11 +2,11 @@ import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GetProjectDauResponseDto } from './dto/get-project-dau-response.dto';
 import { GetProjectDAU } from './dto/get-project-dau.dto';
-import { AnalyticService } from './analytic.service';
+import { AnalyticsService } from './analytics.service';
 
-@Controller('analytic')
-export class AnalyticController {
-    constructor(private readonly analyticService: AnalyticService) {}
+@Controller('analytics')
+export class AnalyticsController {
+    constructor(private readonly analyticService: AnalyticsService) {}
 
     @Get('/dau')
     @HttpCode(HttpStatus.OK)

@@ -6,7 +6,7 @@ import type { GetTop5ElapsedTimeDto } from './dto/get-top5-elapsed-time.dto';
 import { GetTop5ElapsedTime, ProjectElapsedTime } from './dto/get-top5-elapsed.time';
 import type { Repository } from 'typeorm';
 import type { GetPathElapsedTimeRank } from './dto/get-path-elapsed-time.rank';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import {
     GetPathElapsedTimeResponseDto,
     PathResponseTime,

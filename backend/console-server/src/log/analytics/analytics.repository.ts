@@ -4,7 +4,7 @@ import { TimeSeriesQueryBuilder } from '../../clickhouse/query-builder/time-seri
 import { DauMetric } from './metric/dau.metric';
 
 @Injectable()
-export class AnalyticRepository {
+export class AnalyticsRepository {
     constructor(private readonly clickhouse: Clickhouse) {}
 
     async findDAUByProject(domain: string, date: string) {

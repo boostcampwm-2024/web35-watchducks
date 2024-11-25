@@ -1,13 +1,13 @@
-import { AnalyticService } from './analytic.service';
-import { AnalyticRepository } from './analytic.repository';
+import { AnalyticsService } from './analytics.service';
+import { AnalyticsRepository } from './analytics.repository';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Project } from '../../project/entities/project.entity';
 import { NotFoundException } from '@nestjs/common';
 
-describe('AnalyticService 테스트', () => {
-    let service: AnalyticService;
+describe('AnalyticsService 테스트', () => {
+    let service: AnalyticsService;
 
     const mockLogRepository = {
         findDAUByProject: jest.fn(),
@@ -16,9 +16,9 @@ describe('AnalyticService 테스트', () => {
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
-                AnalyticService,
+                AnalyticsService,
                 {
-                    provide: AnalyticRepository,
+                    provide: AnalyticsRepository,
                     useValue: mockLogRepository,
                 },
                 {
@@ -28,7 +28,7 @@ describe('AnalyticService 테스트', () => {
             ],
         }).compile();
 
-        service = module.get<AnalyticService>(AnalyticService);
+        service = module.get<AnalyticsService>(AnalyticsService);
 
         jest.clearAllMocks();
     });

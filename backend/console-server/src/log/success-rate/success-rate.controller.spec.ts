@@ -2,6 +2,7 @@ import { SuccessRateController } from './success-rate.controller';
 import { SuccessRateService } from './success-rate.service';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('SuccessRateController 테스트', () => {
     let controller: SuccessRateController;
@@ -12,6 +13,12 @@ describe('SuccessRateController 테스트', () => {
         getProjectSuccessRate: jest.fn(),
     };
 
+    const mockCacheManager = {
+        get: jest.fn(),
+        set: jest.fn(),
+        del: jest.fn(),
+    };
+
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             controllers: [SuccessRateController],
@@ -19,6 +26,10 @@ describe('SuccessRateController 테스트', () => {
                 {
                     provide: SuccessRateService,
                     useValue: mockSuccessRateService,
+                },
+                {
+                    provide: CACHE_MANAGER,
+                    useValue: mockCacheManager,
                 },
             ],
         }).compile();

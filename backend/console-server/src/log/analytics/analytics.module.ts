@@ -3,13 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Project } from '../../project/entities/project.entity';
 import { ClickhouseModule } from '../../clickhouse/clickhouse.module';
 import { Clickhouse } from '../../clickhouse/clickhouse';
-import { AnalyticController } from './analytic.controller';
-import { AnalyticService } from './analytic.service';
-import { AnalyticRepository } from './analytic.repository';
+import { AnalyticsController } from './analytics.controller';
+import { AnalyticsService } from './analytics.service';
+import { AnalyticsRepository } from './analytics.repository';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Project]), ClickhouseModule],
-    providers: [AnalyticService, AnalyticRepository, Clickhouse],
-    controllers: [AnalyticController],
+    providers: [AnalyticsService, AnalyticsRepository, Clickhouse],
+    controllers: [AnalyticsController],
 })
-export class AnalyticModule {}
+export class AnalyticsModule {}
