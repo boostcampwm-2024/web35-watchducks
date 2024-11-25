@@ -28,10 +28,12 @@ async function main(): Promise<void> {
 
     try {
         const server = await initializer.initialize();
+        const signals = ['SIGINT', 'SIGTERM'];
         await server.start();
-
-        ['SIGINT', 'SIGTERM'].forEach((signal) => {
-            process.on(signal, () => handleShutdown(server, logger, signal));
+        signals.forEach((signal) => {
+            process.on(signal, async () => {
+                await handleShutdown(server, logger, signal);
+            });
         });
     } catch (error) {
         logger.error(createSystemErrorLog(
