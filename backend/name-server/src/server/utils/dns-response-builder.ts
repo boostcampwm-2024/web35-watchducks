@@ -57,7 +57,7 @@ export class DNSResponseBuilder {
             {
                 name: question.name,
                 type: RECORD_TYPE.ADDRESS,
-                class: RECORD_CLASS.ITHERNET,
+                class: RECORD_CLASS.INTERNET,
                 ttl: this.config.ttl,
                 data: this.config.proxyServerIp,
             },
@@ -68,13 +68,13 @@ export class DNSResponseBuilder {
     addAuthorities(question?: Question): this {
         if (!question) return this;
 
-        this.response.authorities = this.config.authoritativeNameServers.map((ns) => {
+        this.response.authorities = this.config.authoritativeNameServers.map((nameServerDomain) => {
             return {
                 name: question.name,
                 type: RECORD_TYPE.NAME_SERVER,
-                class: RECORD_CLASS.ITHERNET,
+                class: RECORD_CLASS.INTERNET,
                 ttl: this.config.ttl,
-                data: ns,
+                data: nameServerDomain,
             };
         });
         return this;
@@ -85,7 +85,7 @@ export class DNSResponseBuilder {
             return {
                 name: nameServerDomain,
                 type: RECORD_TYPE.ADDRESS,
-                class: RECORD_CLASS.ITHERNET,
+                class: RECORD_CLASS.INTERNET,
                 ttl: this.config.ttl,
                 data: this.config.nameServerIp,
             };

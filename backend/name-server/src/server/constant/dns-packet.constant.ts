@@ -20,7 +20,7 @@ export const RECORD_TYPE = {
 } as const;
 
 export const RECORD_CLASS = {
-    ITHERNET: 'IN',
+    INTERNET: 'IN',
 } as const;
 
 export const PACKET_TYPE = {
