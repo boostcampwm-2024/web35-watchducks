@@ -6,40 +6,35 @@ export const useDefaultOptions = () => {
 
 const defaultOptions: ApexCharts.ApexOptions = {
   chart: {
-    toolbar: {
-      show: true,
-      tools: {
-        download: true,
-        selection: true,
-        zoomin: true,
-        zoomout: true,
-        zoom: true,
-        pan: true,
-        reset: true
-      },
-      autoSelected: 'zoom'
-    },
     animations: {
       enabled: false
     },
-    zoom: {
-      enabled: true
+    toolbar: {
+      show: false
     }
   },
   dataLabels: {
     enabled: false
   },
+  tooltip: {
+    enabled: true,
+    shared: true,
+    followCursor: true,
+    intersect: false,
+    fixed: {
+      enabled: false
+    }
+  },
   states: {
     hover: {
       filter: {
-        type: 'darken',
-        value: 0.9
+        type: 'none'
       }
     },
     active: {
+      allowMultipleDataPointsSelection: false,
       filter: {
-        type: 'darken',
-        value: 0.8
+        type: 'none'
       }
     }
   }

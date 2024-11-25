@@ -49,7 +49,7 @@ export function BarChart({ series, options: additionalOptions }: Props) {
     }
   };
 
-  const options = merge(barChartOptions, additionalOptions);
+  const options = merge({}, barChartOptions, additionalOptions);
 
   return <Chart type='bar' series={series} options={options} />;
 }

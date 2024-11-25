@@ -1,6 +1,6 @@
 import { useDefaultOptions } from '@hook/useDefaultOption';
 import { ApexOptions } from 'apexcharts';
-import { merge, cloneDeep } from 'lodash-es';
+import { merge } from 'lodash-es';
 import ReactApexChart from 'react-apexcharts';
 
 type ApexChartType =
@@ -29,18 +29,9 @@ type Props = {
 export function Chart({ type, options: chartOptions, series }: Props) {
   const { defaultOptions } = useDefaultOptions();
 
-  const clonedDefaults = cloneDeep(defaultOptions);
-  const clonedChartOptions = cloneDeep(chartOptions);
-
-  const options = merge(clonedDefaults, clonedChartOptions);
+  const options = merge({}, defaultOptions, chartOptions);
 
   return (
-    <ReactApexChart
-      type={type}
-      series={cloneDeep(series)}
-      options={options}
-      width='100%'
-      height='100%'
-    />
+    <ReactApexChart type={type} series={series} options={options} width='100%' height='100%' />
   );
 }

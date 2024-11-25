@@ -1,3 +1,5 @@
+import { CHART_COLORS } from '@constant/ChartColors';
+import { DATE_FORMAT_OPTIONS, TIME_FORMAT_OPTIONS } from '@constant/Time';
 import { merge } from 'lodash-es';
 
 import { Chart } from './Chart';
@@ -10,41 +12,35 @@ type Props = {
 export function LineChart({ series, options: additionalOptions }: Props) {
   const lineChartOption: ApexCharts.ApexOptions = {
     chart: {
-      type: 'area',
       height: 350,
       toolbar: {
-        show: true
+        show: true,
+        tools: {
+          selection: false
+        }
+      },
+      selection: {
+        enabled: false
+      },
+      zoom: {
+        enabled: true,
+        type: 'x'
       }
     },
-    colors: ['#FF6B6B', '#FF9F43', '#FECA57', '#4ECB71', '#4B7BEC'],
-    fill: {
-      type: 'gradient',
-      gradient: {
-        shadeIntensity: 1,
-        inverseColors: false,
-        opacityFrom: 0.5,
-        opacityTo: 0,
-        stops: [0, 90, 100]
-      }
-    },
+    colors: CHART_COLORS,
     tooltip: {
-      enabled: true,
       shared: true,
       intersect: false,
-      followCursor: true,
+      fillSeriesColor: false,
+      marker: {
+        show: true
+      },
       x: {
+        show: true,
         format: 'yyyy-MM-dd HH:mm',
         formatter: function (val) {
-          const utcDate = new Date(val);
-          const koreaDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
-          return koreaDate.toLocaleString('ko-KR', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          });
+          const date = new Date(val);
+          return '오전 ' + date.toLocaleString('ko-KR', TIME_FORMAT_OPTIONS);
         }
       },
       y: [
@@ -52,70 +48,56 @@ export function LineChart({ series, options: additionalOptions }: Props) {
           formatter: function (val) {
             return val.toFixed(1);
           }
-        },
-        {
-          formatter: function (val) {
-            return val.toFixed(1);
-          }
         }
       ],
-      custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-        const value = series[seriesIndex][dataPointIndex];
-        const utcDate = new Date(w.globals.seriesX[seriesIndex][dataPointIndex]);
-        const koreaDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
-        const seriesName = w.globals.seriesNames[seriesIndex];
-        const color = w.globals.colors[seriesIndex];
-
-        return (
+      custom: function ({ series, dataPointIndex, w }) {
+        const date = new Date(w.globals.seriesX[0][dataPointIndex]);
+        let tooltipContent =
           '<div class="custom-tooltip" style="padding: 8px;">' +
-          `<div style="color: ${color}; margin-bottom: 4px;">${seriesName}</div>` +
-          `<div style="color: #666;">Time: ${koreaDate.toLocaleString('ko-KR', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          })}</div>` +
-          `<div style="color: #000; font-weight: bold;">Traffic: ${value.toFixed(1)}</div>` +
-          '</div>'
-        );
+          `<div style="color: #666; margin-bottom: 8px;">Time: ${date.toLocaleString('ko-KR', DATE_FORMAT_OPTIONS)}</div>`;
+
+        w.globals.seriesNames.forEach((name: string, index: number) => {
+          const value = series[index][dataPointIndex];
+          const color = w.globals.colors[index];
+          tooltipContent +=
+            `<div style="display: flex; align-items: center; margin-bottom: 4px;">` +
+            `<div style="width: 8px; height: 8px; border-radius: 50%; background-color: ${color}; margin-right: 8px;"></div>` +
+            `<div style="color: ${color};">${name}: </div>` +
+            `<div style="color: #000; font-weight: bold; margin-left: 4px;">${value.toFixed(1)}</div>` +
+            `</div>`;
+        });
+
+        tooltipContent += '</div>';
+        return tooltipContent;
+      }
+    },
+    stroke: {
+      curve: 'smooth',
+      width: 3
+    },
+    markers: {
+      size: 1,
+      strokeWidth: 0,
+      hover: {
+        size: 6,
+        sizeOffset: 3
       }
     },
     xaxis: {
       type: 'datetime',
+      tickAmount: 12,
       labels: {
         formatter: function (value: string, timestamp: number) {
           if (!timestamp) return value;
           const date = new Date(timestamp);
-          const koreaDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
-          return koreaDate.toLocaleTimeString('ko-KR', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-          });
-        }
-      }
-    },
-    yaxis: {
-      labels: {
-        formatter: function (val) {
-          return val.toFixed(1);
-        }
-      }
-    },
-    legend: {
-      labels: {
-        colors: '#64748B'
-      }
-    },
-    markers: {
-      hover: {
-        sizeOffset: 0
+          return date.toLocaleString('ko-KR', TIME_FORMAT_OPTIONS);
+        },
+        rotateAlways: false,
+        hideOverlappingLabels: true
       }
     }
   };
 
-  const options = merge(lineChartOption, additionalOptions);
+  const options = merge({}, lineChartOption, additionalOptions);
   return <Chart type='area' series={series} options={options} />;
 }
