@@ -5,21 +5,21 @@ export interface ServerConfig {
     proxyServerIp: string;
     nameServerPort: number;
     ttl: number;
-    nameServerDomainFirst: string;
-    nameServerDomainSecond: string;
+    authoritativeNameServers: string[];
+    nameServerIp: string;
 }
 
 export class ConfigurationValidator {
     static validate(): ServerConfig {
         const { PROXY_SERVER_IP, NAME_SERVER_PORT } = process.env;
-        const { TTL, NS_DOMAIN_FIRST, NS_DOMAIN_SECOND } = process.env;
+        const { TTL, AUTHORITATIVE_NAME_SERVERS, NAME_SERVER_IP } = process.env;
 
         if (
             !PROXY_SERVER_IP ||
             !NAME_SERVER_PORT ||
             !TTL ||
-            !NS_DOMAIN_FIRST ||
-            !NS_DOMAIN_SECOND
+            !AUTHORITATIVE_NAME_SERVERS ||
+            !NAME_SERVER_IP
         ) {
             throw new ConfigurationError('Missing required environment variables');
         }
@@ -28,8 +28,8 @@ export class ConfigurationValidator {
             proxyServerIp: PROXY_SERVER_IP,
             nameServerPort: parseInt(NAME_SERVER_PORT, 10),
             ttl: parseInt(TTL, 10),
-            nameServerDomainFirst: NS_DOMAIN_FIRST,
-            nameServerDomainSecond: NS_DOMAIN_SECOND,
+            authoritativeNameServers: AUTHORITATIVE_NAME_SERVERS.split(',').map((s) => s.trim()),
+            nameServerIp: NAME_SERVER_IP,
         };
     }
 }

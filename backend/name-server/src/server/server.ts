@@ -51,7 +51,10 @@ export class Server {
 
             const response = new DNSResponseBuilder(this.config, query)
                 .addAnswer(RESPONSE_CODE.NOERROR, question)
+                .addAuthorities(question)
+                .addAdditionals()
                 .build();
+
             const responseMsg = encode(response);
 
             await this.sendResponse(responseMsg, remoteInfo);

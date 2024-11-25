@@ -42,34 +42,54 @@ export class DNSResponseBuilder {
     }
 
     addAnswer(rcode: ResponseCodeType, question?: Question): this {
-        this.response.flags = 0x8400; // AA(Authoritative Answer) Flag 1로 변경
+        this.response.flags = 0x8000;
 
         if (this.response.flags && rcode === RESPONSE_CODE.NXDOMAIN) {
             this.response.flags |= RESPONSE_CODE.NXDOMAIN;
         }
 
-        if (rcode === RESPONSE_CODE.NOERROR && question) {
-            this.response.answers = [
-                {
-                    name: question.name,
-                    type: RECORD_TYPE.ADDRESS,
-                    class: RECORD_CLASS.ITHERNET,
-                    ttl: this.config.ttl,
-                    data: this.config.proxyServerIp,
-                },
-            ];
+        if (rcode !== RESPONSE_CODE.NOERROR || !question) {
+            this.response.answers = [];
             return this;
         }
-        this.response.answers = [];
 
+        this.response.answers = [
+            {
+                name: question.name,
+                type: RECORD_TYPE.ADDRESS,
+                class: RECORD_CLASS.ITHERNET,
+                ttl: this.config.ttl,
+                data: this.config.proxyServerIp,
+            },
+        ];
         return this;
     }
 
     addAuthorities(question?: Question): this {
+        if (!question) return this;
+
+        this.response.authorities = this.config.authoritativeNameServers.map((ns) => {
+            return {
+                name: question.name,
+                type: RECORD_TYPE.NAME_SERVER,
+                class: RECORD_CLASS.ITHERNET,
+                ttl: this.config.ttl,
+                data: ns,
+            };
+        });
         return this;
     }
 
     addAdditionals(): this {
+        this.response.additionals = this.config.authoritativeNameServers.map((ns) => {
+            return {
+                name: ns,
+                type: RECORD_TYPE.ADDRESS,
+                class: RECORD_CLASS.ITHERNET,
+                ttl: this.config.ttl,
+                data: this.config.nameServerIp,
+            };
+        });
         return this;
     }
 
