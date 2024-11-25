@@ -7,7 +7,7 @@ import { GetProjectSuccessRateResponseDto } from './dto/get-project-success-rate
 import { GetProjectSuccessRateDto } from './dto/get-project-success-rate.dto';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 
-@Controller('success-rate')
+@Controller('log/success-rate')
 @UseInterceptors(CacheInterceptor)
 export class SuccessRateController {
     constructor(private readonly successRateService: SuccessRateService) {}
