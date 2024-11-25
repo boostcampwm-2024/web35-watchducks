@@ -1,8 +1,14 @@
 import { ProxyError } from '../core/proxy.error';
+import { ErrorMessage } from 'common/constant/error-message.constant';
+import { HttpStatus } from 'common/constant/http-status.constant';
 
 export class DatabaseQueryError extends ProxyError {
     constructor(originalError?: Error) {
-        super(`데이터베이스 쿼리 중 문제가 발생했습니다.`, 404, originalError);
+        super(
+            ErrorMessage.DATABASE.QUERY_FAILED,
+            HttpStatus.NOT_FOUND,
+            originalError
+        );
         this.name = 'DatabaseQueryError';
     }
 }
