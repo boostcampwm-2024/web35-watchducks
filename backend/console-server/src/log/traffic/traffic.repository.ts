@@ -6,6 +6,7 @@ import { TrafficRankMetric } from './metric/traffic-rank.metric';
 import { TrafficRankTop5Metric } from './metric/traffic-rank-top5.metric';
 import { TrafficCountMetric } from './metric/traffic-count.metric';
 import { Injectable } from '@nestjs/common';
+import type { TimeUnit } from './traffic.constant';
 
 @Injectable()
 export class TrafficRepository {
@@ -62,13 +63,14 @@ export class TrafficRepository {
         return this.clickhouse.query<{ count: number }>(queryBuilder.query, queryBuilder.params);
     }
 
-    async findTrafficByProject(domain: string, timeUnit: string) {
+    async findTrafficByProject(domain: string, start: Date, end: Date, timeUnit: TimeUnit) {
         const { query, params } = new TimeSeriesQueryBuilder()
             .metrics([
                 { name: '*', aggregation: 'count' },
                 { name: `toStartOf${timeUnit}(timestamp) as timestamp` },
             ])
             .from('http_log')
+            .timeBetween(start, end)
             .filter({ host: domain })
             .groupBy(['timestamp'])
             .orderBy(['timestamp'], false)
@@ -78,6 +80,7 @@ export class TrafficRepository {
 
         return results.map((result) => plainToInstance(TrafficCountMetric, result));
     }
+
     async findTrafficTop5Chart() {
         const now = new Date();
         const today = new Date(now.setHours(0, 0, 0, 0));
