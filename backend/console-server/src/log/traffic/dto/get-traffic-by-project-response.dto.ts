@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class TrafficCountByTimeunit {
     @ApiProperty({
-        example: '2024-11-07 23:07:28',
+        example: '2024-11-07 23:00:00',
         description: '시간 단위 별 타임스탬프',
     })
     @Expose()
@@ -27,15 +27,15 @@ export class GetTrafficByProjectResponseDto {
     projectName: string;
 
     @ApiProperty({
-        example: 'hour',
-        description: '시간 단위',
+        example: '24hours',
+        description: '데이터 범위',
     })
     @Expose()
-    timeUnit: string;
+    timeRange: string;
 
     @ApiProperty({
         type: [TrafficCountByTimeunit],
-        description: '시간 단위 별 트래픽 데이터',
+        description: '시간 범위 별 트래픽 데이터',
     })
     @Expose()
     @Type(() => TrafficCountByTimeunit)
