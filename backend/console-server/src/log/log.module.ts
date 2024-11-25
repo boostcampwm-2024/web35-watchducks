@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { LogController } from './log.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Project } from '../project/entities/project.entity';
 import { ClickhouseModule } from '../clickhouse/clickhouse.module';
@@ -17,6 +16,5 @@ import { AnalyticsModule } from './analytics/analytics.module';
         SuccessRateModule,
         AnalyticsModule,
     ],
-    controllers: [LogController],
 })
 export class LogModule {}
