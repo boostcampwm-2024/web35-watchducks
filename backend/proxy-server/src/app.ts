@@ -1,7 +1,5 @@
 import { configDotenv } from 'dotenv';
 import { Server } from './server/server';
-import { LogService } from './domain/log/log.service';
-import { LogRepositoryClickhouse } from './database/query/log.repository.clickhouse';
 import { ProjectRepositoryMysql } from './database/query/project.repository.mysql';
 import { ProjectService } from './domain/project/project.service';
 import { ErrorLogRepository } from './common/logger/error-log.repository';
@@ -24,9 +22,6 @@ export class Application {
 
     public async initialize(): Promise<Server> {
         try {
-            const logRepository = new LogRepositoryClickhouse();
-            const logService = new LogService(logRepository);
-
             const projectRepository = new ProjectRepositoryMysql();
             const projectService = new ProjectService(projectRepository);
             const proxyService = new ProxyService(projectService, this.logger);
@@ -35,7 +30,7 @@ export class Application {
 
             this.logger.info({ message: 'Services initialized successfully' });
 
-            return new Server(logService, projectService, errorLogRepository, proxyService);
+            return new Server( errorLogRepository, proxyService);
         } catch (error) {
             const errorLog: ErrorLog = {
                 method: 'SYSTEM',
