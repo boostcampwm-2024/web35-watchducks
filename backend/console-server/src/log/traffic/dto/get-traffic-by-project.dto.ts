@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsString, IsIn } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { TIME_RANGE, TimeRange } from '../traffic.constant';
 
 export class GetTrafficByProjectDto {
     @ApiProperty({
@@ -13,10 +14,8 @@ export class GetTrafficByProjectDto {
     @ApiProperty({
         example: '24hours',
         description: '데이터 범위 (24hours, 1week, 1month)',
-        enum: ['24hours', '1week', '1month'],
+        enum: Object.values(TIME_RANGE),
     })
     @IsNotEmpty()
-    @IsString()
-    @IsIn(['24hours', '1week', '1month'])
-    timeRange: string;
+    timeRange: TimeRange;
 }
