@@ -2,15 +2,15 @@ import type { Socket } from 'dgram';
 import { createSocket, type RemoteInfo } from 'dgram';
 import { decode, encode } from 'dns-packet';
 import type { DecodedPacket, Question } from 'dns-packet';
-import type { ServerConfig } from 'common/utils/validator/configuration.validator';
+import type { ServerConfig } from '../common/utils/validator/configuration.validator';
 import { PacketValidator } from './utils/packet.validator';
 import { DNSResponseBuilder } from './utils/dns-response-builder';
 import { RESPONSE_CODE } from './constant/dns-packet.constant';
-import { logger } from 'common/utils/logger/console.logger';
+import { logger } from '../common/utils/logger/console.logger';
 import { ServerError } from './error/server.error';
 import type { ProjectQueryInterface } from 'database/query/project.query.interface';
 import type { DAURecorderInterface } from 'database/query/dau-recorder';
-import { MESSAGE_TYPE } from 'server/constant/message-type.constants';
+import { MESSAGE_TYPE } from '../server/constant/message-type.constants';
 
 export class Server {
     private server: Socket;
