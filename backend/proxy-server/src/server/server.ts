@@ -13,6 +13,7 @@ import { LogHandler } from '../domain/log/log.handler';
 import type { ProxyService } from 'domain/proxy/proxy.service';
 
 export class Server {
+    private readonly SHUTDOWN_TIMEOUT = 30000;
     private readonly server: FastifyInstance;
     private readonly errorHandler: ErrorHandler;
     private readonly logger: FastifyLogger;
@@ -78,15 +79,6 @@ export class Server {
         });
     }
 
-    private handleError(error: Error): void {
-        this.logger.error(createSystemErrorLog(
-            error,
-            '/server',
-            'Server error occurred'
-        ));
-        this.stop();
-    }
-
     public async start(): Promise<void> {
         try {
             await this.server.listen({
@@ -106,7 +98,14 @@ export class Server {
 
     public async stop(): Promise<void> {
         try {
-            await this.server.close();
+            this.logger.info({ message: 'Starting proxy server shutdown' });
+
+            const closePromise = this.server.close();
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Server shutdown timeout')), this.SHUTDOWN_TIMEOUT)
+            );
+
+            await Promise.race([closePromise, timeoutPromise]);
             this.logger.info({ message: 'Proxy server stopped' });
         } catch (error) {
             this.logger.error(createSystemErrorLog(
