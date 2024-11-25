@@ -81,9 +81,9 @@ export class DNSResponseBuilder {
     }
 
     addAdditionals(): this {
-        this.response.additionals = this.config.authoritativeNameServers.map((ns) => {
+        this.response.additionals = this.config.authoritativeNameServers.map((nameServerDomain) => {
             return {
-                name: ns,
+                name: nameServerDomain,
                 type: RECORD_TYPE.ADDRESS,
                 class: RECORD_CLASS.ITHERNET,
                 ttl: this.config.ttl,
