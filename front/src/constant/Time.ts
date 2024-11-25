@@ -1,4 +1,4 @@
-const TIME_OFFSET = 9 * 60 * 60 * 1000;
+const DAY_TO_MS_SECOND = 24 * 60 * 60 * 1000;
 
 const DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
   year: 'numeric',
@@ -15,4 +15,4 @@ const TIME_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
   hour12: false
 };
 
-export { TIME_OFFSET, DATE_FORMAT_OPTIONS, TIME_FORMAT_OPTIONS };
+export { DAY_TO_MS_SECOND, DATE_FORMAT_OPTIONS, TIME_FORMAT_OPTIONS };
