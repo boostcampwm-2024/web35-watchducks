@@ -10,6 +10,8 @@ import { FindByGenerationDto } from './dto/find-by-generation.dto';
 import { FindByGenerationResponseDto } from './dto/find-by-generation-response.dto';
 import { CountProjectByGenerationDto } from './dto/count-project-by-generation.dto';
 import { CountProjectByGenerationResponseDto } from './dto/count-project-by-generation-response.dto';
+import { ExistsProjectDto } from './dto/exists-project.dto';
+import { ExistsProjectResponseDto } from './dto/exists-project-response.dto';
 
 @Injectable()
 export class ProjectService {
@@ -62,6 +64,14 @@ export class ProjectService {
         return plainToInstance(CountProjectByGenerationResponseDto, {
             count: count,
         });
+    }
+
+    async existsProject(existProjectDto: ExistsProjectDto) {
+        const exists = await this.projectRepository.exists({
+            where: { name: existProjectDto.projectName },
+        });
+
+        return plainToInstance(ExistsProjectResponseDto, { exists });
     }
 }
 
