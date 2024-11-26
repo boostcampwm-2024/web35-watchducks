@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsString, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class GetProjectDAU {
+export class GetDAUsByProjectDto {
     @ApiProperty({
         example: 'watchducks',
         description: '프로젝트 이름',
@@ -9,12 +9,4 @@ export class GetProjectDAU {
     @IsNotEmpty()
     @IsString()
     projectName: string;
-
-    @ApiProperty({
-        example: '2023-10-01',
-        description: '조회할 날짜 (YYYY-MM-DD 형식)',
-    })
-    @IsNotEmpty()
-    @IsDateString()
-    date: string;
 }
