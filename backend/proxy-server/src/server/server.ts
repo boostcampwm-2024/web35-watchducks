@@ -7,7 +7,7 @@ import type { ErrorLogRepository } from '../common/logger/error-log.repository';
 import { ProxyHandler } from '../domain/proxy/proxy.handler';
 import type { ProxyService } from 'domain/proxy/proxy.service';
 import { ServerConfiguration } from 'server/config/server.configuration';
-import { RouterManager } from 'server/router.manager';
+import { ServerInitializer } from 'server/config/server.initializer';
 import { SystemErrorFactory } from 'common/error/factories/system-error.factory';
 import { LogHandler } from 'domain/log/log.handler';
 import type { LogService } from 'domain/log/log.service';
@@ -16,7 +16,7 @@ export class Server {
     private readonly SHUTDOWN_TIMEOUT = 30000;
     private readonly server: FastifyInstance;
     private readonly configuration: ServerConfiguration;
-    private readonly routerManager: RouterManager;
+    private readonly routerManager: ServerInitializer;
     private readonly logger: FastifyLogger;
 
     constructor(
@@ -32,7 +32,7 @@ export class Server {
         const logHandler = new LogHandler(logService, this.logger);
 
         this.configuration = new ServerConfiguration(this.server);
-        this.routerManager = new RouterManager(this.server, proxyHandler, errorHandler, logHandler)
+        this.routerManager = new ServerInitializer(this.server, proxyHandler, errorHandler, logHandler)
 
         this.initialize();
     }

@@ -3,7 +3,7 @@ import type { ErrorHandler } from 'server/error.handler';
 import type {ProxyHandler} from 'domain/proxy/proxy.handler';
 import type { LogHandler } from 'domain/log/log.handler';
 
-export class RouterManager {
+export class ServerInitializer {
     constructor(
         private readonly server: FastifyInstance,
         private readonly proxyHandler: ProxyHandler,
