@@ -1,6 +1,6 @@
 import type { GetTrafficTop5Dto } from './dto/get-traffic-top5.dto';
 import { plainToInstance } from 'class-transformer';
-import { GetTrafficRankResponseDto } from './dto/get-traffic-rank-response.dto';
+import { GetTrafficTop5ResponseDto } from './dto/get-traffic-top5-response.dto';
 import type { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
 import { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generation-response.dto';
 import type { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
@@ -32,7 +32,7 @@ export class TrafficService {
     async getTrafficTop5(_getTrafficTop5Dto: GetTrafficTop5Dto) {
         const result = await this.trafficRepository.findTop5CountByHost();
 
-        return plainToInstance(GetTrafficRankResponseDto, result);
+        return plainToInstance(GetTrafficTop5ResponseDto, result);
     }
 
     async getTrafficByGeneration(_getTrafficByGenerationDto: GetTrafficByGenerationDto) {

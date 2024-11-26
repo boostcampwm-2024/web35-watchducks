@@ -1,6 +1,6 @@
 import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { GetTrafficRankResponseDto } from './dto/get-traffic-rank-response.dto';
+import { GetTrafficTop5ResponseDto } from './dto/get-traffic-top5-response.dto';
 import { GetTrafficTop5Dto } from './dto/get-traffic-top5.dto';
 import { GetTrafficByProjectResponseDto } from './dto/get-traffic-by-project-response.dto';
 import { GetTrafficByProjectDto } from './dto/get-traffic-by-project.dto';
@@ -25,7 +25,7 @@ export class TrafficController {
     @ApiResponse({
         status: HttpStatus.OK,
         description: '트래픽 랭킹 TOP 5가 정상적으로 반환됨.',
-        type: GetTrafficRankResponseDto,
+        type: GetTrafficTop5ResponseDto,
     })
     async getTrafficTop5(@Query() getTrafficTop5Dto: GetTrafficTop5Dto) {
         return await this.trafficService.getTrafficTop5(getTrafficTop5Dto);

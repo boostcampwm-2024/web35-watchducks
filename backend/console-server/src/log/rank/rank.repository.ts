@@ -2,6 +2,7 @@ import { Clickhouse } from '../../clickhouse/clickhouse';
 import { Injectable } from '@nestjs/common';
 import { TimeSeriesQueryBuilder } from '../../clickhouse/query-builder/time-series.query-builder';
 import { HostErrorRateMetric } from './metric/host-error-rate.metric';
+import { HostCountMetric } from './metric/host-count.metric';
 
 @Injectable()
 export class RankRepository {
@@ -16,5 +17,16 @@ export class RankRepository {
             .build();
 
         return await this.clickhouse.query<HostErrorRateMetric>(query, params);
+    }
+
+    async findCountOrderByCount() {
+        const { query, params } = new TimeSeriesQueryBuilder()
+            .metrics([{ name: 'host' }, { name: '*', aggregation: 'count' }])
+            .from('http_log')
+            .groupBy(['host'])
+            .orderBy(['count'], true)
+            .build();
+
+        return await this.clickhouse.query<HostCountMetric>(query, params);
     }
 }
