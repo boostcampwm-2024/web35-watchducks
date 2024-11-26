@@ -1,8 +1,14 @@
 import { ProxyError } from '../core/proxy.error';
+import { ErrorMessage } from '../../common/constant/error-message.constant';
+import { HttpStatus } from '../../common/constant/http-status.constant';
 
 export class DomainNotFoundError extends ProxyError {
     constructor(domain: string, originalError?: Error) {
-        super(`도메인 ${domain}에 대한 IP를 찾을 수 없습니다.`, 404, originalError);
+        super(
+            ErrorMessage.DOMAIN.NOT_FOUND(domain),
+            HttpStatus.NOT_FOUND,
+            originalError
+        );
         this.name = 'DomainNotFoundError';
     }
 }
