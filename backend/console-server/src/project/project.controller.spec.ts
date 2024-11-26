@@ -4,12 +4,14 @@ import { ProjectController } from './project.controller';
 import { ProjectService } from './project.service';
 import type { CreateProjectDto } from './dto/create-project.dto';
 import { ConflictException } from '@nestjs/common';
+import type { ExistsProjectDto } from './dto/exists-project.dto';
 
 describe('ProjectController의', () => {
     let projectController: ProjectController;
 
     const mockProjectService = {
         create: jest.fn(),
+        existsProject: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -51,6 +53,32 @@ describe('ProjectController의', () => {
                 ConflictException,
             );
             expect(mockProjectService.create).toHaveBeenCalledWith(createProjectDto);
+        });
+    });
+
+    describe('existsProject()는', () => {
+        const existsProjectDto: ExistsProjectDto = {
+            projectName: 'watchducks',
+        };
+
+        it('유효한 프로젝트명 요청에 대해 true를 응답해야합니다.', async () => {
+            const result = { exists: true };
+            (mockProjectService.existsProject as jest.Mock).mockReturnValue(result);
+
+            const response = await projectController.existProject(existsProjectDto);
+
+            expect(response).toEqual(result);
+            expect(mockProjectService.existsProject).toHaveBeenCalledWith(existsProjectDto);
+        });
+
+        it('유효한 프로젝트명 요청에 대해 false를 응답해야합니다.', async () => {
+            const result = { exists: false };
+            (mockProjectService.existsProject as jest.Mock).mockReturnValue(result);
+
+            const response = await projectController.existProject(existsProjectDto);
+
+            expect(response).toEqual(result);
+            expect(mockProjectService.existsProject).toHaveBeenCalledWith(existsProjectDto);
         });
     });
 });

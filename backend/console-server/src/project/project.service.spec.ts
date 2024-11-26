@@ -12,6 +12,8 @@ import { ConflictException } from '@nestjs/common';
 import { FindByGenerationDto } from './dto/find-by-generation.dto';
 import { FindByGenerationResponseDto } from './dto/find-by-generation-response.dto';
 import { plainToInstance } from 'class-transformer';
+import type { ExistsProjectDto } from './dto/exists-project.dto';
+import type { ExistsProjectResponseDto } from './dto/exists-project-response.dto';
 
 describe('ProjectService 클래스의', () => {
     let projectService: ProjectService;
@@ -28,6 +30,7 @@ describe('ProjectService 클래스의', () => {
                         create: jest.fn(),
                         save: jest.fn(),
                         find: jest.fn(),
+                        exists: jest.fn(),
                     },
                 },
                 {
@@ -172,6 +175,47 @@ describe('ProjectService 클래스의', () => {
                     name: true,
                 },
                 where: { generation },
+            });
+        });
+    });
+
+    describe('existsProject() 는', () => {
+        it('프로젝트명의 유효성 결과를 반환합니다.', async () => {
+            const projectNames = ['watchducks', 'watchducksJJAP'];
+            const properName = 'watchducks';
+
+            projectNames.forEach(async (name) => {
+                const existsProjectDto = { projectName: name };
+                const result: ExistsProjectResponseDto = { exists: name === properName };
+
+                if (name === properName)
+                    (projectRepository.exists as jest.Mock).mockReturnValue(true);
+                else (projectRepository.exists as jest.Mock).mockReturnValue(false);
+
+                if (name === properName)
+                    expect(await projectService.existsProject(existsProjectDto)).toEqual(result);
+                else expect(await projectService.existsProject(existsProjectDto)).toEqual(result);
+
+                expect(projectRepository.exists).toHaveBeenCalledWith({
+                    where: { name: existsProjectDto.projectName },
+                });
+            });
+        });
+
+        it('레포지토리 에러 발생 시 예외를 던집니다.', async () => {
+            // Given
+            const existsProjectDto: ExistsProjectDto = {
+                projectName: 'watchducks',
+            };
+
+            const mockError = new Error('Database error');
+            (projectRepository.exists as jest.Mock).mockRejectedValue(mockError);
+
+            // When & Then
+            await expect(projectService.existsProject(existsProjectDto)).rejects.toThrow(mockError);
+
+            expect(projectRepository.exists).toHaveBeenCalledWith({
+                where: { name: existsProjectDto.projectName },
             });
         });
     });
