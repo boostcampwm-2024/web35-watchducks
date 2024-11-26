@@ -6,11 +6,11 @@ import { FastifyLogger } from '../common/logger/fastify.logger';
 import type { ErrorLogRepository } from '../common/logger/error-log.repository';
 import { ProxyHandler } from '../domain/proxy/proxy.handler';
 import type { ProxyService } from 'domain/proxy/proxy.service';
-import { ServerConfiguration } from 'server/config/server.configuration';
-import { ServerInitializer } from 'server/config/server.initializer';
-import { SystemErrorFactory } from 'common/error/factories/system-error.factory';
-import { LogHandler } from 'domain/log/log.handler';
-import type { LogService } from 'domain/log/log.service';
+import { ServerConfiguration } from '../server/config/server.configuration';
+import { ServerInitializer } from '../server/config/server.initializer';
+import { SystemErrorFactory } from '../common/error/factories/system-error.factory';
+import { LogHandler } from '../domain/log/log.handler';
+import type { LogService } from '../domain/log/log.service';
 
 export class Server {
     private readonly SHUTDOWN_TIMEOUT = 30000;

@@ -3,7 +3,7 @@ import { DatabaseQueryError } from '../../common/error/database-query.error';
 import { LogRepository } from '../../domain/log/log.repository';
 import { HttpLogEntity } from '../../domain/log/http-log.entity';
 import { ClickHouseClient } from '@clickhouse/client';
-import { formatDateTime } from 'common/utils/date.util';
+import { formatDateTime } from '../../common/utils/date.util';
 
 export class LogRepositoryClickhouse implements LogRepository {
     private readonly clickhouse: ClickHouseClient;

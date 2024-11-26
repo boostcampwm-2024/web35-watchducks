@@ -1,5 +1,5 @@
-import type { SystemErrorLogContext } from 'common/error/types/system-error.type';
-import type { ErrorLog } from 'common/logger/logger.interface';
+import type { SystemErrorLogContext } from '../../../common/error/types/system-error.type';
+import type { ErrorLog } from '../../../common/logger/logger.interface';
 
 export class SystemErrorFactory {
     static createErrorLog(context: SystemErrorLogContext): ErrorLog {

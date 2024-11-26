@@ -1,11 +1,12 @@
 import request from 'supertest';
 import { Server } from '../src/server/server';
 import { LogService } from '../src/domain/log/log.service';
-import type { LogRepository } from '../src/domain/log/log.repository';
+import { LogRepositoryClickhouse } from '../src/database/query/log.repository.clickhouse';
 import { ErrorLogRepository } from '../src/common/logger/error-log.repository';
 import type { ProjectService } from '../src/domain/project/project.service';
+import { ProxyService } from '../src/domain/proxy/proxy.service';
 import { fastifyConfig } from '../src/server/config/fastify.config';
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 
 dotenv.config({ path: '../.env' });
 
@@ -23,14 +24,22 @@ describe('Proxy Server 통합 테스트', () => {
         process.env.DEFAULT_KEEP_ALIVE = '5000';
 
         Object.assign(fastifyConfig, {
-            bodyLimit: 1048576, // 1MB
+            bodyLimit: 1048576,
             requestTimeout: 30000,
             keepAliveTimeout: 5000,
         });
 
-        const mockLogRepository: LogRepository = {
-            insertHttpLog: jest.fn(),
-        };
+        class MockLogRepository extends LogRepositoryClickhouse {
+            constructor() {
+                super();
+            }
+
+            async insertHttpLog() {
+                return Promise.resolve();
+            }
+        }
+
+        const mockLogRepository = new MockLogRepository();
 
         const mockProjectService: ProjectService = {
             getIpByDomain: jest.fn().mockImplementation(async (_domain: string) => {
@@ -40,9 +49,14 @@ describe('Proxy Server 통합 테스트', () => {
 
         const logService = new LogService(mockLogRepository);
         const errorLogRepository = new ErrorLogRepository();
+        const proxyService = new ProxyService(mockProjectService);
 
         try {
-            server = new Server(logService, mockProjectService, errorLogRepository);
+            server = new Server(
+                errorLogRepository,
+                proxyService,
+                logService
+            );
 
             await server.start();
         } catch (error) {
@@ -61,13 +75,13 @@ describe('Proxy Server 통합 테스트', () => {
         it('프록시 서버가 요청을 올바르게 처리할 수 있어야 한다.', async () => {
             const response = await request(targetAddress)
                 .get('/api')
-                .set('Host', 'watchducks-test.shop')
+                .set('Host', 'watchducks-test.store')
                 .set('Accept', '*/*')
                 .set('Accept-Encoding', 'gzip, deflate, br')
                 .set('Connection', 'keep-alive');
 
             console.log('Response Status:', response.status);
-            expect([200, 404, 502]).toContain(response.status);
+            expect([200, 502]).toContain(response.status);
         });
     });
 });

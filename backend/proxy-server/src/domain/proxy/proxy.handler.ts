@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { ProxyError } from '../../common/core/proxy.error';
-import { HOST_HEADER } from 'common/constant/http.constant';
-import type { ProxyService } from 'domain/proxy/proxy.service';
+import { HOST_HEADER } from '../../common/constant/http.constant';
+import type { ProxyService } from '../../domain/proxy/proxy.service';
 
 export class ProxyHandler {
     constructor(

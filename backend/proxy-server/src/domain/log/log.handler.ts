@@ -1,8 +1,8 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { HttpLogEntity } from '../../domain/log/http-log.entity';
-import type { LogService } from 'domain/log/log.service';
-import type { FastifyLogger } from 'common/logger/fastify.logger';
-import { SystemErrorFactory } from 'common/error/factories/system-error.factory';
+import type { LogService } from '../../domain/log/log.service';
+import type { FastifyLogger } from '../../common/logger/fastify.logger';
+import { SystemErrorFactory } from '../../common/error/factories/system-error.factory';
 
 export class LogHandler {
     constructor(
