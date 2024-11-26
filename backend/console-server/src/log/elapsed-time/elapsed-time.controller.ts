@@ -48,7 +48,8 @@ export class ElapsedTimeController {
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: '개별 프로젝트의 경로별 응답 속도 순위',
-        description: '개별 프로젝트의 경로별 응답 속도 중 가장 빠른/느린 3개를 반환합니다.',
+        description:
+            '개별 프로젝트의 경로별 응답 속도 중 가장 빠른/느린 3개를 반환합니다. 빠른 응답은 유효한(상태 코드 200번대)만을 포함합니다.',
     })
     @ApiResponse({
         status: HttpStatus.OK,
