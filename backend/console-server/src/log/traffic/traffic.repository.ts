@@ -106,7 +106,7 @@ export class TrafficRepository {
                        FROM (
                                 SELECT
                                     host,
-                                    toDateTime64(toStartOfInterval(timestamp, INTERVAL 1 MINUTE), 0) as timestamp,
+                                    toDateTime64(toStartOfInterval(timestamp, INTERVAL 10 MINUTE ), 0) as timestamp,
                                     count() as requests_count
                                 FROM http_log
                                 WHERE timestamp >= {startTime: DateTime64(3)}
