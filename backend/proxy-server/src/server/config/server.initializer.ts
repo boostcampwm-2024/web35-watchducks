@@ -19,7 +19,7 @@ export class ServerInitializer {
 
     private initializeHooks(): void {
         this.server.addHook('onResponse', async (request, reply) => {
-            await this.logHandler.logResponse(request, reply);
+            await this.logHandler.handleLogResponse(request, reply);
         });
     }
 

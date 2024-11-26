@@ -10,7 +10,7 @@ export class LogHandler {
         private readonly logger: FastifyLogger,
     ) {}
 
-     async logResponse(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+     async handleLogResponse(request: FastifyRequest, reply: FastifyReply): Promise<void> {
         const httpLog: HttpLogEntity = {
             method: request.method,
             host: request.host,

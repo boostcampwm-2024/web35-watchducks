@@ -43,6 +43,7 @@ describe('Proxy Server 통합 테스트', () => {
 
         try {
             server = new Server(logService, mockProjectService, errorLogRepository);
+
             await server.start();
         } catch (error) {
             console.error('Server initialization failed:', error);
