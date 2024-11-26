@@ -28,6 +28,7 @@ services:
     image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/console-server:latest
     container_name: app-server-blue-1
     environment:
+      - TZ=Asia/Seoul
       - NODE_ENV=production
       - PORT=3001
     restart: always
@@ -45,6 +46,7 @@ services:
     image: ghcr.io/boostcampwm-2024/web35-watchducks/backend/console-server:latest
     container_name: app-server-green-1
     environment:
+      - TZ=Asia/Seoul
       - NODE_ENV=production
       - PORT=3002
     restart: always
