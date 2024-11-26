@@ -9,7 +9,6 @@ export class DAURecorder implements DAURecorderInterface {
 
     public async recordAccess(domain: string): Promise<void> {
         const dateString = new Date().toLocaleDateString('en-CA');
-        console.log(dateString);
         const values = [{ domain: domain.toLowerCase(), date: dateString, access: 1 }];
         try {
             await this.clickhouseClient.insert({

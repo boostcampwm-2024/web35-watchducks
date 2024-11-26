@@ -18,7 +18,6 @@ export const RESPONSE_CODE_MASK = 0x000f;
 
 export const RECORD_TYPE = {
     ADDRESS: 'A',
-    IPV6_ADDRESS: 'AAAA',
     NAME_SERVER: 'NS',
 } as const;
 
