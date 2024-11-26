@@ -4,6 +4,7 @@ import { RankRepository } from './rank.repository';
 import { Clickhouse } from '../../clickhouse/clickhouse';
 import { TimeSeriesQueryBuilder } from '../../clickhouse/query-builder/time-series.query-builder';
 import { HostErrorRateMetric } from './metric/host-error-rate.metric';
+import type { HostElapsedTimeMetric } from './metric/host-elapsed-time.metric';
 
 jest.mock('../../clickhouse/query-builder/time-series.query-builder');
 
@@ -95,22 +96,24 @@ describe('RankRepository', () => {
                 await expect(repository.findSuccessRateOrderByCount()).rejects.toThrow(error);
             });
         });
+        describe('findHostOrderByElapsedTimeSince()는', () => {
+            const mockDate = '2024-10-10';
 
-        describe('findSuccessRateOrderByCount()는', () => {
             const mockQueryResult = {
                 query: '',
-                params: {},
+                params: { timestamp: mockDate },
             };
 
-            const mockResults = [
-                { host: 'test1.com', is_error_rate: 10 },
-                { host: 'test2.com', is_error_rate: 20 },
+            const mockResults: HostElapsedTimeMetric[] = [
+                { host: 'test1.com', avg_elapsed_time: 100 },
+                { host: 'test2.com', avg_elapsed_time: 150 },
             ];
 
             beforeEach(() => {
                 (TimeSeriesQueryBuilder as jest.Mock).mockImplementation(() => ({
                     metrics: jest.fn().mockReturnThis(),
                     from: jest.fn().mockReturnThis(),
+                    filter: jest.fn().mockReturnThis(),
                     groupBy: jest.fn().mockReturnThis(),
                     orderBy: jest.fn().mockReturnThis(),
                     build: jest.fn().mockReturnValue(mockQueryResult),
@@ -120,7 +123,7 @@ describe('RankRepository', () => {
             it('TimeSeriesQueryBuilder를 사용하여 쿼리를 생성해야 한다', async () => {
                 mockClickhouse.query.mockResolvedValue(mockResults);
 
-                await repository.findSuccessRateOrderByCount();
+                await repository.findHostOrderByElapsedTimeSince(mockDate);
 
                 expect(TimeSeriesQueryBuilder).toHaveBeenCalled();
             });
@@ -128,7 +131,7 @@ describe('RankRepository', () => {
             it('생성된 쿼리로 Clickhouse를 호출해야 한다', async () => {
                 mockClickhouse.query.mockResolvedValue(mockResults);
 
-                await repository.findSuccessRateOrderByCount();
+                await repository.findHostOrderByElapsedTimeSince(mockDate);
 
                 expect(clickhouse.query).toHaveBeenCalledWith(
                     mockQueryResult.query,
@@ -136,10 +139,10 @@ describe('RankRepository', () => {
                 );
             });
 
-            it('조회 결과를 HostErrorRateMetric 배열로 반환해야 한다', async () => {
+            it('조회 결과를 HostElapsedTimeMetric 인스턴스로 변환하여 반환해야 한다', async () => {
                 mockClickhouse.query.mockResolvedValue(mockResults);
 
-                const result = await repository.findSuccessRateOrderByCount();
+                const result = await repository.findHostOrderByElapsedTimeSince(mockDate);
 
                 expect(result).toEqual(mockResults);
             });
@@ -148,7 +151,9 @@ describe('RankRepository', () => {
                 const error = new Error('Clickhouse query failed');
                 mockClickhouse.query.mockRejectedValue(error);
 
-                await expect(repository.findSuccessRateOrderByCount()).rejects.toThrow(error);
+                await expect(repository.findHostOrderByElapsedTimeSince(mockDate)).rejects.toThrow(
+                    error,
+                );
             });
         });
     });
