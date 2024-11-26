@@ -16,8 +16,8 @@ export class AnalyticsService {
         private readonly analyticRepository: AnalyticsRepository,
     ) {}
 
-    async getDAUsByProject(getDAUByProjectDto: GetDAUsByProjectDto) {
-        const { projectName } = getDAUByProjectDto;
+    async getDAUsByProject(getDAUsByProjectDto: GetDAUsByProjectDto) {
+        const { projectName } = getDAUsByProjectDto;
         const project = await this.projectRepository.findOne({
             where: { name: projectName },
             select: ['domain'],
