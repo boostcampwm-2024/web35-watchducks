@@ -2,7 +2,6 @@ import { Clickhouse } from '../../clickhouse/clickhouse';
 import { Injectable } from '@nestjs/common';
 import { TimeSeriesQueryBuilder } from '../../clickhouse/query-builder/time-series.query-builder';
 import { HostErrorRateMetric } from './metric/host-error-rate.metric';
-import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class RankRepository {
@@ -16,8 +15,6 @@ export class RankRepository {
             .orderBy(['is_error_rate'])
             .build();
 
-        const results = await this.clickhouse.query<HostErrorRateMetric>(query, params);
-
-        return results.map((result) => plainToInstance(HostErrorRateMetric, result));
+        return await this.clickhouse.query<HostErrorRateMetric>(query, params);
     }
 }

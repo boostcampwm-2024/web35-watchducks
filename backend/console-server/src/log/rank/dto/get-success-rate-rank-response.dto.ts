@@ -21,7 +21,20 @@ export class GetSuccessRateRankResponseDto {
 
     @ApiProperty({
         description: '응답 성공률 순위',
-        example: 'watchducks',
+        example: [
+            {
+                projectName: 'test059',
+                successRate: 98.23100936524453,
+            },
+            {
+                projectName: 'test007',
+                successRate: 98.1094527363184,
+            },
+            {
+                projectName: 'test079',
+                successRate: 98.0083857442348,
+            },
+        ],
     })
     @Expose()
     rank: SuccessRateRank[];
