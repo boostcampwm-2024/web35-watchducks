@@ -80,10 +80,10 @@ describe('TrafficController 테스트', () => {
     });
 
     describe('getTrafficByProject()는', () => {
-        const mockRequestDto = { projectName: 'example-project', timeRange: '1month' as const };
+        const mockRequestDto = { projectName: 'example-project', timeRange: 'month' as const };
         const mockResponseDto = {
             projectName: 'example-project',
-            timeRange: '1month',
+            timeRange: 'month',
             trafficData: [
                 { timestamp: '2024-11-01', count: 14 },
                 { timestamp: '2024-10-01', count: 10 },
@@ -117,7 +117,7 @@ describe('TrafficController 테스트', () => {
         it('빈 트래픽 데이터를 반환해야 한다 (No Data)', async () => {
             const emptyResponseDto = {
                 projectName: 'example-project',
-                timeRange: '1month',
+                timeRange: 'month',
                 trafficData: [],
             };
             mockTrafficService.getTrafficByProject.mockResolvedValue(emptyResponseDto);

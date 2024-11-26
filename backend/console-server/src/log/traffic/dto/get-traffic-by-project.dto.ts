@@ -12,8 +12,8 @@ export class GetTrafficByProjectDto {
     projectName: string;
 
     @ApiProperty({
-        example: '24hours',
-        description: '데이터 범위 (24hours, 1week, 1month)',
+        example: 'day',
+        description: '데이터 범위 (day, week, month)',
         enum: Object.values(TIME_RANGE),
     })
     @IsNotEmpty()

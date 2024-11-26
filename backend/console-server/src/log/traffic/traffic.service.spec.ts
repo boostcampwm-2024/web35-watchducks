@@ -104,7 +104,7 @@ describe('TrafficService 테스트', () => {
     });
 
     describe('getTrafficByProject()는', () => {
-        const mockRequestDto = { projectName: 'example-project', timeRange: '1month' as const };
+        const mockRequestDto = { projectName: 'example-project', timeRange: 'month' as const };
         const mockProject = {
             name: 'example-project',
             domain: 'example.com',
@@ -115,7 +115,7 @@ describe('TrafficService 테스트', () => {
         ];
         const mockResponseDto = {
             projectName: 'example-project',
-            timeRange: '1month',
+            timeRange: 'month',
             trafficData: mockTrafficData,
         };
 

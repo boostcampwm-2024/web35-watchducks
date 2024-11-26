@@ -27,7 +27,7 @@ export class GetTrafficByProjectResponseDto {
     projectName: string;
 
     @ApiProperty({
-        example: '24hours',
+        example: 'day',
         description: '데이터 범위',
     })
     @Expose()

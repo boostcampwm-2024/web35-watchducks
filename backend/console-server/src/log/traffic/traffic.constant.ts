@@ -1,7 +1,7 @@
 export const TIME_RANGE = {
-    DAY: '24hours',
-    WEEK: '1week',
-    MONTH: '1month',
+    DAY: 'day',
+    WEEK: 'week',
+    MONTH: 'month',
 } as const;
 
 export const CLICKHOUSE_TIME_UNIT = {
