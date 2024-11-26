@@ -27,7 +27,6 @@ export class RouterManager {
         this.server.all('*', async (request: FastifyRequest, reply: FastifyReply) => {
             try {
                 await this.proxyHandler.handleProxyRequest(request, reply);
-                await this.logHandler.logResponse(request, reply);
             } catch (error) {
                 throw error;
             }
