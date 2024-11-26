@@ -7,15 +7,16 @@ import { DauMetric } from './metric/dau.metric';
 export class AnalyticsRepository {
     constructor(private readonly clickhouse: Clickhouse) {}
 
-    async findDAUByProject(domain: string, date: string) {
+    async findDAUsByProject(domain: string, start: Date, end: Date) {
         const { query, params } = new TimeSeriesQueryBuilder()
-            .metrics([{ name: `SUM(access) as dau` }])
+            .metrics([{ name: `date` }, { name: `SUM(access) as dau` }])
             .from('dau')
-            .filter({ domain: domain, date: date })
+            .filter({ domain })
+            .timeBetween(start, end, 'date')
+            .groupBy(['date'])
+            .orderBy(['date'])
             .build();
 
-        const [result] = await this.clickhouse.query<DauMetric>(query, params);
-
-        return result?.dau ? result.dau : 0;
+        return await this.clickhouse.query<DauMetric>(query, params);
     }
 }

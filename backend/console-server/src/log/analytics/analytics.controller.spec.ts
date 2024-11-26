@@ -9,7 +9,7 @@ describe('AnalyticsController 테스트', () => {
     let service: AnalyticsService;
 
     const mockLogService = {
-        getProjectDAU: jest.fn(),
+        getDAUsByProject: jest.fn(),
     };
 
     const mockCacheManager = {
@@ -44,35 +44,34 @@ describe('AnalyticsController 테스트', () => {
     });
 
     describe('getProjectDAU()는', () => {
-        const mockRequestDto = { projectName: 'example-project', date: '2024-11-01' };
+        const mockRequestDto = { projectName: 'example-project' };
 
         const mockResponseDto = {
             projectName: 'example-project',
-            date: '2024-11-01',
-            dau: 125,
+            dauRecords: { date: '2024-11-01', dau: 125 },
         };
 
         it('프로젝트명과 날짜가 들어왔을 때 DAU 데이터를 반환해야 한다', async () => {
-            mockLogService.getProjectDAU.mockResolvedValue(mockResponseDto);
+            mockLogService.getDAUsByProject.mockResolvedValue(mockResponseDto);
 
-            const result = await controller.getProjectDAU(mockRequestDto);
+            const result = await controller.getDAUsByProject(mockRequestDto);
 
             expect(result).toEqual(mockResponseDto);
             expect(result).toHaveProperty('projectName', mockRequestDto.projectName);
-            expect(result).toHaveProperty('date', mockRequestDto.date);
-            expect(result).toHaveProperty('dau', 125);
-            expect(service.getProjectDAU).toHaveBeenCalledWith(mockRequestDto);
-            expect(service.getProjectDAU).toHaveBeenCalledTimes(1);
+            expect(result).toHaveProperty('dauRecords');
+            expect(result.dauRecords).toHaveProperty('dau', 125);
+            expect(service.getDAUsByProject).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getDAUsByProject).toHaveBeenCalledTimes(1);
         });
 
         it('서비스 에러 시 예외를 throw 해야 한다', async () => {
             const error = new Error('Database error');
-            mockLogService.getProjectDAU.mockRejectedValue(error);
+            mockLogService.getDAUsByProject.mockRejectedValue(error);
 
-            await expect(controller.getProjectDAU(mockRequestDto)).rejects.toThrow(error);
+            await expect(controller.getDAUsByProject(mockRequestDto)).rejects.toThrow(error);
 
-            expect(service.getProjectDAU).toHaveBeenCalledWith(mockRequestDto);
-            expect(service.getProjectDAU).toHaveBeenCalledTimes(1);
+            expect(service.getDAUsByProject).toHaveBeenCalledWith(mockRequestDto);
+            expect(service.getDAUsByProject).toHaveBeenCalledTimes(1);
         });
     });
 });

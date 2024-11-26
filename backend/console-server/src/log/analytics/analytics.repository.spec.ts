@@ -2,6 +2,7 @@ import { Clickhouse } from '../../clickhouse/clickhouse';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { AnalyticsRepository } from './analytics.repository';
+import type { DauMetric } from './metric/dau.metric';
 
 describe('AnalyticsRepository 테스트', () => {
     let repository: AnalyticsRepository;
@@ -24,6 +25,9 @@ describe('AnalyticsRepository 테스트', () => {
 
         repository = module.get<AnalyticsRepository>(AnalyticsRepository);
         clickhouse = module.get<Clickhouse>(Clickhouse);
+
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2024-11-26T00:00:00.000Z'));
     });
 
     afterEach(() => {
@@ -34,51 +38,37 @@ describe('AnalyticsRepository 테스트', () => {
         expect(repository).toBeDefined();
     });
 
-    describe('getDAUByProject()', () => {
+    describe('findDAUsByProject()', () => {
         const domain = 'example.com';
-        const date = '2024-11-18';
+        const start = new Date('2024-11-01');
+        const end = new Date('2024-11-30');
 
-        it('존재하는 도메인과 날짜가 들어오면 존재하는 DAU 값을 반환해야 한다.', async () => {
-            const mockResult = [{ dau: 150 }];
+        it('존재하는 도메인과 기간이 들어오면 해당 기간의 DAU 데이터를 반환해야 한다.', async () => {
+            const mockResult: DauMetric[] = [
+                { date: new Date('2024-11-01'), dau: 100 },
+                { date: new Date('2024-11-05'), dau: 150 },
+                { date: new Date('2024-11-10'), dau: 200 },
+            ];
             mockClickhouse.query.mockResolvedValue(mockResult);
 
-            const result = await repository.findDAUByProject(domain, date);
+            const result = await repository.findDAUsByProject(domain, start, end);
 
-            expect(result).toBe(150);
+            expect(result).toEqual(mockResult);
             expect(clickhouse.query).toHaveBeenCalledWith(
-                expect.stringMatching(
-                    /SELECT.*SUM\(access\).*as dau.*FROM dau.*WHERE.*domain = \{domain:String}.*AND.*date = \{date:String}/s,
-                ),
-                expect.objectContaining({ domain, date }),
+                expect.any(String),
+                expect.objectContaining({ domain, startTime: start, endTime: end }),
             );
         });
 
-        it('DAU 데이터가 없을 경우 0을 반환해야 한다.', async () => {
+        it('DAU 데이터가 없을 경우 빈 배열을 반환해야 한다.', async () => {
             mockClickhouse.query.mockResolvedValue([]);
 
-            const result = await repository.findDAUByProject(domain, date);
+            const result = await repository.findDAUsByProject(domain, start, end);
 
-            expect(result).toBe(0);
+            expect(result).toEqual([]);
             expect(clickhouse.query).toHaveBeenCalledWith(
-                expect.stringMatching(
-                    /SELECT.*SUM\(access\).*as dau.*FROM dau.*WHERE.*domain = \{domain:String}.*AND.*date = \{date:String}/s,
-                ),
-                expect.objectContaining({ domain, date }),
-            );
-        });
-
-        it('DAU 값이 null일 경우 0을 반환해야 한다.', async () => {
-            const mockResult = [{ dau: null }];
-            mockClickhouse.query.mockResolvedValue(mockResult);
-
-            const result = await repository.findDAUByProject(domain, date);
-
-            expect(result).toBe(0);
-            expect(clickhouse.query).toHaveBeenCalledWith(
-                expect.stringMatching(
-                    /SELECT.*SUM\(access\).*as dau.*FROM dau.*WHERE.*domain = \{domain:String}.*AND.*date = \{date:String}/s,
-                ),
-                expect.objectContaining({ domain, date }),
+                expect.any(String),
+                expect.objectContaining({ domain, startTime: start, endTime: end }),
             );
         });
 
@@ -86,15 +76,13 @@ describe('AnalyticsRepository 테스트', () => {
             const error = new Error('Clickhouse query failed');
             mockClickhouse.query.mockRejectedValue(error);
 
-            await expect(repository.findDAUByProject(domain, date)).rejects.toThrow(
+            await expect(repository.findDAUsByProject(domain, start, end)).rejects.toThrow(
                 'Clickhouse query failed',
             );
 
             expect(clickhouse.query).toHaveBeenCalledWith(
-                expect.stringMatching(
-                    /SELECT.*SUM\(access\).*as dau.*FROM dau.*WHERE.*domain = \{domain:String}.*AND.*date = \{date:String}/s,
-                ),
-                expect.objectContaining({ domain, date }),
+                expect.any(String),
+                expect.objectContaining({ domain, startTime: start, endTime: end }),
             );
         });
     });
