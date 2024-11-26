@@ -95,5 +95,61 @@ describe('RankRepository', () => {
                 await expect(repository.findSuccessRateOrderByCount()).rejects.toThrow(error);
             });
         });
+
+        describe('findSuccessRateOrderByCount()는', () => {
+            const mockQueryResult = {
+                query: '',
+                params: {},
+            };
+
+            const mockResults = [
+                { host: 'test1.com', is_error_rate: 10 },
+                { host: 'test2.com', is_error_rate: 20 },
+            ];
+
+            beforeEach(() => {
+                (TimeSeriesQueryBuilder as jest.Mock).mockImplementation(() => ({
+                    metrics: jest.fn().mockReturnThis(),
+                    from: jest.fn().mockReturnThis(),
+                    groupBy: jest.fn().mockReturnThis(),
+                    orderBy: jest.fn().mockReturnThis(),
+                    build: jest.fn().mockReturnValue(mockQueryResult),
+                }));
+            });
+
+            it('TimeSeriesQueryBuilder를 사용하여 쿼리를 생성해야 한다', async () => {
+                mockClickhouse.query.mockResolvedValue(mockResults);
+
+                await repository.findSuccessRateOrderByCount();
+
+                expect(TimeSeriesQueryBuilder).toHaveBeenCalled();
+            });
+
+            it('생성된 쿼리로 Clickhouse를 호출해야 한다', async () => {
+                mockClickhouse.query.mockResolvedValue(mockResults);
+
+                await repository.findSuccessRateOrderByCount();
+
+                expect(clickhouse.query).toHaveBeenCalledWith(
+                    mockQueryResult.query,
+                    mockQueryResult.params,
+                );
+            });
+
+            it('조회 결과를 HostErrorRateMetric 배열로 반환해야 한다', async () => {
+                mockClickhouse.query.mockResolvedValue(mockResults);
+
+                const result = await repository.findSuccessRateOrderByCount();
+
+                expect(result).toEqual(mockResults);
+            });
+
+            it('Clickhouse 쿼리 실패 시 에러를 전파해야 한다', async () => {
+                const error = new Error('Clickhouse query failed');
+                mockClickhouse.query.mockRejectedValue(error);
+
+                await expect(repository.findSuccessRateOrderByCount()).rejects.toThrow(error);
+            });
+        });
     });
 });
