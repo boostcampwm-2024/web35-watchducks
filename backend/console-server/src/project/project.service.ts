@@ -15,8 +15,6 @@ import { ExistsProjectResponseDto } from './dto/exists-project-response.dto';
 
 @Injectable()
 export class ProjectService {
-    private readonly BASE_YEAR: number = 2015;
-
     constructor(
         @InjectRepository(Project)
         private readonly projectRepository: Repository<Project>,
