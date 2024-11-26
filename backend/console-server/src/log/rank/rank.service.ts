@@ -54,7 +54,7 @@ export class RankService {
 
         const hosts = results.map((result) => result.host);
         const projectMap = await this.hostsToProjectMap(hosts);
-        const rank = results.map((result): ElapsedTimeRank => {
+        const rank = results.map<ElapsedTimeRank>((result) => {
             return {
                 projectName: projectMap.get(result.host) || `Unknown`,
                 elapsedTime: result.avg_elapsed_time,
