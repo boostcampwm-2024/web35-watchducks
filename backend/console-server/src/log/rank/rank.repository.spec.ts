@@ -123,7 +123,7 @@ describe('RankRepository', () => {
         it('TimeSeriesQueryBuilder를 사용하여 쿼리를 생성해야 한다', async () => {
             mockClickhouse.query.mockResolvedValue(mockResults);
 
-            await repository.findDAUOrderByCount(testDate);
+            await repository.findCountOrderByDAU(testDate);
 
             expect(TimeSeriesQueryBuilder).toHaveBeenCalled();
             const queryBuilder = (TimeSeriesQueryBuilder as jest.Mock).mock.results[0].value;
@@ -141,7 +141,7 @@ describe('RankRepository', () => {
         it('생성된 쿼리로 Clickhouse를 호출해야 한다', async () => {
             mockClickhouse.query.mockResolvedValue(mockResults);
 
-            await repository.findDAUOrderByCount(testDate);
+            await repository.findCountOrderByDAU(testDate);
 
             expect(clickhouse.query).toHaveBeenCalledWith(
                 mockQueryResult.query,
@@ -152,7 +152,7 @@ describe('RankRepository', () => {
         it('조회 결과는 host와 dau 속성을 가진 객체여야 한다', async () => {
             mockClickhouse.query.mockResolvedValue(mockResults);
 
-            const results = await repository.findDAUOrderByCount(testDate);
+            const results = await repository.findCountOrderByDAU(testDate);
 
             expect(results).toHaveLength(mockResults.length);
             results.forEach((result) => {
@@ -165,7 +165,7 @@ describe('RankRepository', () => {
             const error = new Error('Clickhouse query failed');
             mockClickhouse.query.mockRejectedValue(error);
 
-            await expect(repository.findDAUOrderByCount(testDate)).rejects.toThrow(error);
+            await expect(repository.findCountOrderByDAU(testDate)).rejects.toThrow(error);
         });
     });
 });

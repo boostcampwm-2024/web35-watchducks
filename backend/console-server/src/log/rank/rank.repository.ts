@@ -19,7 +19,7 @@ export class RankRepository {
         return await this.clickhouse.query<HostErrorRateMetric>(query, params);
     }
 
-    async findDAUOrderByCount(date: string) {
+    async findCountOrderByDAU(date: string) {
         const { query, params } = new TimeSeriesQueryBuilder()
             .metrics([{ name: 'domain as host' }, { name: 'SUM(access) as dau' }])
             .from('dau')

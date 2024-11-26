@@ -15,7 +15,7 @@ describe('RankService', () => {
 
     const mockRankRepository = {
         findSuccessRateOrderByCount: jest.fn(),
-        findDAUOrderByCount: jest.fn(),
+        findCountOrderByDAU: jest.fn(),
     };
 
     const mockProjectRepository = {
@@ -120,7 +120,7 @@ describe('RankService', () => {
             });
 
             it('어제 날짜를 기준으로 DAU 순위를 정상적으로 계산하여 반환해야 한다', async () => {
-                mockRankRepository.findDAUOrderByCount.mockResolvedValue(mockRankResults);
+                mockRankRepository.findCountOrderByDAU.mockResolvedValue(mockRankResults);
                 mockProjectRepository.find.mockResolvedValue(mockProjects);
 
                 const result = await service.getDAURank(mockDto);
@@ -133,12 +133,12 @@ describe('RankService', () => {
             });
 
             it('rankRepository을 호출해야 한다', async () => {
-                mockRankRepository.findDAUOrderByCount.mockResolvedValue(mockRankResults);
+                mockRankRepository.findCountOrderByDAU.mockResolvedValue(mockRankResults);
                 mockProjectRepository.find.mockResolvedValue(mockProjects);
 
                 await service.getDAURank(mockDto);
 
-                expect(rankRepository.findDAUOrderByCount).toHaveBeenCalledWith(yesterday);
+                expect(rankRepository.findCountOrderByDAU).toHaveBeenCalledWith(yesterday);
 
                 expect(projectRepository.find).toHaveBeenCalled();
                 const findCallArg = mockProjectRepository.find.mock.calls[0][0];
@@ -150,7 +150,7 @@ describe('RankService', () => {
 
             it('DAU 데이터 조회 실패 시 에러를 전파해야 한다', async () => {
                 const error = new Error('Failed to fetch DAU data');
-                mockRankRepository.findDAUOrderByCount.mockRejectedValue(error);
+                mockRankRepository.findCountOrderByDAU.mockRejectedValue(error);
 
                 await expect(service.getDAURank(mockDto)).rejects.toThrow(error);
             });

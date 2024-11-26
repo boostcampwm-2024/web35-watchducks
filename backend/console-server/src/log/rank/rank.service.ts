@@ -46,7 +46,7 @@ export class RankService {
 
     async getDAURank(_getDAURankDto: GetDAURankDto) {
         const yesterday = this.getYesterdayDate();
-        const results = await this.rankRepository.findDAUOrderByCount(yesterday);
+        const results = await this.rankRepository.findCountOrderByDAU(yesterday);
 
         const domains = results.map((result) => result.host);
         const projects = await this.projectRepository.find({
