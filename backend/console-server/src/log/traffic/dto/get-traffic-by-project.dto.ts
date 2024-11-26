@@ -1,6 +1,6 @@
-import { IsNotEmpty, IsString, IsIn } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
+import { TIME_RANGE, TimeRange } from '../traffic.constant';
 
 export class GetTrafficByProjectDto {
     @ApiProperty({
@@ -12,19 +12,10 @@ export class GetTrafficByProjectDto {
     projectName: string;
 
     @ApiProperty({
-        example: 'hour',
-        description: '시간 단위 (Minute, Hour, Day, Week, Month)',
-        enum: ['Minute', 'Hour', 'Day', 'Week', 'Month'],
+        example: 'day',
+        description: '데이터 범위 (day, week, month)',
+        enum: Object.values(TIME_RANGE),
     })
     @IsNotEmpty()
-    @IsString()
-    @Transform(({ value }) => {
-        if (typeof value === 'string') {
-            const lower = value.toLowerCase();
-            return lower.charAt(0).toUpperCase() + lower.slice(1);
-        }
-        return value;
-    })
-    @IsIn(['Minute', 'Hour', 'Day', 'Week', 'Month'])
-    timeUnit: string;
+    timeRange: TimeRange;
 }

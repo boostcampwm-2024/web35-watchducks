@@ -16,6 +16,8 @@ FROM node:22-alpine
 
 WORKDIR /usr/src/app
 
+RUN apk add --no-cache tzdata
+
 # 프로덕션 의존성 설치
 COPY package*.json ./
 RUN npm install --production

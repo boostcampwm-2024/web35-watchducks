@@ -24,6 +24,8 @@ describe('TrafficRepository 테스트', () => {
 
         repository = module.get<TrafficRepository>(TrafficRepository);
         clickhouse = module.get<Clickhouse>(Clickhouse);
+
+        jest.spyOn(console, 'error').mockImplementation(() => {});
     });
 
     afterEach(() => {
@@ -69,6 +71,8 @@ describe('TrafficRepository 테스트', () => {
     describe('getTrafficByProject()는', () => {
         const domain = 'example.com';
         const timeUnit = 'Hour';
+        const start = new Date('2024-11-18T00:00:00Z');
+        const end = new Date('2024-11-19T00:00:00Z');
 
         const mockTrafficData = [
             { timestamp: '2024-11-18 10:00:00', count: 150 },
@@ -76,10 +80,10 @@ describe('TrafficRepository 테스트', () => {
             { timestamp: '2024-11-18 12:00:00', count: 180 },
         ];
 
-        it('올바른 도메인과 시간 단위를 기준으로 트래픽 데이터를 반환해야 한다.', async () => {
+        it('입력 받은 도메인과 시간 범위 및 단위를 기준으로 트래픽 데이터를 반환해야 한다.', async () => {
             mockClickhouse.query.mockResolvedValue(mockTrafficData);
 
-            const result = await repository.findTrafficByProject(domain, timeUnit);
+            const result = await repository.findTrafficByProject(domain, start, end, timeUnit);
 
             expect(result).toEqual(mockTrafficData);
             expect(clickhouse.query).toHaveBeenCalledWith(
@@ -92,7 +96,7 @@ FROM http_log WHERE host = {host:String} GROUP BY timestamp ORDER BY timestamp`,
         it('트래픽 데이터가 없을 경우 빈 배열을 반환해야 한다.', async () => {
             mockClickhouse.query.mockResolvedValue([]);
 
-            const result = await repository.findTrafficByProject(domain, timeUnit);
+            const result = await repository.findTrafficByProject(domain, start, end, timeUnit);
 
             expect(result).toEqual([]);
             expect(clickhouse.query).toHaveBeenCalledWith(
@@ -105,9 +109,9 @@ FROM http_log WHERE host = {host:String} GROUP BY timestamp ORDER BY timestamp`,
             const error = new Error('Clickhouse query failed');
             mockClickhouse.query.mockRejectedValue(error);
 
-            await expect(repository.findTrafficByProject(domain, timeUnit)).rejects.toThrow(
-                'Clickhouse query failed',
-            );
+            await expect(
+                repository.findTrafficByProject(domain, start, end, timeUnit),
+            ).rejects.toThrow('Clickhouse query failed');
 
             expect(clickhouse.query).toHaveBeenCalledWith(
                 expect.any(String),
