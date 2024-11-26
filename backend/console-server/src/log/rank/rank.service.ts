@@ -9,6 +9,8 @@ import {
     GetSuccessRateRankResponseDto,
     SuccessRateRank,
 } from './dto/get-success-rate-rank-response.dto';
+import { GetTrafficRankResponseDto, TrafficRank } from './dto/get-traffic-rank-response.dto';
+import { GetTrafficRankDto } from './dto/get-traffic-rank.dto';
 
 @Injectable()
 export class RankService {
@@ -22,13 +24,7 @@ export class RankService {
         const results = await this.rankRepository.findSuccessRateOrderByCount();
         const hosts = results.map((result) => result.host);
 
-        const projects = await this.projectRepository.find({
-            select: ['domain', 'name'],
-            where: {
-                domain: In(hosts),
-            },
-        });
-        const projectMap = new Map(projects.map((project) => [project.domain, project]));
+        const projectMap = await this.hostsToProjectMap(hosts);
 
         const rank = results.map((result) => {
             const project = projectMap.get(result.host);
@@ -40,5 +36,33 @@ export class RankService {
         });
 
         return plainToInstance(GetSuccessRateRankResponseDto, { total: results.length, rank });
+    }
+
+    async getTrafficRank(_getTrafficRankDto: GetTrafficRankDto) {
+        const results = await this.rankRepository.findCountOrderByCount();
+        const hosts = results.map((result) => result.host);
+
+        const projectMap = await this.hostsToProjectMap(hosts);
+
+        const rank = results.map((result) => {
+            const project = projectMap.get(result.host);
+
+            return plainToInstance(TrafficRank, {
+                projectName: project?.name || `Unknown`,
+                count: result.count,
+            });
+        });
+
+        return plainToInstance(GetTrafficRankResponseDto, { total: results.length, rank });
+    }
+
+    private async hostsToProjectMap(hosts: string[]) {
+        const projects = await this.projectRepository.find({
+            select: ['domain', 'name'],
+            where: {
+                domain: In(hosts),
+            },
+        });
+        return new Map(projects.map((project) => [project.domain, project]));
     }
 }
