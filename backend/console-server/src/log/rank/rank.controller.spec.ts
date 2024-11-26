@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing';
 import { RankController } from './rank.controller';
 import { RankService } from './rank.service';
 import type { GetSuccessRateRankDto } from './dto/get-success-rate-rank.dto';
+import type { GetElapsedTimeRankDto } from './dto/get-elapsed-time-rank.dto';
 
 describe('RankController', () => {
     let controller: RankController;
@@ -10,6 +11,7 @@ describe('RankController', () => {
 
     const mockRankService = {
         getSuccessRateRank: jest.fn(),
+        getElapsedTimeRank: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -72,6 +74,48 @@ describe('RankController', () => {
 
                 await expect(controller.getSuccessRateRank(mockDto)).rejects.toThrow(error);
                 expect(service.getSuccessRateRank).toHaveBeenCalledWith(mockDto);
+            });
+        });
+
+        describe('getElapsedTimeRank()는', () => {
+            const mockDto: GetElapsedTimeRankDto = {
+                generation: 1,
+            };
+
+            const mockResponse = {
+                total: 2,
+                rank: [
+                    {
+                        projectName: 'Project A',
+                        elapsedTime: 120,
+                    },
+                    {
+                        projectName: 'Project B',
+                        elapsedTime: 130,
+                    },
+                ],
+            };
+
+            it('정의되어 있어야 한다', () => {
+                expect(controller.getElapsedTimeRank).toBeDefined();
+            });
+
+            it('응답 소요 시간 랭킹 데이터를 반환해야 한다', async () => {
+                mockRankService.getElapsedTimeRank.mockResolvedValue(mockResponse);
+
+                const result = await controller.getElapsedTimeRank(mockDto);
+
+                expect(result).toBe(mockResponse);
+                expect(service.getElapsedTimeRank).toHaveBeenCalledWith(mockDto);
+                expect(service.getElapsedTimeRank).toHaveBeenCalledTimes(1);
+            });
+
+            it('서비스 계층에서 오류가 발생하면 해당 오류를 그대로 던져야 한다', async () => {
+                const error = new Error('Service error');
+                mockRankService.getElapsedTimeRank.mockRejectedValue(error);
+
+                await expect(controller.getElapsedTimeRank(mockDto)).rejects.toThrow(error);
+                expect(service.getElapsedTimeRank).toHaveBeenCalledWith(mockDto);
             });
         });
     });
