@@ -6,6 +6,7 @@ import { Project } from '../../project/entities/project.entity';
 import type { Repository } from 'typeorm';
 import type { GetSuccessRateRankDto } from './dto/get-success-rate-rank.dto';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import type { GetElapsedTimeRankDto } from './dto/get-elapsed-time-rank.dto';
 
 describe('RankService', () => {
     let service: RankService;
@@ -14,6 +15,7 @@ describe('RankService', () => {
 
     const mockRankRepository = {
         findSuccessRateOrderByCount: jest.fn(),
+        findHostOrderByElapsedTimeSince: jest.fn(),
     };
 
     const mockProjectRepository = {
@@ -90,6 +92,61 @@ describe('RankService', () => {
                 await service.getSuccessRateRank(mockDto);
 
                 expect(rankRepository.findSuccessRateOrderByCount).toHaveBeenCalled();
+                expect(projectRepository.find).toHaveBeenCalled();
+            });
+        });
+
+        describe('getElapsedTimeRank()는', () => {
+            const mockDto: GetElapsedTimeRankDto = {
+                generation: 1,
+            };
+
+            const mockRankResults = [
+                { host: 'test1.com', avg_elapsed_time: 100 },
+                { host: 'test2.com', avg_elapsed_time: 150 },
+            ];
+
+            const mockProjects = [
+                { domain: 'test1.com', name: 'Project 1' },
+                { domain: 'test2.com', name: 'Project 2' },
+            ];
+
+            it('응답 소요 시간 순위를 정상적으로 계산하여 반환해야 한다', async () => {
+                mockRankRepository.findHostOrderByElapsedTimeSince.mockResolvedValue(
+                    mockRankResults,
+                );
+                mockProjectRepository.find.mockResolvedValue(mockProjects);
+
+                const result = await service.getElapsedTimeRank(mockDto);
+
+                expect(result.total).toBe(mockRankResults.length);
+                expect(result.rank).toHaveLength(mockRankResults.length);
+                expect(result.rank[0].projectName).toBe('Project 1');
+                expect(result.rank[0].elapsedTime).toBe(100);
+                expect(result.rank[1].projectName).toBe('Project 2');
+                expect(result.rank[1].elapsedTime).toBe(150);
+            });
+
+            it('프로젝트 정보가 없는 경우 Unknown으로 표시해야 한다', async () => {
+                mockRankRepository.findHostOrderByElapsedTimeSince.mockResolvedValue(
+                    mockRankResults,
+                );
+                mockProjectRepository.find.mockResolvedValue([mockProjects[0]]);
+
+                const result = await service.getElapsedTimeRank(mockDto);
+
+                expect(result.rank[1].projectName).toBe('Unknown');
+            });
+
+            it('rankRepository와 projectRepository를 호출해야 한다', async () => {
+                mockRankRepository.findHostOrderByElapsedTimeSince.mockResolvedValue(
+                    mockRankResults,
+                );
+                mockProjectRepository.find.mockResolvedValue(mockProjects);
+
+                await service.getElapsedTimeRank(mockDto);
+
+                expect(rankRepository.findHostOrderByElapsedTimeSince).toHaveBeenCalled();
                 expect(projectRepository.find).toHaveBeenCalled();
             });
         });
