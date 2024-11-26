@@ -20,6 +20,7 @@ import {
     TrafficTop5Chart,
 } from './dto/get-traffic-top5-chart-response.dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { TIME_RANGE, TIME_RANGE_UNIT_MAP, TimeRange } from './traffic.constant';
 
 @Injectable()
 export class TrafficService {
@@ -88,21 +89,49 @@ export class TrafficService {
     }
 
     async getTrafficByProject(getTrafficByProjectDto: GetTrafficByProjectDto) {
-        const { projectName, timeUnit } = getTrafficByProjectDto;
-
+        const { projectName, timeRange } = getTrafficByProjectDto;
         const project = await this.projectRepository.findOne({
             where: { name: projectName },
             select: ['domain'],
         });
         if (!project) throw new NotFoundException(`Project with name ${projectName} not found`);
 
-        const results = await this.trafficRepository.findTrafficByProject(project.domain, timeUnit);
+        const { start, end } = this.calculateDateTimeRange(timeRange);
+        const timeUnit = TIME_RANGE_UNIT_MAP[timeRange];
+        if (!timeUnit) throw new Error(`Invalid timeRange value: ${timeRange}`);
+
+        const results = await this.trafficRepository.findTrafficByProject(
+            project.domain,
+            start,
+            end,
+            timeUnit,
+        );
 
         return plainToInstance(GetTrafficByProjectResponseDto, {
             projectName,
-            timeUnit,
+            timeRange,
             trafficData: results.map((result) => plainToInstance(TrafficCountByTimeunit, result)),
         });
+    }
+
+    private calculateDateTimeRange(timeRange: TimeRange): { start: Date; end: Date } {
+        const end = new Date();
+        const start = new Date(end.getTime());
+
+        switch (timeRange) {
+            case TIME_RANGE.DAY:
+                start.setHours(start.getHours() - 24);
+                break;
+            case TIME_RANGE.WEEK:
+                start.setDate(start.getDate() - 7);
+                break;
+            case TIME_RANGE.MONTH:
+                start.setMonth(start.getMonth() - 1);
+                break;
+            default:
+                throw new Error(`Invalid timeRange value: ${timeRange}`);
+        }
+        return { start, end };
     }
 
     async getTrafficTop5Chart(_getTrafficTop5ChartDto: GetTrafficTop5ChartDto) {
