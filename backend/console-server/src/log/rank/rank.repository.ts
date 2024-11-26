@@ -2,6 +2,7 @@ import { Clickhouse } from '../../clickhouse/clickhouse';
 import { Injectable } from '@nestjs/common';
 import { TimeSeriesQueryBuilder } from '../../clickhouse/query-builder/time-series.query-builder';
 import { HostErrorRateMetric } from './metric/host-error-rate.metric';
+import { HostElapsedTimeMetric } from './metric/host-elapsed-time.metric';
 
 @Injectable()
 export class RankRepository {
@@ -16,5 +17,20 @@ export class RankRepository {
             .build();
 
         return await this.clickhouse.query<HostErrorRateMetric>(query, params);
+    }
+
+    async findHostOrderByElapsedTimeSince(date: string) {
+        const { query, params } = new TimeSeriesQueryBuilder()
+            .metrics([
+                { name: 'host' },
+                { name: 'toUInt32(avg(elapsed_time)) as avg_elapsed_time' },
+                { name: 'toDate(timestamp) as timestamp' },
+            ])
+            .from('http_log')
+            .filter({ timestamp: date })
+            .groupBy(['host', 'timestamp'])
+            .orderBy(['avg_elapsed_time'])
+            .build();
+        return await this.clickhouse.query<HostElapsedTimeMetric>(query, params);
     }
 }
