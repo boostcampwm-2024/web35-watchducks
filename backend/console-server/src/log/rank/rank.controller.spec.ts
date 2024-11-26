@@ -1,8 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { RankController } from './rank.controller';
 import { RankService } from './rank.service';
-import { GetSuccessRateRankDto } from './dto/get-success-rate-rank.dto';
-import { HttpStatus } from '@nestjs/common';
+import type { GetSuccessRateRankDto } from './dto/get-success-rate-rank.dto';
 
 describe('RankController', () => {
     let controller: RankController;

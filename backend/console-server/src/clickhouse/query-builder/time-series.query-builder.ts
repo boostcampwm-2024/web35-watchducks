@@ -95,6 +95,7 @@ export class TimeSeriesQueryBuilder {
      *
      * @param {Date} start - 조회 시작 시간
      * @param {Date} end - 조회 종료 시간
+     * @param {string} columnName - 시간 정보 컬럼명 (default: timestamp)
      * @returns {this} 메서드 체이닝을 위해 현재 인스턴스를 반환합니다
      * @throws {TimeSeriesQueryBuilderError} 시작 시간이 종료 시간보다 늦거나, 유효하지 않은 Date 객체가 전달될 경우 에러를 발생시킵니다
      *
@@ -104,9 +105,9 @@ export class TimeSeriesQueryBuilder {
      * const end = new Date('2024-01-02');
      * queryBuilder.timeBetween(start, end);
      */
-    timeBetween(start: Date, end: Date): this {
+    timeBetween(start: Date, end: Date, columnName: string = 'timestamp'): this {
         this.validateTimeRange(start, end);
-        this.addTimeRangeSql();
+        this.addTimeRangeSql(columnName);
         this.updateTimeParameters(start, end);
 
         return this;
@@ -122,10 +123,10 @@ export class TimeSeriesQueryBuilder {
         }
     }
 
-    private addTimeRangeSql(): void {
-        const timeRangeCondition = `
-WHERE timestamp >= {startTime: DateTime64(3)}
-AND timestamp < {endTime: DateTime64(3)}`;
+    private addTimeRangeSql(columnName: string = 'timestamp'): void {
+        const timeRangeCondition = this.query.includes('WHERE')
+            ? `\nAND ${columnName} >= {startTime: DateTime64(3)} AND ${columnName} < {endTime: DateTime64(3)}`
+            : `\nWHERE ${columnName} >= {startTime: DateTime64(3)} AND ${columnName} < {endTime: DateTime64(3)}`;
 
         this.query += timeRangeCondition;
     }
