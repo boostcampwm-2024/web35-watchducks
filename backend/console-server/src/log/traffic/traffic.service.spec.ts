@@ -11,6 +11,11 @@ import { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
 import { NotFoundException } from '@nestjs/common';
 import type { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
 import { GetTrafficDailyDifferenceResponseDto } from './dto/get-traffic-daily-difference-response.dto';
+import {
+    GetTrafficTop5ChartResponseDto,
+    TrafficTop5Chart,
+} from './dto/get-traffic-top5-chart-response.dto';
+import type { GetTrafficTop5ChartDto } from './dto/get-traffic-top5-chart.dto';
 
 describe('TrafficService 테스트', () => {
     let service: TrafficService;
@@ -22,6 +27,7 @@ describe('TrafficService 테스트', () => {
         findTrafficByProject: jest.fn(),
         findTrafficDailyDifferenceByGeneration: jest.fn(),
         findTrafficForTimeRange: jest.fn(),
+        findTrafficTop5Chart: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -279,6 +285,110 @@ describe('TrafficService 테스트', () => {
                 2,
                 yesterdayStart,
                 yesterdayEnd,
+            );
+        });
+    });
+
+    describe('getTrafficTop5Chart()는 ', () => {
+        const getTrafficTop5ChartDto: GetTrafficTop5ChartDto = { generation: 9 };
+
+        it('트래픽 TOP 5 차트 데이터를 정상적으로 반환해야 한다', async () => {
+            // Given
+            const projectRepository = service['projectRepository'];
+            const mockTrafficResults = [
+                { host: 'example1.com', traffic: 1000 },
+                { host: 'example2.com', traffic: 800 },
+            ];
+
+            const mockProjects = [{ name: 'Project 1' }, { name: 'Project 2' }];
+
+            mockTrafficRepository.findTrafficTop5Chart.mockResolvedValue(mockTrafficResults);
+
+            projectRepository.findOne = jest
+                .fn()
+                .mockResolvedValueOnce(mockProjects[0])
+                .mockResolvedValueOnce(mockProjects[1]);
+
+            const expectedTrafficCharts = mockTrafficResults.map((result, index) => ({
+                name: mockProjects[index].name,
+                traffic: result.traffic,
+            }));
+
+            const expected = plainToInstance(GetTrafficTop5ChartResponseDto, {
+                trafficCharts: expectedTrafficCharts.map((chart) =>
+                    plainToInstance(TrafficTop5Chart, chart),
+                ),
+            });
+
+            // When
+            const result = await service.getTrafficTop5Chart(getTrafficTop5ChartDto);
+
+            // Then
+            expect(mockTrafficRepository.findTrafficTop5Chart).toHaveBeenCalled();
+            expect(projectRepository.findOne).toHaveBeenCalledTimes(2);
+            expect(projectRepository.findOne).toHaveBeenCalledWith({
+                select: ['name'],
+                where: { domain: expect.any(String) },
+            });
+            expect(result).toEqual(expected);
+        });
+
+        it('프로젝트가 존재하지 않는 경우 name이 undefined인 데이터를 반환해야 한다', async () => {
+            // Given
+            const projectRepository = service['projectRepository'];
+            const mockTrafficResults = [{ host: 'example1.com', traffic: 1000 }];
+
+            mockTrafficRepository.findTrafficTop5Chart.mockResolvedValue(mockTrafficResults);
+            projectRepository.findOne = jest.fn().mockResolvedValue(undefined);
+
+            const expectedTrafficCharts = mockTrafficResults.map((result) => ({
+                traffic: result.traffic,
+            }));
+
+            const expected = plainToInstance(GetTrafficTop5ChartResponseDto, {
+                trafficCharts: expectedTrafficCharts.map((chart) =>
+                    plainToInstance(TrafficTop5Chart, chart),
+                ),
+            });
+
+            // When
+            const result = await service.getTrafficTop5Chart(getTrafficTop5ChartDto);
+
+            // Then
+            expect(mockTrafficRepository.findTrafficTop5Chart).toHaveBeenCalled();
+            expect(projectRepository.findOne).toHaveBeenCalledWith({
+                select: ['name'],
+                where: { domain: 'example1.com' },
+            });
+            expect(result).toEqual(expected);
+        });
+
+        it('트래픽 데이터가 없는 경우 빈 배열을 반환해야 한다', async () => {
+            // Given
+            const projectRepository = service['projectRepository'];
+            mockTrafficRepository.findTrafficTop5Chart.mockResolvedValue([]);
+
+            const expected = plainToInstance(GetTrafficTop5ChartResponseDto, {
+                trafficCharts: [],
+            });
+
+            // When
+            const result = await service.getTrafficTop5Chart(getTrafficTop5ChartDto);
+
+            // Then
+            expect(mockTrafficRepository.findTrafficTop5Chart).toHaveBeenCalled();
+            expect(projectRepository.findOne).not.toHaveBeenCalled();
+            expect(result).toEqual(expected);
+        });
+
+        it('repository 에러 발생 시 에러를 전파해야 한다', async () => {
+            // Given
+            const error = new Error('Repository error');
+            mockTrafficRepository.findTrafficTop5Chart.mockRejectedValue(error);
+
+            // When & Then
+            await expect(service.getTrafficTop5Chart(getTrafficTop5ChartDto)).rejects.toThrow(
+                error,
             );
         });
     });
