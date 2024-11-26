@@ -30,7 +30,11 @@ describe('AnalyticsService 테스트', () => {
         }).compile();
 
         service = module.get<AnalyticsService>(AnalyticsService);
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2024-11-26T00:00:00.000Z'));
+    });
 
+    afterEach(() => {
         jest.clearAllMocks();
     });
 
