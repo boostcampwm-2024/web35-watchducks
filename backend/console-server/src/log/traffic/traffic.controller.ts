@@ -35,11 +35,11 @@ export class TrafficController {
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: '프로젝트 별 트래픽 조회',
-        description: '프로젝트 이름과 시간 단위로 특정 프로젝트의 트래픽 데이터를 반환합니다.',
+        description: '특정 프로젝트의 지난 24시간/1주일/1개월 간의 트래픽 데이터를 반환합니다.',
     })
     @ApiResponse({
         status: HttpStatus.OK,
-        description: '특정 프로젝트의 트래픽 데이터가 반환됨.',
+        description: '요청한 프로젝트명/기간에 맞는 트래픽 데이터가 반환됨.',
         type: GetTrafficByProjectResponseDto,
     })
     async getTrafficByProject(@Query() getTrafficByProjectDto: GetTrafficByProjectDto) {

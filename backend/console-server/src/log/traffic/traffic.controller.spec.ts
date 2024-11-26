@@ -80,10 +80,10 @@ describe('TrafficController 테스트', () => {
     });
 
     describe('getTrafficByProject()는', () => {
-        const mockRequestDto = { projectName: 'example-project', timeUnit: 'month' };
+        const mockRequestDto = { projectName: 'example-project', timeRange: 'month' as const };
         const mockResponseDto = {
             projectName: 'example-project',
-            timeUnit: 'month',
+            timeRange: 'month',
             trafficData: [
                 { timestamp: '2024-11-01', count: 14 },
                 { timestamp: '2024-10-01', count: 10 },
@@ -96,7 +96,7 @@ describe('TrafficController 테스트', () => {
 
             expect(result).toEqual(mockResponseDto);
             expect(result).toHaveProperty('projectName', mockRequestDto.projectName);
-            expect(result).toHaveProperty('timeUnit', mockRequestDto.timeUnit);
+            expect(result).toHaveProperty('timeRange', mockRequestDto.timeRange);
             expect(result.trafficData).toHaveLength(2);
             expect(result.trafficData[0]).toHaveProperty('timestamp', '2024-11-01');
             expect(result.trafficData[0]).toHaveProperty('count', 14);
@@ -117,7 +117,7 @@ describe('TrafficController 테스트', () => {
         it('빈 트래픽 데이터를 반환해야 한다 (No Data)', async () => {
             const emptyResponseDto = {
                 projectName: 'example-project',
-                timeUnit: 'month',
+                timeRange: 'month',
                 trafficData: [],
             };
             mockTrafficService.getTrafficByProject.mockResolvedValue(emptyResponseDto);
@@ -126,7 +126,7 @@ describe('TrafficController 테스트', () => {
 
             expect(result).toEqual(emptyResponseDto);
             expect(result).toHaveProperty('projectName', mockRequestDto.projectName);
-            expect(result).toHaveProperty('timeUnit', mockRequestDto.timeUnit);
+            expect(result).toHaveProperty('timeRange', mockRequestDto.timeRange);
             expect(result.trafficData).toHaveLength(0);
             expect(service.getTrafficByProject).toHaveBeenCalledWith(mockRequestDto);
             expect(service.getTrafficByProject).toHaveBeenCalledTimes(1);
