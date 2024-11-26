@@ -9,6 +9,8 @@ import {
     GetSuccessRateRankResponseDto,
     SuccessRateRank,
 } from './dto/get-success-rate-rank-response.dto';
+import { GetDAURankDto } from './dto/get-dau-rank.dto';
+import { DAURank, GetDAURankResponseDto } from './dto/get-dau-rank-response.dto';
 
 @Injectable()
 export class RankService {
@@ -40,5 +42,39 @@ export class RankService {
         });
 
         return plainToInstance(GetSuccessRateRankResponseDto, { total: results.length, rank });
+    }
+
+    async getDAURank(_getDAURankDto: GetDAURankDto) {
+        const yesterday = this.getYesterdayDate();
+        const results = await this.rankRepository.findDAUOrderByCount(yesterday);
+
+        const domains = results.map((result) => result.host);
+        const projects = await this.projectRepository.find({
+            select: ['domain', 'name'],
+            where: {
+                domain: In(domains),
+            },
+        });
+
+        const _projectMap = new Map(projects.map((project) => [project.domain, project]));
+
+        const rank = results.map((result) => {
+            return plainToInstance(DAURank, {
+                host: result.host,
+                dau: result.dau,
+            });
+        });
+
+        return plainToInstance(GetDAURankResponseDto, {
+            total: results.length,
+            rank,
+            date: yesterday,
+        });
+    }
+
+    private getYesterdayDate(): string {
+        const date = new Date();
+        date.setDate(date.getDate() - 1);
+        return date.toISOString().split('T')[0];
     }
 }
