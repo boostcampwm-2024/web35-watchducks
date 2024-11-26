@@ -1,9 +1,6 @@
 import type { Packet, Question } from 'dns-packet';
-import {
-    MESSAGE_TYPE,
-    MessageType,
-    MIN_DNS_MESSAGE_LENGTH,
-} from 'server/constant/message-type.constants';
+import type { MessageType } from '../../server/constant/message-type.constants';
+import { MESSAGE_TYPE, MIN_DNS_MESSAGE_LENGTH } from '../../server/constant/message-type.constants';
 
 type TypeGuardResult<T> = T extends Packet ? T & { questions: Question[] } : never;
 
