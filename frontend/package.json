@@ -1,7 +1,7 @@
 {
   "name": "watchducks",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@nivo/calendar": "^0.88.0",
     "@tanstack/react-query": "^5.59.19",
     "@tanstack/react-query-devtools": "^5.59.19",
     "apexcharts": "^3.54.1",
