@@ -33,12 +33,16 @@ export class ElapsedTimeRepository {
         return results.map((result) => plainToInstance(HostAvgElapsedTimeMetric, result));
     }
 
-    async getFastestPathsByDomain(domain: string) {
+    async findFastestPathsByDomain(domain: string) {
         const { query, params } = new TimeSeriesQueryBuilder()
-            .metrics([{ name: 'elapsed_time', aggregation: 'avg' }, { name: 'path' }])
+            .metrics([
+                { name: 'toUInt32(avg(elapsed_time)) as avg_elapsed_time' },
+                { name: 'path' },
+                { name: 'if(status_code >= 200 AND status_code < 300, 1, 0) AS is_valid' },
+            ])
             .from('http_log')
-            .filter({ host: domain })
-            .groupBy(['path'])
+            .filter({ host: domain, is_valid: 1 })
+            .groupBy(['path', 'is_valid'])
             .orderBy(['avg_elapsed_time'], false)
             .limit(3)
             .build();
@@ -50,7 +54,10 @@ export class ElapsedTimeRepository {
 
     async findSlowestPathsByDomain(domain: string) {
         const { query, params } = new TimeSeriesQueryBuilder()
-            .metrics([{ name: 'elapsed_time', aggregation: 'avg' }, { name: 'path' }])
+            .metrics([
+                { name: 'toUInt32(avg(elapsed_time)) as avg_elapsed_time' },
+                { name: 'path' },
+            ])
             .from('http_log')
             .filter({ host: domain })
             .groupBy(['path'])
