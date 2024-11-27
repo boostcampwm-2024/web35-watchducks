@@ -12,7 +12,7 @@ export default function ProjectElapsedTime({ id }: Props) {
 
   if (!data?.fastestPaths?.length && !data?.slowestPaths?.length) {
     return (
-      <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full'>
+      <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full h-full'>
         <div className='mb-8 text-center'>
           <h2 className='text-navy text-2xl font-bold'>Response Speed</h2>
         </div>
@@ -86,14 +86,18 @@ export default function ProjectElapsedTime({ id }: Props) {
   };
 
   return (
-    <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full'>
-      <div className='mb-8 text-center'>
-        <h2 className='text-navy text-2xl font-bold'>Response Speed</h2>
+    <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full h-full'>
+      <div className='flex h-full flex-col'>
+        <div className='mb-4'>
+          <h2 className='text-navy text-center text-2xl font-bold'>Response Speed</h2>
+        </div>
+        <div className='min-h-0 flex-1'>
+          <PolarAreaChart options={options} series={series} />
+        </div>
+        <div className='mt-auto pt-4'>
+          <ProjectElapsedTimeLegend averageTime={getAverageResponseTime()} />
+        </div>
       </div>
-      <div className='w-full flex-1'>
-        <PolarAreaChart options={options} series={series} />
-      </div>
-      <ProjectElapsedTimeLegend averageTime={getAverageResponseTime()} />
     </DataLayout>
   );
 }

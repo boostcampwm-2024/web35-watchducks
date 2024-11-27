@@ -59,7 +59,7 @@ export default function ProjectSuccessRate({ id }: Props) {
   };
 
   return (
-    <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full'>
+    <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full h-full'>
       <div className='mb-8 text-center'>
         <h2 className='text-navy text-2xl font-bold'>Request Success Rate</h2>
       </div>
