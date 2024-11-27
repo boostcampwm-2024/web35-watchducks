@@ -12,7 +12,7 @@ import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, CACHE_KEY_METADATA, CACHE_TTL_METADATA } from '@nestjs/cache-manager';
 import { Reflector, HttpAdapterHost } from '@nestjs/core';
 import { firstValueFrom } from 'rxjs';
-import { CACHE_REFRESH_THRESHOLD_METADATA } from './cache-wrap.decorator';
+import { CACHE_REFRESH_THRESHOLD_METADATA } from './cache.constant';
 import { isNil } from '@nestjs/common/utils/shared.utils';
 
 @Injectable()
