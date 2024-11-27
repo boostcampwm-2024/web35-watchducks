@@ -1,4 +1,4 @@
-import { CHART_COLORS } from '@constant/ChartColors';
+import { CHART_COLORS } from '@constant/Chart';
 import { DATE_FORMAT_OPTIONS, TIME_FORMAT_OPTIONS } from '@constant/Time';
 import { merge } from 'lodash-es';
 
@@ -9,7 +9,7 @@ type Props = {
   options: ApexCharts.ApexOptions;
 };
 
-export function LineChart({ series, options: additionalOptions }: Props) {
+export default function LineChart({ series, options: additionalOptions }: Props) {
   const lineChartOption: ApexCharts.ApexOptions = {
     chart: {
       height: 350,

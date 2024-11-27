@@ -1,8 +1,7 @@
-import { LineChart } from '@chart/LineChart';
+import LineChart from '@chart/LineChart';
 import DataLayout from '@component/template/DataLayout';
 import { DAY_TO_MS_SECOND } from '@constant/Time';
 import useTop5Traffic from '@hook/api/useTop5Traffic';
-import { Top5Traffic } from '@type/api';
 import { fillEmptySlots } from '@util/Time';
 import { useMemo } from 'react';
 
@@ -14,18 +13,11 @@ export default function MainTrafficChart({ generation }: Props) {
   const { data } = useTop5Traffic(generation);
 
   const series = useMemo(() => {
-    return data.map((item: Top5Traffic) => ({
-      name: item.name || 'Unknown',
-      data: fillEmptySlots(
-        item.traffic.reduce<Array<[string, string]>>((acc, value, index, arr) => {
-          if (index % 2 === 0 && index + 1 < arr.length) {
-            acc.push([value, arr[index + 1]]);
-          }
-          return acc;
-        }, [])
-      ).map(([timestamp, value]) => ({
+    return data.trafficCharts.map((chart) => ({
+      name: chart.name || 'Unknown',
+      data: fillEmptySlots(chart.traffic).map(([timestamp, value]) => ({
         x: new Date(timestamp),
-        y: value
+        y: Number(value)
       }))
     }));
   }, [data]);

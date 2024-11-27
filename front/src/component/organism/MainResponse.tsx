@@ -1,7 +1,8 @@
-import { BarChart } from '@chart/BarChart';
+import BarChart from '@chart/BarChart';
 import DataLayout from '@component/template/DataLayout';
-import { CHART_COLORS } from '@constant/ChartColors';
 import useTop5ResponseTime from '@hook/api/useTop5ResponseTime';
+
+import { CHART_COLORS } from '@/constant/Chart';
 
 type Props = {
   generation: string;

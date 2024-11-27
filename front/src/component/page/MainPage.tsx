@@ -12,7 +12,7 @@ export default function MainPage() {
   const { generation } = useNavContext<Props>();
 
   return (
-    <div className='bg-lightgray dark:bg-lightblack flex h-screen w-full flex-col gap-8 p-8'>
+    <div className='flex h-screen w-full flex-col gap-8 bg-lightgray p-8 dark:bg-lightblack'>
       <div className='mt-8 grid h-1/2 grid-cols-1 gap-8 lg:grid-cols-2'>
         <CustomErrorBoundary>
           <MainData generation={generation} />

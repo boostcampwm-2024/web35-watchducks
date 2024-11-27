@@ -14,7 +14,7 @@ export default function ProjectDetailPage() {
 
   const { data, isLoading } = useIsExistGroup(id);
   if (isLoading) {
-    return null;
+    return;
   }
   if (data?.exists === false) {
     return <Navigate to='/404' />;
