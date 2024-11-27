@@ -6,25 +6,28 @@ import { configDotenv } from 'dotenv';
 configDotenv();
 
 export const fastifyConfig = {
-    logger: {
-        level: process.env.LOG_LEVEL || 'info',
-        serializers: {
-            req(
-                request: FastifyRequest<
-                    RouteGenericInterface,
-                    http.Server<typeof IncomingMessage, typeof ServerResponse>,
-                    RawRequestDefaultExpression<
-                        http.Server<typeof IncomingMessage, typeof ServerResponse>
-                    >
-                >,
-            ) {
-                return {
-                    method: request.method,
-                    url: request.url,
-                    host: request.headers.host,
-                };
-            },
-        },
-    },
+    logger:
+        process.env.NODE_ENV === 'development'
+            ? true
+            : {
+                  level: process.env.LOG_LEVEL || 'info',
+                  serializers: {
+                      req(
+                          request: FastifyRequest<
+                              RouteGenericInterface,
+                              http.Server<typeof IncomingMessage, typeof ServerResponse>,
+                              RawRequestDefaultExpression<
+                                  http.Server<typeof IncomingMessage, typeof ServerResponse>
+                              >
+                          >,
+                      ) {
+                          return {
+                              method: request.method,
+                              url: request.url,
+                              host: request.headers.host,
+                          };
+                      },
+                  },
+              },
     bodyLimit: Number(process.env.BODY_LIMIT),
 };

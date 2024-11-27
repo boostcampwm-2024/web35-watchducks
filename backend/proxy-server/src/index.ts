@@ -1,23 +1,25 @@
-import { Application } from './app';
-import { FastifyLogger } from './common/logger/fastify.logger';
+import { Application } from 'app';
+import { FastifyLogger } from 'common/logger/fastify.logger';
 import fastify from 'fastify';
 import { SystemErrorFactory } from 'common/error/factories/system-error.factory';
 
 async function handleShutdown(
     server: Awaited<ReturnType<Application['initialize']>>,
     logger: FastifyLogger,
-    signal: string
+    signal: string,
 ): Promise<void> {
-    try{
+    try {
         await server.stop();
-        logger.info({message: `Server stopped on ${signal}`});
+        logger.info({ message: `Server stopped on ${signal}` });
         process.exit(0);
-    }catch (error) {
-        logger.error(SystemErrorFactory.createErrorLog({
-            originalError: error,
-            path: '/shutdown',
-            message: `Error during shutdown on ${signal}`
-        }));
+    } catch (error) {
+        logger.error(
+            SystemErrorFactory.createErrorLog({
+                originalError: error,
+                path: '/shutdown',
+                message: `Error during shutdown on ${signal}`,
+            }),
+        );
         process.exit(1);
     }
 }
@@ -29,6 +31,7 @@ async function main(): Promise<void> {
     try {
         const server = await initializer.initialize();
         const signals = ['SIGINT', 'SIGTERM'];
+
         await server.start();
         signals.forEach((signal) => {
             process.on(signal, async () => {
@@ -36,11 +39,13 @@ async function main(): Promise<void> {
             });
         });
     } catch (error) {
-        logger.error(SystemErrorFactory.createErrorLog({
-            originalError: error,
-            path: '/startup',
-            message: 'Fatal error during startup'
-        }));
+        logger.error(
+            SystemErrorFactory.createErrorLog({
+                originalError: error,
+                path: '/startup',
+                message: 'Fatal error during startup',
+            }),
+        );
         process.exit(1);
     }
 }

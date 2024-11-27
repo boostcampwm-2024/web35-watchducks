@@ -21,6 +21,7 @@ export class MysqlDatabase {
 
     public async connect(): Promise<void> {
         try {
+            console.log(poolConfig);
             this.pool = mysql.createPool(poolConfig);
 
             await this.pool.query('SELECT 1');
