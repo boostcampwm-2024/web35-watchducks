@@ -7,7 +7,7 @@ import {
     NestInterceptor,
     Optional,
 } from '@nestjs/common';
-import { Observable, from } from 'rxjs';
+import { Observable, from, of } from 'rxjs';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, CACHE_KEY_METADATA, CACHE_TTL_METADATA } from '@nestjs/cache-manager';
 import { Reflector, HttpAdapterHost } from '@nestjs/core';
@@ -54,19 +54,18 @@ export class CustomCacheInterceptor<T> implements NestInterceptor<T> {
                     ? await refreshThresholdValueOrFactory(context)
                     : refreshThresholdValueOrFactory;
 
-            const cachedResponsePromise = this.cacheManager.wrap<T>(
+            const args: [string, () => Promise<T>, number?, number?] = [
                 cacheKey,
-                async () => {
-                    return await firstValueFrom(next.handle());
-                },
-                ttl,
-                refreshThreshold,
-            );
+                () => firstValueFrom(next.handle()),
+            ];
+            if (!isNil(ttl)) args.push(ttl);
+            if (!isNil(refreshThreshold)) args.push(refreshThreshold);
 
-            const cachedResponse = await cachedResponsePromise;
+            const cachedResponse = await this.cacheManager.wrap<T>(...args);
+
             this.setHeadersWhenHttp(context, cachedResponse);
 
-            return from(Promise.resolve(cachedResponse));
+            return of(cachedResponse);
         } catch (err) {
             Logger.error(
                 `CacheInterceptor Error: ${err.message}`,
