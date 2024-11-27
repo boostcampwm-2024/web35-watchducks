@@ -1,6 +1,6 @@
 import LineChart from '@chart/LineChart';
 import DataLayout from '@component/template/DataLayout';
-import { DAY_TO_MS_SECOND } from '@constant/Time';
+import { DAY_TO_MS_SECOND } from '@constant/Date';
 import useTop5Traffic from '@hook/api/useTop5Traffic';
 import { fillEmptySlots } from '@util/Time';
 import { useMemo } from 'react';
