@@ -1,13 +1,11 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { ProxyError } from '../../common/core/proxy.error';
-import type { ErrorHandler } from '../../server/error.handler';
-import { HOST_HEADER } from 'common/constant/http.constant';
-import type { ProxyService } from 'domain/proxy/proxy.service';
+import { HOST_HEADER } from '../../common/constant/http.constant';
+import type { ProxyService } from '../../domain/proxy/proxy.service';
 
 export class ProxyHandler {
     constructor(
         private readonly proxyService: ProxyService,
-        private readonly errorHandler: ErrorHandler,
     ) {}
 
     async handleProxyRequest(request: FastifyRequest, reply: FastifyReply): Promise<void> {

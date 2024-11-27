@@ -5,6 +5,9 @@ import { GetSuccessRateRankDto } from './dto/get-success-rate-rank.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GetElapsedTimeRankResponseDto } from './dto/get-elapsed-time-rank-response.dto';
 import { GetElapsedTimeRankDto } from './dto/get-elapsed-time-rank.dto';
+import { GetDAURankDto } from './dto/get-dau-rank.dto';
+import { GetDAURankResponseDto } from './dto/get-dau-rank-response.dto';
+import { GetTrafficRankDto } from './dto/get-traffic-rank.dto';
 
 @Controller('log/rank')
 export class RankController {
@@ -38,5 +41,35 @@ export class RankController {
     })
     async getElapsedTimeRank(@Query() getElapsedTimeRankDto: GetElapsedTimeRankDto) {
         return await this.rankService.getElapsedTimeRank(getElapsedTimeRankDto);
+    }
+
+    @Get('/dau')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({
+        summary: '기수 내 DAU 랭킹',
+        description: '요청받은 기수의 기수 내 DAU 랭킹을 반환합니다.',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: '기수 내 DAU 랭킹이 송공적으로 반환됨.',
+        type: GetDAURankResponseDto,
+    })
+    async getDAURank(@Query() getDAURankDto: GetDAURankDto) {
+        return await this.rankService.getDAURank(getDAURankDto);
+    }
+
+    @Get('/traffic')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({
+        summary: '기수 내 트래픽 랭킹',
+        description: '요청받은 기수의 기수 내 트래픽 랭킹을 반환합니다.',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: '기수 내 트래픽 랭킹이 성공적으로 반환됨.',
+        type: GetTrafficRankDto,
+    })
+    async getTrafficRank(@Query() getTrafficRankDto: GetTrafficRankDto) {
+        return await this.rankService.getTrafficRank(getTrafficRankDto);
     }
 }

@@ -9,6 +9,8 @@ import { ProjectResponseDto } from './dto/create-project-response.dto';
 import { CountProjectByGenerationDto } from './dto/count-project-by-generation.dto';
 import { FindByGenerationResponseDto } from './dto/find-by-generation-response.dto';
 import { CountProjectByGenerationResponseDto } from './dto/count-project-by-generation-response.dto';
+import { ExistsProjectDto } from './dto/exists-project.dto';
+import { ExistsProjectResponseDto } from './dto/exists-project-response.dto';
 
 @Controller('project')
 export class ProjectController {
@@ -58,5 +60,20 @@ export class ProjectController {
         @Query() countProjectByGenerationDto: CountProjectByGenerationDto,
     ) {
         return await this.projectService.countProjectByGeneration(countProjectByGenerationDto);
+    }
+
+    @Get('/exists')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({
+        summary: '프로젝트명 유효성 검사',
+        description: '요청받은 프로젝트명에 대한 유효성 검사 결과를 반환합니다.',
+    })
+    @ApiResponse({
+        status: 200,
+        description: '프로젝트명이 유효성 검사 결과가 반환됨',
+        type: ExistsProjectResponseDto,
+    })
+    async existProject(@Query() existsProjectDto: ExistsProjectDto) {
+        return await this.projectService.existsProject(existsProjectDto);
     }
 }

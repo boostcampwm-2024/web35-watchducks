@@ -1,11 +1,13 @@
-import { Type } from 'class-transformer';
 import { IsNumber, IsString } from 'class-validator';
+import { Expose, Type } from 'class-transformer';
 
-export class HostErrorRateMetric {
+export class HostDauMetric {
     @IsString()
+    @Expose()
     host: string;
 
     @Type(() => Number)
     @IsNumber()
-    is_error_rate: number;
+    @Expose()
+    dau: number;
 }

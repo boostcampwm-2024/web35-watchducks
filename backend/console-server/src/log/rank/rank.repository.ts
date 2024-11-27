@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { TimeSeriesQueryBuilder } from '../../clickhouse/query-builder/time-series.query-builder';
 import { HostErrorRateMetric } from './metric/host-error-rate.metric';
 import { HostElapsedTimeMetric } from './metric/host-elapsed-time.metric';
+import { HostDauMetric } from './metric/host-dau.metric';
+import { HostCountMetric } from './metric/host-count.metric';
 
 @Injectable()
 export class RankRepository {
@@ -32,5 +34,28 @@ export class RankRepository {
             .orderBy(['avg_elapsed_time'])
             .build();
         return await this.clickhouse.query<HostElapsedTimeMetric>(query, params);
+    }
+
+    async findCountOrderByDAU(date: string) {
+        const { query, params } = new TimeSeriesQueryBuilder()
+            .metrics([{ name: 'domain as host' }, { name: 'SUM(access) as dau' }])
+            .from('dau')
+            .filter({ date })
+            .groupBy(['domain'])
+            .orderBy(['dau'], true)
+            .build();
+
+        return await this.clickhouse.query<HostDauMetric>(query, params);
+    }
+
+    async findCountOrderByCount() {
+        const { query, params } = new TimeSeriesQueryBuilder()
+            .metrics([{ name: 'host' }, { name: '*', aggregation: 'count' }])
+            .from('http_log')
+            .groupBy(['host'])
+            .orderBy(['count'], true)
+            .build();
+
+        return await this.clickhouse.query<HostCountMetric>(query, params);
     }
 }
