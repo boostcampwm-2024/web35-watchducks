@@ -1,6 +1,6 @@
-import { DomainNotFoundError } from '../common/error/domain-not-found.error';
-import { MissingHostHeaderError } from '../common/error/missing-host-header.error';
-import { ProxyError } from '../common/core/proxy.error';
+import { DomainNotFoundError } from 'common/error/domain-not-found.error';
+import { MissingHostHeaderError } from 'common/error/missing-host-header.error';
+import { ProxyError } from 'common/core/proxy.error';
 
 export function validateHost(host: string | undefined): string {
     if (!host) {
@@ -9,7 +9,7 @@ export function validateHost(host: string | undefined): string {
     return host;
 }
 
-export function validateIp(ip: string, host: string): void {
+export function validateIp(host: string, ip: string): void {
     if (!ip) {
         throw new DomainNotFoundError(host);
     }
