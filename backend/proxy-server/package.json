@@ -7,7 +7,7 @@
   "scripts": {
     "test": "jest --config jest.config.js -ts-config=tsconfig.test.json",
     "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
-    "dev": "tsx src/index.ts"
+    "dev": "NODE_ENV=development tsx src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -42,6 +42,7 @@
     "dotenv": "^16.4.5",
     "fastify": "^5.1.0",
     "mysql2": "^3.11.4",
+    "redis": "^4.7.0",
     "supertest": "^7.0.0"
   }
 }

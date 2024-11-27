@@ -22,7 +22,7 @@ export class Server {
     constructor(
         private readonly errorLogRepository: ErrorLogRepository,
         private readonly proxyService: ProxyService,
-        private readonly logService:LogService,
+        private readonly logService: LogService,
     ) {
         this.server = fastify(fastifyConfig);
         this.logger = new FastifyLogger(this.server);
@@ -32,7 +32,12 @@ export class Server {
         const logHandler = new LogHandler(logService, this.logger);
 
         this.configuration = new ServerConfiguration(this.server);
-        this.routerManager = new ServerInitializer(this.server, proxyHandler, errorHandler, logHandler)
+        this.routerManager = new ServerInitializer(
+            this.server,
+            proxyHandler,
+            errorHandler,
+            logHandler,
+        );
 
         this.initialize();
     }
@@ -47,11 +52,13 @@ export class Server {
             await this.server.listen(this.configuration.getListenOptions());
             this.logger.info({ message: `Proxy server is running on port ${process.env.PORT}` });
         } catch (error) {
-            this.logger.error(SystemErrorFactory.createErrorLog({
-                originalError: error,
-                path: '/server/start',
-                message: 'Failed to start server'
-            }));
+            this.logger.error(
+                SystemErrorFactory.createErrorLog({
+                    originalError: error,
+                    path: '/server/start',
+                    message: 'Failed to start server',
+                }),
+            );
             process.exit(1);
         }
     }
@@ -62,17 +69,22 @@ export class Server {
 
             const closePromise = this.server.close();
             const timeoutPromise = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('Server shutdown timeout')), this.SHUTDOWN_TIMEOUT)
+                setTimeout(
+                    () => reject(new Error('Server shutdown timeout')),
+                    this.SHUTDOWN_TIMEOUT,
+                ),
             );
 
             await Promise.race([closePromise, timeoutPromise]);
             this.logger.info({ message: 'Proxy server stopped' });
         } catch (error) {
-            this.logger.error(SystemErrorFactory.createErrorLog({
-                originalError: error,
-                path: '/server/stop',
-                message: 'Error while stopping server'
-            }));
+            this.logger.error(
+                SystemErrorFactory.createErrorLog({
+                    originalError: error,
+                    path: '/server/stop',
+                    message: 'Error while stopping server',
+                }),
+            );
             throw error;
         }
     }
