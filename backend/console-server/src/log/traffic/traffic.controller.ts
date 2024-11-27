@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GetTrafficTop5ResponseDto } from './dto/get-traffic-top5-response.dto';
 import { GetTrafficTop5Dto } from './dto/get-traffic-top5.dto';
@@ -11,8 +11,13 @@ import { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference
 import { GetTrafficTop5ChartResponseDto } from './dto/get-traffic-top5-chart-response.dto';
 import { GetTrafficTop5ChartDto } from './dto/get-traffic-top5-chart.dto';
 import { TrafficService } from './traffic.service';
+import { CustomCacheInterceptor, FIVE_MINUTES, THREE_MINUTES } from '../../common/cache';
+import { CacheTTL } from '@nestjs/cache-manager';
 
 @Controller('log/traffic')
+@UseInterceptors(CustomCacheInterceptor)
+@CacheTTL(FIVE_MINUTES)
+@CacheTTL(THREE_MINUTES)
 export class TrafficController {
     constructor(private readonly trafficService: TrafficService) {}
 
