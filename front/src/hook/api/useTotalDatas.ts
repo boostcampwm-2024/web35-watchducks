@@ -1,5 +1,5 @@
 import {
-  getTotalTraffic,
+  getTotalTrafficCount,
   getTotalProjectCount,
   getTotalResponseRate,
   getDailyDifferenceTraffic,
@@ -10,7 +10,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 export default function useTotalDatas(generation: string) {
   const { data: trafficData } = useSuspenseQuery({
     queryKey: ['totalTraffic', generation],
-    queryFn: () => getTotalTraffic(generation)
+    queryFn: () => getTotalTrafficCount(generation)
   });
 
   const { data: projectData } = useSuspenseQuery({

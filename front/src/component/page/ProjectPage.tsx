@@ -1,3 +1,16 @@
+import Loading from '@component/atom/Loading';
+import useGroupNames from '@hook/api/useGroupNames';
+import { Navigate } from 'react-router-dom';
+
 export default function ProjectPage() {
-  return <div className='flex h-screen w-full bg-gray-50'>개별페이지입니다</div>;
+  const { data, isLoading } = useGroupNames('9');
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (!data?.length) {
+    return <Navigate to='/404' />;
+  }
+
+  return <Navigate to={`/project/${data[0].value}`} />;
 }

@@ -25,8 +25,40 @@ type ResponseTime = {
 };
 
 type Top5Traffic = {
-  name: string;
-  traffic: string[];
+  trafficCharts: {
+    name: string;
+    traffic: [string, string][];
+  }[];
+};
+
+type ProjectElapsedTime = {
+  projectName: string;
+  fastestPaths: { path: string; avgResponseTime: number }[];
+  slowestPaths: { path: string; avgResponseTime: number }[];
+};
+
+type ProjectSuccessRate = {
+  projectName: string;
+  success_rate: number;
+};
+
+type ProjectDAU = {
+  projectName: string;
+  dauRecords: [{ date: string; dau: number }];
+};
+
+type ProjectTraffic = {
+  projectName: string;
+  trafficData: [
+    {
+      timestamp: string;
+      count: number;
+    }
+  ];
+};
+
+type ProjectExist = {
+  exists: boolean;
 };
 
 export type {
@@ -36,5 +68,10 @@ export type {
   DailyDifferenceTraffic,
   ElapsedTime,
   ResponseTime,
-  Top5Traffic
+  Top5Traffic,
+  ProjectSuccessRate,
+  ProjectDAU,
+  ProjectTraffic,
+  ProjectElapsedTime,
+  ProjectExist
 };

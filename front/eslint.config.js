@@ -32,6 +32,7 @@ export default [
       '@tanstack/query': tanstackQuery
     },
     rules: {
+      'react/prop-types': 'off',
       '@tanstack/query/exhaustive-deps': 'warn',
       'react/react-in-jsx-scope': 'off',
       'react/jsx-uses-react': 'off',

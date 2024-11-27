@@ -1,9 +1,9 @@
 import { getGroupNames } from '@api/get';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export default function useGroupNames(generation: string) {
-  return useSuspenseQuery({
+  return useQuery({
     queryKey: ['groupNames', generation],
-    queryFn: () => getGroupNames(generation)
+    queryFn: () => getGroupNames(generation),
   });
 }

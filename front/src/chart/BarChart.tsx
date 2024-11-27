@@ -7,7 +7,7 @@ type Props = {
   options: ApexCharts.ApexOptions;
 };
 
-export function BarChart({ series, options: additionalOptions }: Props) {
+export default function BarChart({ series, options: additionalOptions }: Props) {
   const barChartOptions: ApexCharts.ApexOptions = {
     chart: {
       height: '100%',
