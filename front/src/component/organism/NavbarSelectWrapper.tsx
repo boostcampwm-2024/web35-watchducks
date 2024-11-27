@@ -12,7 +12,7 @@ type Props = NavbarSelectProps;
 
 export default function NavbarSelectWrapper(props: Props) {
   const { pathname } = useLocation();
-  const isProjectPath = pathname === PATH.PROJECT;
+  const isProjectPath = pathname.includes(PATH.PROJECT);
   const containerRef = useRef<HTMLDivElement>(null);
   const duckAnimation = useDuckAnimation({ containerRef });
 
