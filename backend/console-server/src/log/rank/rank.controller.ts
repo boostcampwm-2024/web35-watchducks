@@ -1,5 +1,5 @@
 import { RankService } from './rank.service';
-import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query, UseInterceptors } from '@nestjs/common';
 import { GetSuccessRateRankResponseDto } from './dto/get-success-rate-rank-response.dto';
 import { GetSuccessRateRankDto } from './dto/get-success-rate-rank.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -8,8 +8,11 @@ import { GetElapsedTimeRankDto } from './dto/get-elapsed-time-rank.dto';
 import { GetDAURankDto } from './dto/get-dau-rank.dto';
 import { GetDAURankResponseDto } from './dto/get-dau-rank-response.dto';
 import { GetTrafficRankDto } from './dto/get-traffic-rank.dto';
+import { CacheTTLUntilMidnight, CustomCacheInterceptor } from '../../common/cache';
 
 @Controller('log/rank')
+@UseInterceptors(CustomCacheInterceptor)
+@CacheTTLUntilMidnight()
 export class RankController {
     constructor(private readonly rankService: RankService) {}
 
