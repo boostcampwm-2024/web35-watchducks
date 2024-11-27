@@ -16,7 +16,7 @@ import { CACHE_REFRESH_THRESHOLD_METADATA } from './cache.constant';
 import { isNil } from '@nestjs/common/utils/shared.utils';
 
 @Injectable()
-export class CustomCacheInterceptor<T> implements NestInterceptor<T> {
+export class CustomCacheInterceptor<T> implements NestInterceptor<T, T> {
     @Optional()
     @Inject()
     protected readonly httpAdapterHost: HttpAdapterHost;
