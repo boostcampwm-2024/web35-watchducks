@@ -105,10 +105,20 @@ export default function ProjectTrafficChart({ id }: Props) {
       xaxis: {
         type: 'datetime',
         ...xAxisConfig,
+        style: {
+          colors: '#6B7280'
+        },
         labels: {
           ...xAxisConfig,
           rotateAlways: false,
           hideOverlappingLabels: true
+        }
+      },
+      yaxis: {
+        labels: {
+          style: {
+            colors: '#6B7280'
+          }
         }
       },
       tooltip: {
