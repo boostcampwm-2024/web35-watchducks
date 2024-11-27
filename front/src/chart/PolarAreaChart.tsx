@@ -8,7 +8,6 @@ type Props = {
 };
 
 export default function PolarAreaChart({ series, options: additionalOptions }: Props) {
-  console.log(series);
   const PolarChartOption: ApexCharts.ApexOptions = {
     chart: {
       type: 'polarArea',

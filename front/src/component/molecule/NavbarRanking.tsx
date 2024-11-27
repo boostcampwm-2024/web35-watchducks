@@ -21,7 +21,7 @@ export default function NavbarRanking({ generation }: Props) {
 
   const renderRankingItem = (item: Ranking, index: number) => {
     const rank = index;
-    console.log(item.host);
+
     return (
       <Fragment key={item.host}>
         <div
