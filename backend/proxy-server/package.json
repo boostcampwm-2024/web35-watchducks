@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --config jest.config.js -ts-config=tsconfig.test.json",
     "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "dev": "tsx src/index.ts"
   },

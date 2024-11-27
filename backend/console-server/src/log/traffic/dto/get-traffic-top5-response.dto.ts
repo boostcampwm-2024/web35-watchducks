@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { TrafficRankMetric } from '../metric/traffic-rank.metric';
 
-export class GetTrafficRankResponseDto {
+export class GetTrafficTop5ResponseDto {
     @ApiProperty({
         example: [
             { host: 'watchducks01', count: 100 },

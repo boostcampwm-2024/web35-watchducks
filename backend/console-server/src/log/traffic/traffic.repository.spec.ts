@@ -87,8 +87,9 @@ describe('TrafficRepository 테스트', () => {
 
             expect(result).toEqual(mockTrafficData);
             expect(clickhouse.query).toHaveBeenCalledWith(
-                expect.any(String),
-                expect.objectContaining({ host: domain, startTime: start, endTime: end }),
+                `SELECT toUInt32(count()) as count, toStartOfHour(timestamp) as timestamp
+FROM http_log WHERE host = {host:String} GROUP BY timestamp ORDER BY timestamp`,
+                { host: 'example.com' },
             );
         });
 

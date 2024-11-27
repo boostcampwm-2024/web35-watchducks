@@ -7,6 +7,7 @@ import type { Repository } from 'typeorm';
 import type { GetSuccessRateRankDto } from './dto/get-success-rate-rank.dto';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import type { GetDAURankDto } from './dto/get-dau-rank.dto';
+import type { GetTrafficRankDto } from './dto/get-traffic-rank.dto';
 
 describe('RankService', () => {
     let service: RankService;
@@ -16,6 +17,7 @@ describe('RankService', () => {
     const mockRankRepository = {
         findSuccessRateOrderByCount: jest.fn(),
         findCountOrderByDAU: jest.fn(),
+        findCountOrderByCount: jest.fn(),
     };
 
     const mockProjectRepository = {
@@ -96,6 +98,7 @@ describe('RankService', () => {
             });
         });
 
+
         describe('getDAURank()는', () => {
             const mockDto: GetDAURankDto = {
                 generation: 9,
@@ -111,7 +114,7 @@ describe('RankService', () => {
                 { domain: 'test1.com', name: 'Project 1' },
                 { domain: 'test2.com', name: 'Project 2' },
             ];
-
+              
             beforeEach(() => {
                 jest.spyOn(
                     RankService.prototype as unknown as { getYesterdayDate: () => string },
@@ -167,6 +170,50 @@ describe('RankService', () => {
 
                     jest.useRealTimers();
                 });
+            });
+        });
+
+        describe('getTrafficRank()는', () => {
+            const mockDto: GetTrafficRankDto = {
+                generation: 1,
+            };
+
+            const mockRankResults = [
+                { host: 'test1.com', count: 9999 },
+                { host: 'test2.com', count: 9090 },
+            ];
+
+            it('트래픽 순위를 정상적으로 계산하여 반환해야 한다', async () => {
+                mockRankRepository.findCountOrderByCount.mockResolvedValue(mockRankResults);
+                mockProjectRepository.find.mockResolvedValue(mockProjects);
+
+                const result = await service.getTrafficRank(mockDto);
+
+                expect(result.total).toBe(mockRankResults.length);
+                expect(result.rank).toHaveLength(mockRankResults.length);
+                expect(result.rank[0].projectName).toBe('Project 1');
+                expect(result.rank[0].count).toBe(9999);
+                expect(result.rank[1].projectName).toBe('Project 2');
+                expect(result.rank[1].count).toBe(9090);
+            });
+
+            it('프로젝트 정보가 없는 경우 Unknown으로 표시해야 한다', async () => {
+                mockRankRepository.findCountOrderByCount.mockResolvedValue(mockRankResults);
+                mockProjectRepository.find.mockResolvedValue([mockProjects[0]]);
+
+                const result = await service.getTrafficRank(mockDto);
+
+                expect(result.rank[1].projectName).toBe('Unknown');
+            });
+
+            it('rankRepository와 projectRepository를 호출해야 한다', async () => {
+                mockRankRepository.findCountOrderByCount.mockResolvedValue(mockRankResults);
+                mockProjectRepository.find.mockResolvedValue(mockProjects);
+
+                await service.getTrafficRank(mockDto);
+
+                expect(rankRepository.findCountOrderByCount).toHaveBeenCalled();
+                expect(projectRepository.find).toHaveBeenCalled();
             });
         });
     });
