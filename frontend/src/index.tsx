@@ -9,12 +9,14 @@ import 'react-toastify/ReactToastify.css';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  // <StrictMode>
+  <>
     <CustomQueryProvider>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </CustomQueryProvider>
     <ToastContainer />
-  </StrictMode>
+  </>
+  // </StrictMode>
 );
