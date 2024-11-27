@@ -11,7 +11,7 @@ type Props = {
 export default function PieChart({ series, options: additionalOptions }: Props) {
   const donutChartOption: ApexCharts.ApexOptions = {
     chart: {
-      height: 350,
+      height: 300,
       type: 'donut'
     },
     legend: {

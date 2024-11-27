@@ -2,6 +2,7 @@ import CustomErrorBoundary from '@boundary/CustomErrorBoundary';
 import ProjectDAU from '@component/organism/ProjectDAU';
 import ProjectElapsedTime from '@component/organism/ProjectElapsedTime';
 import ProjectSuccessRate from '@component/organism/ProjectSuccessRate';
+import ProjectTrafficChart from '@component/organism/ProjectTrafficChart';
 import useIsExistGroup from '@hook/api/useIsExistGroup';
 import { Navigate, useParams } from 'react-router-dom';
 
@@ -21,22 +22,28 @@ export default function ProjectDetailPage() {
   }
 
   return (
-    <div className='flex h-screen w-full flex-col gap-8 bg-lightgray p-8 dark:bg-lightblack'>
-      <div className='mt-8 grid max-h-[400px] grid-cols-1 gap-8 lg:grid-cols-3'>
-        <CustomErrorBoundary>
-          <ProjectElapsedTime id={id} />
-        </CustomErrorBoundary>
-        <CustomErrorBoundary>
-          <ProjectSuccessRate id={id} />
-        </CustomErrorBoundary>
-        <CustomErrorBoundary>
-          <ProjectDAU id={id} />
-        </CustomErrorBoundary>
+    <div className='flex h-screen w-full flex-col bg-lightgray p-8 dark:bg-lightblack'>
+      <div className='flex h-1/2 gap-8'>
+        <div className='h-full w-1/3'>
+          <CustomErrorBoundary>
+            <ProjectElapsedTime id={id} />
+          </CustomErrorBoundary>
+        </div>
+        <div className='h-full w-1/3'>
+          <CustomErrorBoundary>
+            <ProjectSuccessRate id={id} />
+          </CustomErrorBoundary>
+        </div>
+        <div className='h-full w-1/3'>
+          <CustomErrorBoundary>
+            <ProjectDAU id={id} />
+          </CustomErrorBoundary>
+        </div>
       </div>
 
-      <div className='min-h-0 flex-1'>
+      <div className='mt-8 h-1/2'>
         <CustomErrorBoundary>
-          <div>ProjectDetailPage</div>
+          <ProjectTrafficChart id={id} />
         </CustomErrorBoundary>
       </div>
     </div>
