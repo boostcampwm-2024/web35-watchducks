@@ -14,7 +14,7 @@ export default function ErrorPage() {
         <motion.div
           key={i}
           initial={{
-            x: getRandomX(),
+            x: getRandomX() + 'vw',
             y: -20,
             opacity: 1,
             rotate: 0,
