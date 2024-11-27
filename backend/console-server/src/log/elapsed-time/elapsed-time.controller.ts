@@ -7,13 +7,17 @@ import { GetTop5ElapsedTime } from './dto/get-top5-elapsed.time';
 import { GetTop5ElapsedTimeDto } from './dto/get-top5-elapsed-time.dto';
 import { GetPathElapsedTimeResponseDto } from './dto/get-path-elapsed-time-response.dto';
 import { GetPathElapsedTimeRank } from './dto/get-path-elapsed-time.rank';
-import { CacheInterceptor } from '@nestjs/cache-manager';
+import { CustomCacheInterceptor } from '../../common/cache/cache-wrap.interceptor';
+import { CacheTTL } from '@nestjs/cache-manager';
+import { CacheRefreshThreshold } from '../../common/cache/cache-wrap.decorator';
 
 @Controller('log/elapsed-time')
-@UseInterceptors(CacheInterceptor)
+@UseInterceptors(CustomCacheInterceptor)
 export class ElapsedTimeController {
     constructor(private readonly elapsedTimeService: ElapsedTimeService) {}
 
+    @CacheTTL(30 * 1000)
+    @CacheRefreshThreshold(15 * 1000)
     @Get('')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
