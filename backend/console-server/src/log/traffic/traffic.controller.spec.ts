@@ -5,6 +5,8 @@ import { plainToInstance } from 'class-transformer';
 import { GetTrafficTop5Dto } from './dto/get-traffic-top5.dto';
 import { TrafficController } from './traffic.controller';
 import { TrafficService } from './traffic.service';
+import type { GetTrafficTop5ChartResponseDto } from './dto/get-traffic-top5-chart-response.dto';
+import type { GetTrafficTop5ChartDto } from './dto/get-traffic-top5-chart.dto';
 
 interface TrafficRankResponseType {
     status: number;
@@ -20,6 +22,7 @@ describe('TrafficController 테스트', () => {
         getTrafficByGeneration: jest.fn(),
         getTrafficByProject: jest.fn(),
         getTrafficDailyDifferenceByGeneration: jest.fn(),
+        getTrafficTop5Chart: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -176,6 +179,90 @@ describe('TrafficController 테스트', () => {
 
             const sortedData = [...result.data].sort((a, b) => b.count - a.count);
             expect(result.data).toEqual(sortedData);
+        });
+    });
+
+    describe('getTrafficTop5Chart()는', () => {
+        const getTrafficTop5ChartDto: GetTrafficTop5ChartDto = {
+            generation: 9,
+        };
+        const mockResponse: GetTrafficTop5ChartResponseDto = {
+            trafficCharts: [
+                {
+                    name: 'watchducks',
+                    traffic: [
+                        ['2024-01-01 11:12:00', '100'],
+                        ['2024-01-02 11:13:00', '100'],
+                        ['2024-01-02 11:14:00', '100'],
+                        ['2024-01-02 11:15:00', '100'],
+                    ],
+                },
+                {
+                    name: 'watchducks01',
+                    traffic: [
+                        ['2024-01-01 11:12:00', '100'],
+                        ['2024-01-02 11:13:00', '100'],
+                        ['2024-01-02 11:14:00', '100'],
+                        ['2024-01-02 11:15:00', '100'],
+                    ],
+                },
+            ],
+        };
+
+        it('Top5 트래픽 차트 데이터를 반환해야한다.', async () => {
+            // Given
+            const DATE_FORMAT_REGEX =
+                /^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01]) (?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/;
+            const INTEGER_REGEX = /^-?\d+$/;
+
+            mockTrafficService.getTrafficTop5Chart.mockResolvedValue(mockResponse);
+
+            // When
+            const result = await controller.getTrafficTop5Chart(getTrafficTop5ChartDto);
+
+            // Then
+            expect(service.getTrafficTop5Chart).toHaveBeenCalledWith(getTrafficTop5ChartDto);
+            expect(service.getTrafficTop5Chart).toHaveBeenCalledTimes(1);
+            expect(result).toBe(mockResponse);
+
+            expect(result.trafficCharts.length).toBe(mockResponse.trafficCharts.length);
+
+            result.trafficCharts.forEach((trafficTop5Chart) => {
+                expect(trafficTop5Chart).toHaveProperty('name');
+                expect(trafficTop5Chart).toHaveProperty('traffic');
+                expect(Array.isArray(trafficTop5Chart.traffic)).toBeTruthy();
+
+                trafficTop5Chart.traffic.forEach((dataPoint) => {
+                    expect(DATE_FORMAT_REGEX.test(dataPoint[0])).toBe(true);
+                    expect(INTEGER_REGEX.test(dataPoint[1])).toBe(true);
+                });
+            });
+        });
+
+        it('데이터가 빈 배열이어도 처리할 수 있어야한다.', async () => {
+            // Given
+            const emptyResponse: GetTrafficTop5ChartResponseDto = { trafficCharts: [] };
+
+            mockTrafficService.getTrafficTop5Chart.mockResolvedValue(emptyResponse);
+
+            // When
+            const result = await controller.getTrafficTop5Chart(getTrafficTop5ChartDto);
+
+            // Then
+            expect(result).toEqual(emptyResponse);
+            expect(result.trafficCharts).toHaveLength(0);
+        });
+
+        it('서비스에서 에러가 발생할 경우 에러를 발생시켜야한다.', async () => {
+            // Given
+            const error = new Error('Service error');
+
+            mockTrafficService.getTrafficTop5Chart.mockRejectedValue(error);
+
+            // When/Then
+            await expect(controller.getTrafficTop5Chart(getTrafficTop5ChartDto)).rejects.toThrow(
+                'Service error',
+            );
         });
     });
 });

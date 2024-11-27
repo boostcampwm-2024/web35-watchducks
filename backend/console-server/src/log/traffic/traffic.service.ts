@@ -140,11 +140,10 @@ export class TrafficService {
         const trafficCharts = await Promise.all(
             results.map(async (result) => {
                 const host = result.host;
-                const project = await this.projectRepository
-                    .createQueryBuilder('project')
-                    .select('project.name')
-                    .where('project.domain = :domain', { domain: host })
-                    .getOne();
+                const project = await this.projectRepository.findOne({
+                    select: ['name'],
+                    where: { domain: host },
+                });
 
                 const projectName = project?.name;
 
@@ -155,6 +154,6 @@ export class TrafficService {
             }),
         );
 
-        return plainToInstance(GetTrafficTop5ChartResponseDto, trafficCharts);
+        return plainToInstance(GetTrafficTop5ChartResponseDto, { trafficCharts });
     }
 }
