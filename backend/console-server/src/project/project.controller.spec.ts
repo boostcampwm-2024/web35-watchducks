@@ -5,6 +5,7 @@ import { ProjectService } from './project.service';
 import type { CreateProjectDto } from './dto/create-project.dto';
 import { ConflictException } from '@nestjs/common';
 import type { ExistsProjectDto } from './dto/exists-project.dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('ProjectController의', () => {
     let projectController: ProjectController;
@@ -13,11 +14,21 @@ describe('ProjectController의', () => {
         create: jest.fn(),
         existsProject: jest.fn(),
     };
-
+    const mockCacheManager = {
+        get: jest.fn(),
+        set: jest.fn(),
+        del: jest.fn(),
+    };
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             controllers: [ProjectController],
-            providers: [{ provide: ProjectService, useValue: mockProjectService }],
+            providers: [
+                { provide: ProjectService, useValue: mockProjectService },
+                {
+                    provide: CACHE_MANAGER,
+                    useValue: mockCacheManager,
+                },
+            ],
         }).compile();
 
         projectController = module.get<ProjectController>(ProjectController);

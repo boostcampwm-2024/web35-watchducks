@@ -7,6 +7,7 @@ import { TrafficController } from './traffic.controller';
 import { TrafficService } from './traffic.service';
 import type { GetTrafficTop5ChartResponseDto } from './dto/get-traffic-top5-chart-response.dto';
 import type { GetTrafficTop5ChartDto } from './dto/get-traffic-top5-chart.dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 interface TrafficRankResponseType {
     status: number;
@@ -24,7 +25,11 @@ describe('TrafficController 테스트', () => {
         getTrafficDailyDifferenceByGeneration: jest.fn(),
         getTrafficTop5Chart: jest.fn(),
     };
-
+    const mockCacheManager = {
+        get: jest.fn(),
+        set: jest.fn(),
+        del: jest.fn(),
+    };
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             controllers: [TrafficController],
@@ -32,6 +37,10 @@ describe('TrafficController 테스트', () => {
                 {
                     provide: TrafficService,
                     useValue: mockTrafficService,
+                },
+                {
+                    provide: CACHE_MANAGER,
+                    useValue: mockCacheManager,
                 },
             ],
         }).compile();

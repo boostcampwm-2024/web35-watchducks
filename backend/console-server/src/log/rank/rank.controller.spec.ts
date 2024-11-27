@@ -8,6 +8,7 @@ import type { GetSuccessRateRankResponseDto } from './dto/get-success-rate-rank-
 import type { GetTrafficRankDto } from './dto/get-traffic-rank.dto';
 import type { GetTrafficRankResponseDto } from './dto/get-traffic-rank-response.dto';
 import type { GetElapsedTimeRankDto } from './dto/get-elapsed-time-rank.dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('RankController', () => {
     let controller: RankController;
@@ -19,6 +20,11 @@ describe('RankController', () => {
         getDAURank: jest.fn(),
         getTrafficRank: jest.fn(),
     };
+    const mockCacheManager = {
+        get: jest.fn(),
+        set: jest.fn(),
+        del: jest.fn(),
+    };
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -27,6 +33,10 @@ describe('RankController', () => {
                 {
                     provide: RankService,
                     useValue: mockRankService,
+                },
+                {
+                    provide: CACHE_MANAGER,
+                    useValue: mockCacheManager,
                 },
             ],
         }).compile();
