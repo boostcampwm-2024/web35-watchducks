@@ -32,7 +32,11 @@ export default function NavbarMenu() {
     <div className='flex flex-col gap-8 md:gap-16'>
       <H1 cssOption='mt-8 text-14 md:text-16 whitespace-nowrap dark:text-white' content='MENU' />
       {MENU_ITEMS.map((item) => (
-        <MenuItem key={item.path} item={item} isActive={pathname === item.path} />
+        <MenuItem
+          key={item.path}
+          item={item}
+          isActive={item.path === '/' ? pathname === '/' : pathname.startsWith(item.path)}
+        />
       ))}
     </div>
   );
