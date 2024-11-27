@@ -3,6 +3,8 @@ import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
 import { GetSuccessRateRankResponseDto } from './dto/get-success-rate-rank-response.dto';
 import { GetSuccessRateRankDto } from './dto/get-success-rate-rank.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { GetElapsedTimeRankResponseDto } from './dto/get-elapsed-time-rank-response.dto';
+import { GetElapsedTimeRankDto } from './dto/get-elapsed-time-rank.dto';
 import { GetDAURankDto } from './dto/get-dau-rank.dto';
 import { GetDAURankResponseDto } from './dto/get-dau-rank-response.dto';
 import { GetTrafficRankDto } from './dto/get-traffic-rank.dto';
@@ -26,6 +28,21 @@ export class RankController {
         return await this.rankService.getSuccessRateRank(getSuccessRateRankDto);
     }
 
+    @Get('/elapsed-time')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({
+        summary: '기수 내 응답 소요 시간 랭킹',
+        description: '요청 받은 기수의 어제 하루 동안 응답 소요 시간 랭킹을 반환합니다.',
+    })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: '기수 내 응답 소요 시간 랭킹 데이터가 성공적으로 반환됨.',
+        type: GetElapsedTimeRankResponseDto,
+    })
+    async getElapsedTimeRank(@Query() getElapsedTimeRankDto: GetElapsedTimeRankDto) {
+        return await this.rankService.getElapsedTimeRank(getElapsedTimeRankDto);
+    }
+
     @Get('/dau')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
@@ -39,6 +56,7 @@ export class RankController {
     })
     async getDAURank(@Query() getDAURankDto: GetDAURankDto) {
         return await this.rankService.getDAURank(getDAURankDto);
+    }
 
     @Get('/traffic')
     @HttpCode(HttpStatus.OK)

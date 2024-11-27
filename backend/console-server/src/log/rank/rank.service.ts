@@ -9,6 +9,11 @@ import {
     GetSuccessRateRankResponseDto,
     SuccessRateRank,
 } from './dto/get-success-rate-rank-response.dto';
+import { GetElapsedTimeRankDto } from './dto/get-elapsed-time-rank.dto';
+import {
+    ElapsedTimeRank,
+    GetElapsedTimeRankResponseDto,
+} from './dto/get-elapsed-time-rank-response.dto';
 import { GetDAURankDto } from './dto/get-dau-rank.dto';
 import { DAURank, GetDAURankResponseDto } from './dto/get-dau-rank-response.dto';
 import { GetTrafficRankResponseDto, TrafficRank } from './dto/get-traffic-rank-response.dto';
@@ -29,10 +34,10 @@ export class RankService {
         const projectMap = await this.hostsToProjectMap(hosts);
 
         const rank = results.map((result) => {
-            const project = projectMap.get(result.host);
+            const projectName = projectMap.get(result.host);
 
             return plainToInstance(SuccessRateRank, {
-                projectName: project?.name || `Unknown`,
+                projectName: projectName || `Unknown`,
                 successRate: 100 - result.is_error_rate,
             });
         });
@@ -40,8 +45,40 @@ export class RankService {
         return plainToInstance(GetSuccessRateRankResponseDto, { total: results.length, rank });
     }
 
+    async getElapsedTimeRank(_getElapsedTimeRankDto: GetElapsedTimeRankDto) {
+        const results = await this.rankRepository.findHostOrderByElapsedTimeSince(
+            this.getYesterdayDateString(),
+        );
+
+        const hosts = results.map((result) => result.host);
+        const projectMap = await this.hostsToProjectMap(hosts);
+        const rank = results.map<ElapsedTimeRank>((result) => {
+            return {
+                projectName: projectMap.get(result.host) || `Unknown`,
+                elapsedTime: result.avg_elapsed_time,
+            };
+        });
+
+        return plainToInstance(GetElapsedTimeRankResponseDto, { total: rank.length, rank });
+    }
+
+    private getYesterdayDateString() {
+        const now = new Date();
+        const yesterday = new Date(now);
+        yesterday.setDate(now.getDate() - 1);
+        return this.formatDate(yesterday);
+    }
+
+    private formatDate(dateInput: Date) {
+        const date = new Date(dateInput);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
     async getDAURank(_getDAURankDto: GetDAURankDto) {
-        const yesterday = this.getYesterdayDate();
+        const yesterday = this.getYesterdayDateString();
         const results = await this.rankRepository.findCountOrderByDAU(yesterday);
 
         const domains = results.map((result) => result.host);
@@ -68,12 +105,6 @@ export class RankService {
         });
     }
 
-    private getYesterdayDate(): string {
-        const date = new Date();
-        date.setDate(date.getDate() - 1);
-        return date.toISOString().split('T')[0];
-    }
-      
     async getTrafficRank(_getTrafficRankDto: GetTrafficRankDto) {
         const results = await this.rankRepository.findCountOrderByCount();
         const hosts = results.map((result) => result.host);
@@ -81,10 +112,10 @@ export class RankService {
         const projectMap = await this.hostsToProjectMap(hosts);
 
         const rank = results.map((result) => {
-            const project = projectMap.get(result.host);
+            const projectName = projectMap.get(result.host);
 
             return plainToInstance(TrafficRank, {
-                projectName: project?.name || `Unknown`,
+                projectName: projectName || `Unknown`,
                 count: result.count,
             });
         });
@@ -99,6 +130,6 @@ export class RankService {
                 domain: In(hosts),
             },
         });
-        return new Map(projects.map((project) => [project.domain, project]));
+        return new Map(projects.map(({ domain, name }) => [domain, name]));
     }
 }

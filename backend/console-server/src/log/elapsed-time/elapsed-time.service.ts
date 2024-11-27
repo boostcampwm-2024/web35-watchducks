@@ -56,7 +56,7 @@ export class ElapsedTimeService {
 
         if (!project) throw new NotFoundException(`Project with name ${projectName} not found`);
 
-        const fastestPaths = await this.elapsedTimeRepository.getFastestPathsByDomain(
+        const fastestPaths = await this.elapsedTimeRepository.findFastestPathsByDomain(
             project.domain,
         );
         const slowestPaths = await this.elapsedTimeRepository.findSlowestPathsByDomain(

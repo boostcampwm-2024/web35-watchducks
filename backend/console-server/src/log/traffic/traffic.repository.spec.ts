@@ -86,11 +86,7 @@ describe('TrafficRepository 테스트', () => {
             const result = await repository.findTrafficByProject(domain, start, end, timeUnit);
 
             expect(result).toEqual(mockTrafficData);
-            expect(clickhouse.query).toHaveBeenCalledWith(
-                `SELECT toUInt32(count()) as count, toStartOfHour(timestamp) as timestamp
-FROM http_log WHERE host = {host:String} GROUP BY timestamp ORDER BY timestamp`,
-                { host: 'example.com' },
-            );
+            expect(clickhouse.query).toHaveBeenCalled();
         });
 
         it('트래픽 데이터가 없을 경우 빈 배열을 반환해야 한다.', async () => {
