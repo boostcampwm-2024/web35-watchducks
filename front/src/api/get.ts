@@ -5,7 +5,12 @@ import {
   DailyDifferenceTraffic,
   ElapsedTime,
   ResponseTime,
-  Top5Traffic
+  Top5Traffic,
+  ProjectElapsedTime,
+  ProjectSuccessRate,
+  ProjectDAU,
+  ProjectTraffic,
+  ProjectExist
 } from '@type/api';
 import { GroupOption } from '@type/Navbar';
 
@@ -24,7 +29,7 @@ const getRankings = async (generation: string) => {
   return response.data;
 };
 
-const getTotalTraffic = async (generation: string) => {
+const getTotalTrafficCount = async (generation: string) => {
   const response = await api.get<Traffic>(`/log/traffic?generation=${generation}`);
   return response.data;
 };
@@ -57,20 +62,56 @@ const getTop5ResponseTime = async (generation: string) => {
 };
 
 const getTop5Traffic = async (generation: string) => {
-  const response = await api.get<Top5Traffic[]>(
+  const response = await api.get<Top5Traffic>(
     `/log/traffic/top5/line-chart?generation=${generation}`
   );
   return response.data;
 };
 
+const getSuccessRate = async (project: string) => {
+  const response = await api.get<ProjectSuccessRate>(
+    `/log/success-rate/project?projectName=${project}`
+  );
+  return response.data;
+};
+
+const getDAU = async (project: string) => {
+  const response = await api.get<ProjectDAU>(`/log/analytics/dau?projectName=${project}`);
+  return response.data;
+};
+
+const getElapsedTime = async (project: string) => {
+  const response = await api.get<ProjectElapsedTime>(
+    `/log/elapsed-time/path-rank?projectName=${project}`
+  );
+  return response.data;
+};
+
+const getTraffic = async (project: string, dateType: string) => {
+  const response = await api.get<ProjectTraffic>(
+    `/log/traffic/project?projectName=${project}&timeUnit=${dateType}`
+  );
+  return response.data;
+};
+
+const getIsExistProject = async (project: string) => {
+  const response = await api.get<ProjectExist>(`/project/exists?projectName=${project}`);
+  return response.data;
+};
+
 export {
+  getIsExistProject,
   getGroupNames,
   getRankings,
-  getTotalTraffic,
+  getTotalTrafficCount,
   getTotalProjectCount,
   getTotalResponseRate,
   getDailyDifferenceTraffic,
   getTotalElapsedTime,
   getTop5ResponseTime,
-  getTop5Traffic
+  getTop5Traffic,
+  getSuccessRate,
+  getDAU,
+  getElapsedTime,
+  getTraffic
 };

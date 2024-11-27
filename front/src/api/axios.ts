@@ -13,10 +13,6 @@ const api = {
   post: async <T, P>(url: string, data: P): Promise<AxiosResponse<T>> => {
     return $axios.post<T>(url, data);
   },
-
-  patch: async <T, P>(url: string, data: P): Promise<AxiosResponse<T>> => {
-    return $axios.patch<T>(url, data);
-  }
 };
 
 export { api };
