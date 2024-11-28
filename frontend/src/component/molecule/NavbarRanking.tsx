@@ -15,18 +15,18 @@ export default function NavbarRanking({ generation }: Props) {
   const navigate = useNavigate();
   const { data = [] } = useRankings(generation);
 
-  const handleClick = (host: string) => {
-    navigate(`/project/${host}`);
+  const handleClick = (projectName: string) => {
+    navigate(`/project/${projectName}`);
   };
 
   const renderRankingItem = (item: Ranking, index: number) => {
     const rank = index;
 
     return (
-      <Fragment key={item.host}>
+      <Fragment key={item.projectName}>
         <div
           className='group flex items-center justify-between gap-2 py-2 font-light hover:cursor-pointer'
-          onClick={() => handleClick(item.host)}>
+          onClick={() => handleClick(item.projectName)}>
           <div className='flex min-w-0 flex-1 items-center gap-2'>
             {rank <= 2 ? (
               <Fragment>
@@ -36,7 +36,7 @@ export default function NavbarRanking({ generation }: Props) {
                 />
                 <P
                   cssOption={`truncate ${MEDALS[rank as keyof typeof MEDALS].color} max-w-[140px] text-[clamp(12px,1.5vw,14px)]`}
-                  content={item.host}
+                  content={item.projectName}
                 />
               </Fragment>
             ) : (
@@ -45,7 +45,7 @@ export default function NavbarRanking({ generation }: Props) {
                   cssOption='w-6 flex-shrink-0 font-medium dark:text-white'
                   content={`${rank + 1}th`}
                 />
-                <P cssOption='truncate dark:text-white max-w-[140px]' content={item.host} />
+                <P cssOption='truncate dark:text-white max-w-[140px]' content={item.projectName} />
               </Fragment>
             )}
           </div>
