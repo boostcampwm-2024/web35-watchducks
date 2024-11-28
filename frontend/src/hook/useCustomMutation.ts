@@ -1,13 +1,12 @@
+import { getErrorByCode } from '@boundary/toastError';
 import { UseMutationOptions, useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-import { getErrorByCode } from '@/boundary/toastError';
-
-interface ErrorResponse {
+type ErrorResponse = {
   code: number;
   message: string;
-}
+};
 
 export default function useCustomMutation<TData, TError, TVariables>(
   options: UseMutationOptions<TData, TError, TVariables>
