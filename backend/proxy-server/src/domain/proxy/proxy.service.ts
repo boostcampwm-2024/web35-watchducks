@@ -34,8 +34,6 @@ export class ProxyService {
 
             return ip;
         } catch (error) {
-            console.log('error: ', error);
-
             if (error instanceof ProxyError) {
                 throw error;
             }

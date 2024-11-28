@@ -10,7 +10,7 @@ export const fastifyConfig = {
         process.env.NODE_ENV === 'development'
             ? true
             : {
-                  level: process.env.LOG_LEVEL || 'info',
+                  level: process.env.LOG_LEVEL || 'warning',
                   serializers: {
                       req(
                           request: FastifyRequest<

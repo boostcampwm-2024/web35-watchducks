@@ -25,15 +25,15 @@ export class GetElapsedTimeRankResponseDto {
         example: [
             {
                 projectName: 'test059',
-                elapsedTime: 100,
+                value: 100,
             },
             {
                 projectName: 'test007',
-                elapsedTime: 110,
+                value: 110,
             },
             {
                 projectName: 'test079',
-                elapsedTime: 120,
+                value: 120,
             },
         ],
     })

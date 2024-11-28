@@ -4,35 +4,80 @@ import { LogRepository } from '../../domain/log/log.repository';
 import { HttpLogEntity } from '../../domain/log/http-log.entity';
 import { ClickHouseClient } from '@clickhouse/client';
 import { formatDateTime } from '../../common/utils/date.util';
+import { LogBufferConfig } from 'domain/config/log-buffer.config';
+import { FastifyLogger } from 'common/logger/fastify.logger';
+
+type httpLogRecord = {
+    method: string;
+    path: string;
+    host: string;
+    status_code: number;
+    elapsed_time: number;
+    timestamp: string;
+};
 
 export class LogRepositoryClickhouse implements LogRepository {
     private readonly clickhouse: ClickHouseClient;
+    private readonly config: LogBufferConfig;
+    private logBuffer: httpLogRecord[] = [];
+    private flushTimer: NodeJS.Timeout | null = null;
+    private isProcessing: boolean = false;
 
-    constructor() {
+    constructor(config: LogBufferConfig) {
         this.clickhouse = ClickhouseDatabase.getInstance();
+        this.config = config;
+        this.startFlushTimer();
     }
 
-    public async insertHttpLog(log: HttpLogEntity): Promise<void> {
-        const values = [
-            {
-                method: log.method,
-                path: log.path || '',
-                host: log.host,
-                status_code: log.statusCode,
-                elapsed_time: Math.round(log.responseTime),
-                timestamp: formatDateTime(new Date()),
-            },
-        ];
+    private startFlushTimer(): void {
+        if (this.flushTimer) {
+            clearInterval(this.flushTimer);
+        }
 
+        this.flushTimer = setInterval(async () => {
+            if (this.logBuffer.length > 0 && !this.isProcessing) {
+                await this.flush();
+            }
+        }, this.config.flushIntervalSecond * 1000);
+    }
+
+    private async flush(): Promise<void> {
+        if (this.isProcessing || this.logBuffer.length === 0) {
+            return;
+        }
+        let batchToFlush = [...this.logBuffer];
+
+        this.logBuffer = [];
         try {
+            this.isProcessing = true;
+
             await this.clickhouse.insert({
                 table: 'http_log',
-                values: values,
+                values: batchToFlush,
                 format: 'JSONEachRow',
             });
         } catch (error) {
-            console.error('ClickHouse Error:', error);
+            this.logBuffer = [...this.logBuffer, ...batchToFlush];
             throw new DatabaseQueryError(error as Error);
+        } finally {
+            this.isProcessing = false;
+        }
+    }
+
+    public async insertHttpLog(log: HttpLogEntity): Promise<void> {
+        const httpLogRecord: httpLogRecord = {
+            method: log.method,
+            path: log.path || '',
+            host: log.host,
+            status_code: log.statusCode,
+            elapsed_time: Math.round(log.responseTime),
+            timestamp: formatDateTime(new Date()),
+        };
+
+        this.logBuffer.push(httpLogRecord);
+
+        if (this.logBuffer.length >= this.config.maxSize) {
+            this.flush();
         }
     }
 }
