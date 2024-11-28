@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query, UseInterceptors } from '@nestjs/common';
 import { Post } from '@nestjs/common';
 import { Body } from '@nestjs/common';
 import { ProjectService } from './project.service';
@@ -11,8 +11,18 @@ import { FindByGenerationResponseDto } from './dto/find-by-generation-response.d
 import { CountProjectByGenerationResponseDto } from './dto/count-project-by-generation-response.dto';
 import { ExistsProjectDto } from './dto/exists-project.dto';
 import { ExistsProjectResponseDto } from './dto/exists-project-response.dto';
+import {
+    CacheRefreshThreshold,
+    CustomCacheInterceptor,
+    ONE_MINUTE_HALF,
+    THREE_MINUTES,
+} from '../common/cache';
+import { CacheTTL } from '@nestjs/cache-manager';
 
 @Controller('project')
+@UseInterceptors(CustomCacheInterceptor)
+@CacheTTL(THREE_MINUTES)
+@CacheRefreshThreshold(ONE_MINUTE_HALF)
 export class ProjectController {
     constructor(private readonly projectService: ProjectService) {}
 
