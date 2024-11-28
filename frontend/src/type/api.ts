@@ -1,6 +1,8 @@
-type Ranking = {
-  host: string;
-  count: string;
+type NavbarRanking = {
+  rank: {
+    projectName: string;
+    count: string;
+  }[];
 };
 
 type Traffic = {
@@ -60,10 +62,18 @@ type ProjectExist = {
   exists: boolean;
 };
 
+type RankingData = {
+  total: number;
+  rank: {
+    projectName: string;
+    value: number;
+  }[];
+};
+
 export type {
   Traffic,
   ResponseRate,
-  Ranking,
+  NavbarRanking,
   DailyDifferenceTraffic,
   ElapsedTime,
   ResponseTime,
@@ -72,5 +82,6 @@ export type {
   ProjectDAU,
   ProjectTraffic,
   ProjectElapsedTime,
-  ProjectExist
+  ProjectExist,
+  RankingData
 };

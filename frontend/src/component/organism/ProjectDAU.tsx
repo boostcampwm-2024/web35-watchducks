@@ -1,6 +1,7 @@
 import DataLayout from '@component/template/DataLayout';
 import useProjectDAU from '@hook/api/useProjectDAU';
 import { ResponsiveTimeRange } from '@nivo/calendar';
+import { validateDAU } from '@util/Validate';
 import { useMemo } from 'react';
 
 type Props = {
@@ -21,6 +22,20 @@ export default function ProjectDAU({ id }: Props) {
         value: dau
       }));
   }, [data]);
+
+
+  if (validateDAU(data)) {
+    return (
+      <DataLayout cssOption='flex flex-col items-center justify-center p-8 rounded-lg shadow-md w-full bg-white h-full'>
+        <div className='mb-8 text-center'>
+          <h2 className='text-navy text-2xl font-bold'>DAU</h2>
+        </div>
+        <div className='text-gray-500 flex w-full flex-1 items-center justify-center text-center'>
+          No DAU data available
+        </div>
+      </DataLayout>
+    );
+  }
 
   const today = new Date();
   const thirtyDaysAgo = new Date(today);

@@ -16,8 +16,8 @@ const ERROR_CODE: ErrorCodeType = {
 
   400: { code: '400', message: '잘못된 요청.' },
   404: { code: '404', message: '요청한 리소스를 찾을 수 없습니다.' },
-  409: { code: '409', message: '중복된 도메인입니다!' },
-} as const;
+  409: { code: '409', message: '중복된 도메인입니다!' }
+};
 
 export const getErrorByCode = (error: AxiosError<{ code: number; message: string }>) => {
   const serverErrorCode = error?.response?.data?.code ?? '';

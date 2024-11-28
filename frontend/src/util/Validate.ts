@@ -1,9 +1,13 @@
+import { ProjectDAU } from '@type/api';
+
 function validateWebsite(value: string) {
   return value.length >= 2;
 }
+
 function validateDomain(value: string) {
   return /\..+/.test(value);
 }
+
 function validateIp(value: string) {
   const ipNumbers = value.split('.');
   const isValidIp =
@@ -15,8 +19,14 @@ function validateIp(value: string) {
 
   return isValidIp;
 }
+
 function validateEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
-export { validateWebsite, validateDomain, validateIp, validateEmail };
+function validateDAU(data: ProjectDAU) {
+  const count = data.dauRecords.reduce((acc, cur) => acc + cur.dau, 0);
+  return count === 0;
+}
+
+export { validateWebsite, validateDomain, validateIp, validateEmail, validateDAU };
