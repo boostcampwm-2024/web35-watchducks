@@ -38,7 +38,7 @@ export class RankService {
 
             return plainToInstance(SuccessRateRank, {
                 projectName: projectName || `Unknown`,
-                successRate: 100 - result.is_error_rate,
+                value: 100 - result.is_error_rate,
             });
         });
 
@@ -55,7 +55,7 @@ export class RankService {
         const rank = results.map<ElapsedTimeRank>((result) => {
             return {
                 projectName: projectMap.get(result.host) || `Unknown`,
-                elapsedTime: result.avg_elapsed_time,
+                value: result.avg_elapsed_time,
             };
         });
 
@@ -90,7 +90,7 @@ export class RankService {
 
             return plainToInstance(DAURank, {
                 projectName: projectName || `Unknown`,
-                dau: result.dau,
+                value: result.dau,
             });
         });
 
@@ -108,7 +108,7 @@ export class RankService {
 
             return plainToInstance(TrafficRank, {
                 projectName: projectName || `Unknown`,
-                count: result.count,
+                value: result.count,
             });
         });
 
