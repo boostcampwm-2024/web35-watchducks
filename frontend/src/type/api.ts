@@ -1,6 +1,8 @@
-type Ranking = {
-  projectName: string;
-  count: string;
+type NavbarRanking = {
+  rank: {
+    projectName: string;
+    count: string;
+  }[];
 };
 
 type Traffic = {
@@ -71,7 +73,7 @@ type RankingData = {
 export type {
   Traffic,
   ResponseRate,
-  Ranking,
+  NavbarRanking,
   DailyDifferenceTraffic,
   ElapsedTime,
   ResponseTime,

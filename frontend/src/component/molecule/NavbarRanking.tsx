@@ -3,7 +3,6 @@ import P from '@component/atom/P';
 import Span from '@component/atom/Span';
 import { MEDALS } from '@constant/Medals';
 import useRankings from '@hook/api/useRankings';
-import { Ranking } from '@type/api';
 import { Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,13 +12,13 @@ type Props = {
 
 export default function NavbarRanking({ generation }: Props) {
   const navigate = useNavigate();
-  const { data = [] } = useRankings(generation);
+  const { data } = useRankings(generation);
 
   const handleClick = (projectName: string) => {
     navigate(`/project/${projectName}`);
   };
 
-  const renderRankingItem = (item: Ranking, index: number) => {
+  const renderRankingItem = (item: { projectName: string; count: string }, index: number) => {
     const rank = index;
 
     return (
@@ -65,7 +64,7 @@ export default function NavbarRanking({ generation }: Props) {
   return (
     <div className='mt-8 rounded-10 border-1.5 border-solid border-gray p-4'>
       <P cssOption='text-12 mb-1 font-bold dark:text-white' content='TRAFFIC RANKING' />
-      {data.map((item, index) => renderRankingItem(item, index))}
+      {data.rank.map((item, index) => renderRankingItem(item, index))}
     </div>
   );
 }

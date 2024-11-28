@@ -2,7 +2,7 @@ import { api } from '@api/axios';
 import {
   ResponseRate,
   Traffic,
-  Ranking,
+  NavbarRanking,
   DailyDifferenceTraffic,
   ElapsedTime,
   ResponseTime,
@@ -10,7 +10,7 @@ import {
 } from '@type/api';
 
 export const getRankings = async (generation: string) => {
-  const response = await api.get<Ranking[]>(`/log/traffic/rank?generation=${generation}`);
+  const response = await api.get<NavbarRanking>(`/log/traffic/rank?generation=${generation}`);
   return response.data;
 };
 
