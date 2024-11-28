@@ -64,11 +64,11 @@ describe('RankController', () => {
                     rank: [
                         {
                             projectName: 'watchducks001',
-                            successRate: 98.5,
+                            value: 98.5,
                         },
                         {
                             projectName: 'watchducks002',
-                            successRate: 97.2,
+                            value: 97.2,
                         },
                     ],
                 };
@@ -146,11 +146,11 @@ describe('RankController', () => {
                     rank: [
                         {
                             projectName: 'watchducks001',
-                            count: 10000,
+                            value: 10000,
                         },
                         {
                             projectName: 'watchducks002',
-                            count: 9998,
+                            value: 9998,
                         },
                     ],
                 };

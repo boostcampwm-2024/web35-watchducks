@@ -8,7 +8,7 @@ export class DAURank {
 
     @Type(() => Number)
     @IsNumber()
-    dau: number;
+    value: number;
 }
 
 export class GetDAURankResponseDto {
@@ -24,15 +24,15 @@ export class GetDAURankResponseDto {
         example: [
             {
                 projectName: 'test059',
-                dau: 12345,
+                value: 12345,
             },
             {
                 projectName: 'test007',
-                dau: 234234,
+                value: 234234,
             },
             {
                 projectName: 'test079',
-                dau: 21212,
+                value: 21212,
             },
         ],
     })

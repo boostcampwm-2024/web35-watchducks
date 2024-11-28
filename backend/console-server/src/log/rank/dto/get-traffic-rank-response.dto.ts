@@ -6,7 +6,7 @@ export class TrafficRank {
     projectName: string;
 
     @IsNumber()
-    count: number;
+    value: number;
 }
 
 export class GetTrafficRankResponseDto {
@@ -22,15 +22,15 @@ export class GetTrafficRankResponseDto {
         example: [
             {
                 projectName: 'test059',
-                count: 10000,
+                value: 10000,
             },
             {
                 projectName: 'test007',
-                count: 9999,
+                value: 9999,
             },
             {
                 projectName: 'test079',
-                count: 9898,
+                value: 9898,
             },
         ],
     })
