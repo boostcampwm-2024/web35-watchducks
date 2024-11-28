@@ -25,11 +25,4 @@ RUN npm install --production
 # 빌드 결과물 복사
 COPY --from=build /usr/src/app/dist ./dist
 
-# PM2 설치
-RUN npm install pm2 -g
-
-# PM2 설정 파일 복사
-COPY ecosystem.config.js ./
-
-# 애플리케이션 실행
-CMD ["pm2-runtime", "ecosystem.config.js"]
+CMD ["node", "./dist/main.js"]
