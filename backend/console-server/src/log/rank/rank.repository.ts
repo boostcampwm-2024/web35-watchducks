@@ -12,7 +12,11 @@ export class RankRepository {
 
     async findSuccessRateOrderByCount(date: string) {
         const { query, params } = new TimeSeriesQueryBuilder()
-            .metrics([{ name: 'host' }, { name: 'is_error', aggregation: 'rate' }])
+            .metrics([
+                { name: 'host' },
+                { name: 'is_error', aggregation: 'rate' },
+                { name: 'toDate(timestamp) as timestamp' },
+            ])
             .from('http_log')
             .filter({ timestamp: date })
             .groupBy(['host'])
