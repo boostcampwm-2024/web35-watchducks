@@ -59,12 +59,16 @@ export default function MainTrafficChart({ generation }: Props) {
       },
       tickAmount: 24,
       tooltip: {
+        enabled: false,
         formatter: (val: string) => {
           return new Date(val).toLocaleTimeString();
         }
       }
     },
     yaxis: {
+      tooltip: {
+        enabled: false
+      },
       title: {
         text: 'Traffic Count',
         style: {
