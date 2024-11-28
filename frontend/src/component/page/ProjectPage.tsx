@@ -1,9 +1,16 @@
 import Loading from '@component/atom/Loading';
 import useGroupNames from '@hook/api/useGroupNames';
+import { useNavContext } from '@hook/useNavContext';
 import { Navigate } from 'react-router-dom';
 
+type Props = {
+  generation: string;
+};
+
 export default function ProjectPage() {
-  const { data, isLoading } = useGroupNames('9');
+  const { generation } = useNavContext<Props>();
+
+  const { data, isLoading } = useGroupNames(generation);
   if (isLoading) {
     return <Loading />;
   }
