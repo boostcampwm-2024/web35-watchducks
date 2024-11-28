@@ -3,7 +3,7 @@ import type { LogRepositoryClickhouse } from 'database/query/log.repository.clic
 export class LogService {
     constructor(private readonly logRepository: LogRepositoryClickhouse) {}
 
-    public async saveHttpLog(log: HttpLogEntity): Promise<void> {
-            await this.logRepository.insertHttpLog(log);
+    async saveHttpLog(log: HttpLogEntity): Promise<void> {
+        this.logRepository.insertHttpLog(log);
     }
 }

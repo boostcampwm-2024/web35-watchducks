@@ -10,7 +10,7 @@ export class LogHandler {
         private readonly logger: FastifyLogger,
     ) {}
 
-     async handleLogResponse(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+    async handleLogResponse(request: FastifyRequest, reply: FastifyReply): Promise<void> {
         const httpLog: HttpLogEntity = {
             method: request.method,
             host: request.host,
@@ -19,15 +19,17 @@ export class LogHandler {
             responseTime: reply.elapsedTime,
         };
 
-         try {
-             this.logger.info(httpLog);
-             await this.logService.saveHttpLog(httpLog);
-         } catch (error) {
-             this.logger.error(SystemErrorFactory.createErrorLog({
-                 originalError: error,
-                 path: '/log/response',
-                 message: 'Failed to save http log'
-             }));
-         }
-     }
+        try {
+            this.logger.info(httpLog);
+            this.logService.saveHttpLog(httpLog);
+        } catch (error) {
+            this.logger.error(
+                SystemErrorFactory.createErrorLog({
+                    originalError: error,
+                    path: '/log/response',
+                    message: 'Failed to save http log',
+                }),
+            );
+        }
+    }
 }

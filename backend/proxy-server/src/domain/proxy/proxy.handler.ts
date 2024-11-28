@@ -4,18 +4,16 @@ import { HOST_HEADER } from '../../common/constant/http.constant';
 import type { ProxyService } from '../../domain/proxy/proxy.service';
 
 export class ProxyHandler {
-    constructor(
-        private readonly proxyService: ProxyService,
-    ) {}
+    constructor(private readonly proxyService: ProxyService) {}
 
     async handleProxyRequest(request: FastifyRequest, reply: FastifyReply): Promise<void> {
         const targetUrl = await this.proxyService.resolveTargetUrl(
             request.headers[HOST_HEADER] as string,
             request.url,
-            request.protocol
+            request.protocol,
         );
 
-        await this.sendProxyRequest(targetUrl, request, reply);
+        return this.sendProxyRequest(targetUrl, request, reply);
     }
 
     async sendProxyRequest(
@@ -23,14 +21,10 @@ export class ProxyHandler {
         request: FastifyRequest,
         reply: FastifyReply,
     ): Promise<void> {
-         await reply.from(targetUrl, {
-             onError: (reply, error) => {
-                 throw new ProxyError(
-                     '프록시 요청 처리 중 오류가 발생했습니다.',
-                     502,
-                     error.error,
-                 );
-             },
-         });
+        return reply.from(targetUrl, {
+            onError: (reply, error) => {
+                throw new ProxyError('프록시 요청 처리 중 오류가 발생했습니다.', 502, error.error);
+            },
+        });
     }
 }
