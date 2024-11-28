@@ -10,9 +10,7 @@ const calculateMillisecondsUntilMidnight = () => {
 };
 
 export const CacheTTLUntilMidnight = () => {
-    return CacheTTL((_ctx: ExecutionContext) => {
-        return calculateMillisecondsUntilMidnight();
-    });
+    return CacheTTL((_ctx: ExecutionContext) => calculateMillisecondsUntilMidnight());
 };
 
 type CacheRefreshThresholdFactory = (ctx: ExecutionContext) => Promise<number> | number;
@@ -21,7 +19,5 @@ export const CacheRefreshThreshold = (threshold: number | CacheRefreshThresholdF
     SetMetadata(CACHE_REFRESH_THRESHOLD_METADATA, threshold);
 
 export const CacheRefreshAtMidnight = () => {
-    return CacheRefreshThreshold((_ctx: ExecutionContext) => {
-        return calculateMillisecondsUntilMidnight();
-    });
+    return CacheRefreshThreshold((_ctx: ExecutionContext) => calculateMillisecondsUntilMidnight());
 };
