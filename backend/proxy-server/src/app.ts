@@ -29,7 +29,10 @@ export class Application {
             const projectCacheRepository = new ProjectCacheRepositoryRedis();
             const projectService = new ProjectService(projectRepository, projectCacheRepository);
             const proxyService = new ProxyService(projectService);
-            const logRepository = new LogRepositoryClickhouse();
+            const logRepository = new LogRepositoryClickhouse({
+                maxSize: 1000,
+                flushIntervalSecond: 5,
+            });
             const logService = new LogService(logRepository);
 
             const errorLogRepository = new ErrorLogRepository();
