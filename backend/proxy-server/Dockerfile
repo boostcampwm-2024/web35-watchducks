@@ -25,7 +25,7 @@ RUN npm install --production
 # 빌드 결과물 복사
 COPY --from=build /usr/src/app/dist ./dist
 
-CMD ["node", "./dist/main.js"]
+CMD ["node", "./dist/index.js"]
 
 ## PM2 설치 (옵션)
 #RUN npm install pm2 -g
