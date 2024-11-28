@@ -1,6 +1,6 @@
 import type { GetTrafficTop5Dto } from './dto/get-traffic-top5.dto';
 import { plainToInstance } from 'class-transformer';
-import { GetTrafficTop5ResponseDto } from './dto/get-traffic-top5-response.dto';
+import { GetTrafficTop5ResponseDto, TrafficRankData } from './dto/get-traffic-top5-response.dto';
 import type { GetTrafficByGenerationDto } from './dto/get-traffic-by-generation.dto';
 import { GetTrafficByGenerationResponseDto } from './dto/get-traffic-by-generation-response.dto';
 import type { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference.dto';
@@ -12,7 +12,7 @@ import {
     TrafficCountByTimeunit,
 } from './dto/get-traffic-by-project-response.dto';
 import { Project } from '../../project/entities/project.entity';
-import type { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { TrafficRepository } from './traffic.repository';
 import type { GetTrafficTop5ChartDto } from './dto/get-traffic-top5-chart.dto';
 import {
@@ -31,7 +31,16 @@ export class TrafficService {
     ) {}
 
     async getTrafficTop5(_getTrafficTop5Dto: GetTrafficTop5Dto) {
-        const result = await this.trafficRepository.findTop5CountByHost();
+        const [data] = await this.trafficRepository.findTop5CountByHost();
+        const hosts = data.rank.map((item) => item.host);
+        const projectMap = await this.hostsToProjectMap(hosts);
+
+        const result = data.rank.map<TrafficRankData>((item) => {
+            return {
+                projectName: projectMap.get(item.host) || 'Unknown',
+                count: item.count || 0,
+            };
+        });
 
         return plainToInstance(GetTrafficTop5ResponseDto, result);
     }
@@ -155,5 +164,14 @@ export class TrafficService {
         );
 
         return plainToInstance(GetTrafficTop5ChartResponseDto, { trafficCharts });
+    }
+    private async hostsToProjectMap(hosts: string[]) {
+        const projects = await this.projectRepository.find({
+            select: ['domain', 'name'],
+            where: {
+                domain: In(hosts),
+            },
+        });
+        return new Map(projects.map(({ domain, name }) => [domain, name]));
     }
 }
