@@ -7,3 +7,11 @@ body {
   width: 100%;
   height: 100%;
 }
+
+.apexcharts-xaxistooltip {
+  display: none !important;
+}
+
+.apexcharts-yaxistooltip {
+  display: none !important;
+}

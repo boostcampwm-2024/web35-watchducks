@@ -32,10 +32,10 @@ export default function NavbarRanking({ generation }: Props) {
               <Fragment>
                 <Img
                   src={MEDALS[rank as keyof typeof MEDALS].image}
-                  cssOption='flex-shrink-0 w-6'
+                  cssOption='flex-shrink-0 w-5'
                 />
                 <P
-                  cssOption={`truncate ${MEDALS[rank as keyof typeof MEDALS].color} max-w-[140px]`}
+                  cssOption={`truncate ${MEDALS[rank as keyof typeof MEDALS].color} max-w-[140px] text-[clamp(12px,1.5vw,14px)]`}
                   content={item.host}
                 />
               </Fragment>
@@ -57,7 +57,7 @@ export default function NavbarRanking({ generation }: Props) {
             <Span cssOption='hidden font-medium group-hover:block dark:text-white' content='&gt;' />
           </div>
         </div>
-        <hr className='border-gray-300' />
+        <hr className='border-zinc-300' />
       </Fragment>
     );
   };
