@@ -3,7 +3,6 @@ import { plainToInstance } from 'class-transformer';
 import { Clickhouse } from '../../clickhouse/clickhouse';
 import { TimeSeriesQueryBuilder } from '../../clickhouse/query-builder/time-series.query-builder';
 import { TrafficRankMetric } from './metric/traffic-rank.metric';
-import { TrafficRankTop5Metric } from './metric/traffic-rank-top5.metric';
 import { TrafficCountMetric } from './metric/traffic-count.metric';
 import { Injectable } from '@nestjs/common';
 import type { TimeUnit } from './traffic.constant';
@@ -29,12 +28,7 @@ export class TrafficRepository {
             .limit(5)
             .build();
 
-        const results = await this.clickhouse.query<TrafficRankMetric>(query, params);
-
-        return plainToInstance(
-            TrafficRankTop5Metric,
-            results.map((result) => plainToInstance(TrafficRankMetric, result)),
-        );
+        return await this.clickhouse.query<TrafficRankMetric>(query, params);
     }
 
     async findTrafficByGeneration() {
