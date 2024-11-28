@@ -78,31 +78,23 @@ export class RankService {
     }
 
     async getDAURank(_getDAURankDto: GetDAURankDto) {
-        const yesterday = this.getYesterdayDateString();
-        const results = await this.rankRepository.findCountOrderByDAU(yesterday);
+        const results = await this.rankRepository.findCountOrderByDAU(
+            this.getYesterdayDateString(),
+        );
+        const hosts = results.map((result) => result.host);
 
-        const domains = results.map((result) => result.host);
-        const projects = await this.projectRepository.find({
-            select: ['domain', 'name'],
-            where: {
-                domain: In(domains),
-            },
-        });
-
-        const _projectMap = new Map(projects.map((project) => [project.domain, project]));
+        const projectMap = await this.hostsToProjectMap(hosts);
 
         const rank = results.map((result) => {
+            const projectName = projectMap.get(result.host);
+
             return plainToInstance(DAURank, {
-                host: result.host,
+                projectName: projectName || `Unknown`,
                 dau: result.dau,
             });
         });
 
-        return plainToInstance(GetDAURankResponseDto, {
-            total: results.length,
-            rank,
-            date: yesterday,
-        });
+        return plainToInstance(GetDAURankResponseDto, { total: results.length, rank });
     }
 
     async getTrafficRank(_getTrafficRankDto: GetTrafficRankDto) {
