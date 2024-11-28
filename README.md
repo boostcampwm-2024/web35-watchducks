@@ -2,6 +2,8 @@
 
 <img width="1063" alt="image" src="https://github.com/user-attachments/assets/3845c953-5d2a-4c95-9610-14a67ce85d38">
 
+<div align="center">
+
 ## "캠퍼들만을 위한, 설치가 필요 없는 트래픽 분석 플랫폼"
 
 와치덕스 (WatchDucks)는 모니터링 한다는 의미의 Watch와 부스트 캠프의 마스코트 부덕(Duck)이의 합성어입니다.
@@ -10,9 +12,22 @@
 
 자신의 프로젝트는 물론, 다양한 캠퍼들의 프로젝트 현황을 비교·분석할 수 있습니다. 또한, 기수별 프로젝트 현황을 제공해 부스트캠프의 역사를 기록합니다.
 
-[🌐 배포 링크 바로가기](https://watchducks.netlify.app/)  |  [📚 프로젝트 위키 바로가기](https://github.com/boostcampwm-2024/web35-WatchDucks/wiki) 
+[🌐 배포 링크 바로가기](https://watchducks.netlify.app/)         |          [📚 프로젝트 위키 바로가기](https://github.com/boostcampwm-2024/web35-WatchDucks/wiki) 
 
 </div>
+
+## 📌 목차
+  * [🚀 주요 기능](#-주요-기능)
+    * [1. 프로젝트 등록](#1-프로젝트-등록)
+    * [2. 기수별 전체 프로젝트 메트릭 확인](#2-기수별-전체-프로젝트-메트릭-확인)
+    * [3. 개별 프로젝트 메트릭 확인](#3-개별-프로젝트-메트릭-확인)
+    * [4. 기수별 프로젝트 순위 확인](#4-기수별-프로젝트-순위-확인)
+  * [📃 프로젝트 설계](#-프로젝트-설계)
+    * [📈 아키텍처](#-아키텍처)
+    * [📈 시퀀스 다이어그램](#-시퀀스-다이어그램)
+    * [📈 동작 원리 흐름도](#-동작-원리-흐름도)
+  * [🙇 팀원소개](#-팀원소개)
+
 
 ## 🚀 주요 기능
 
@@ -46,7 +61,7 @@
     - 응답 성공률
     - 단위별(월/일/시간/분) 실시간 트래픽
 
-### 4. 기수별 프로젝트 순위 확인 (Just for fun 😅)
+### 4. 기수별 프로젝트 순위 확인
 ![image](https://github.com/user-attachments/assets/27078073-e609-478a-875e-8223dc9e9ff0)
 - 사이드바에서 기수를 선택할 수 있습니다.
 - 선택한 기수의 등록된 프로젝트 관련 메트릭을 토대로 전체 순위를 표시합니다.
@@ -54,11 +69,14 @@
 
 ## 📃 프로젝트 설계
 
-### 📈 동작 원리 흐름도 (초안)
-![image](https://github.com/user-attachments/assets/141cd28d-f5c5-4df8-bf2e-4b2a45ab2800)
+### 📈 아키텍처
+![WatchDucks Architecture Page 1](https://github.com/user-attachments/assets/16ecd233-6081-40f1-8041-939dfaa9c0f5)
 
 ### 📈 시퀀스 다이어그램
 <img width="960" alt="스크린샷 2024-11-21 오후 10 10 05" src="https://github.com/user-attachments/assets/fe264935-df48-417f-89be-7f1c08ec44ed">
+
+### 📈 동작 원리 흐름도 
+![image](https://github.com/user-attachments/assets/141cd28d-f5c5-4df8-bf2e-4b2a45ab2800)
 
 #### 용어 설명
 `Client` : ‘WatchDucks‘서비스를 이용하는 고객이자 서비스를 제공하는 캠퍼
@@ -91,8 +109,6 @@
 1. 대시보드에서 `Client` 서버들로부터 수집된 로그를 확인할 수 있습니다.
 2. 다른 `Client`(캠퍼)들의 현황을 실시간으로 모니터링 가능
 
-### 📈 아키텍처
-![아키텍처](https://github.com/user-attachments/assets/0d957b0f-e240-49ad-a41f-f28bd92af7d3)
 
 
 ## 🙇 팀원소개
