@@ -1,5 +1,5 @@
 type Ranking = {
-  host: string;
+  projectName: string;
   count: string;
 };
 
@@ -60,6 +60,14 @@ type ProjectExist = {
   exists: boolean;
 };
 
+type RankingData = {
+  total: number;
+  rank: {
+    projectName: string;
+    value: number;
+  }[];
+};
+
 export type {
   Traffic,
   ResponseRate,
@@ -72,5 +80,6 @@ export type {
   ProjectDAU,
   ProjectTraffic,
   ProjectElapsedTime,
-  ProjectExist
+  ProjectExist,
+  RankingData
 };
