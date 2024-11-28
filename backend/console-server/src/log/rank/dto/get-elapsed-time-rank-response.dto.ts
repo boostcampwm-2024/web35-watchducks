@@ -9,7 +9,7 @@ export class ElapsedTimeRank {
 
     @IsNumber()
     @Expose()
-    elapsedTime: number;
+    value: number;
 }
 
 export class GetElapsedTimeRankResponseDto {

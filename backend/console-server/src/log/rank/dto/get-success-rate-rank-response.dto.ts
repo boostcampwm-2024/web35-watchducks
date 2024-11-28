@@ -8,7 +8,7 @@ export class SuccessRateRank {
 
     @Type(() => Number)
     @IsNumber()
-    successRate: number;
+    value: number;
 }
 
 export class GetSuccessRateRankResponseDto {
@@ -24,15 +24,15 @@ export class GetSuccessRateRankResponseDto {
         example: [
             {
                 projectName: 'test059',
-                successRate: 98.23100936524453,
+                value: 98.23100936524453,
             },
             {
                 projectName: 'test007',
-                successRate: 98.1094527363184,
+                value: 98.1094527363184,
             },
             {
                 projectName: 'test079',
-                successRate: 98.0083857442348,
+                value: 98.0083857442348,
             },
         ],
     })

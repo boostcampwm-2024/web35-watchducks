@@ -7,7 +7,9 @@
   "scripts": {
     "test": "jest --config jest.config.js -ts-config=tsconfig.test.json",
     "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
-    "dev": "NODE_ENV=development tsx src/index.ts"
+    "dev": "NODE_ENV=development tsx src/index.ts",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix"
   },
   "repository": {
     "type": "git",
