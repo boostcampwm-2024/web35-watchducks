@@ -24,7 +24,7 @@ export class TrafficController {
     @Get('/rank')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
-        summary: '기수 내 트래픽 랭킹 TOP 5',
+        summary: '기수 내 전체 기간 트래픽 랭킹 TOP 5',
         description: '요청받은 기수의 트래픽 랭킹 TOP 5를 반환합니다.',
     })
     @ApiResponse({
@@ -39,7 +39,7 @@ export class TrafficController {
     @Get('/project')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
-        summary: '프로젝트 별 트래픽 조회',
+        summary: '프로젝트별 지난 24시간/1주일/1개월 트래픽 조회',
         description: '특정 프로젝트의 지난 24시간/1주일/1개월 간의 트래픽 데이터를 반환합니다.',
     })
     @ApiResponse({
@@ -54,7 +54,7 @@ export class TrafficController {
     @Get('')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
-        summary: '기수 내 총 트래픽',
+        summary: '기수 내 전체 기간 총 트래픽',
         description: ' 요청받은 기수의 기수 내 총 트래픽를 반환합니다.',
     })
     @ApiResponse({
@@ -88,7 +88,7 @@ export class TrafficController {
     @Get('/top5/line-chart')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
-        summary: '프로젝트 트래픽 TOP 5에 대한 트래픽 데이터 조회',
+        summary: '작일 하루 트래픽 TOP 5 프로젝트에 대한 트래픽 데이터',
         description: '프로젝트별 작일 데이터 전체 타임스탬프를 반환',
     })
     @ApiResponse({

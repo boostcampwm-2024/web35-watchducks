@@ -21,8 +21,8 @@ export class ElapsedTimeController {
     @Get('')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
-        summary: '기수 총 트래픽 평균 응답시간 API',
-        description: '요청받은 기수의 트래픽에 대한 평균 응답시간을 반환합니다.',
+        summary: '기수 총 트래픽 전체 기간 평균 응답시간',
+        description: '요청받은 기수 트래픽의 전체 기간 평균 응답시간을 반환합니다.',
     })
     @ApiResponse({
         status: HttpStatus.OK,
@@ -36,7 +36,7 @@ export class ElapsedTimeController {
     @Get('/top5')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
-        summary: '기수 내 응답 속도 TOP5',
+        summary: '기수 내 전체 기간 평균 응답 속도 TOP5',
         description: '요청받은 기수의 응답 속도 랭킹 TOP 5를 반환합니다.',
     })
     @ApiResponse({
@@ -51,7 +51,7 @@ export class ElapsedTimeController {
     @Get('/path-rank')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
-        summary: '개별 프로젝트의 경로별 응답 속도 순위',
+        summary: '개별 프로젝트의 전체 기간 경로별 응답 속도 순위',
         description:
             '개별 프로젝트의 경로별 응답 속도 중 가장 빠른/느린 3개를 반환합니다. 빠른 응답은 유효한(상태 코드 200번대)만을 포함합니다.',
     })

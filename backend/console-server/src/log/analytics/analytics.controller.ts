@@ -12,7 +12,7 @@ export class AnalyticsController {
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
         summary: '프로젝트별 최근 30일 DAU 조회',
-        description: '이름을 받은 프로젝트의 최근 30일간 DAU 를 반환합니다.',
+        description: '이름을 받은 프로젝트의 최근 30일간 DAU를 반환합니다.',
     })
     @ApiResponse({
         status: HttpStatus.OK,

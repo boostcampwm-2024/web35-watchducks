@@ -19,7 +19,7 @@ export class RankController {
     @Get('/success-rate')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
-        summary: '기수 내 응답 성공률 랭킹',
+        summary: '기수 내 어제 동안 응답 성공률 랭킹',
         description: '요청받은 기수의 기수 내 응답 성공률 랭킹을 반환합니다.',
     })
     @ApiResponse({
@@ -34,7 +34,7 @@ export class RankController {
     @Get('/elapsed-time')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
-        summary: '기수 내 응답 소요 시간 랭킹',
+        summary: '기수 내 어제 동안 응답 소요 시간 랭킹',
         description: '요청 받은 기수의 어제 하루 동안 응답 소요 시간 랭킹을 반환합니다.',
     })
     @ApiResponse({
@@ -49,7 +49,7 @@ export class RankController {
     @Get('/dau')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
-        summary: '기수 내 DAU 랭킹',
+        summary: '기수 내 어제 동안 DAU 랭킹',
         description: '요청받은 기수의 기수 내 DAU 랭킹을 반환합니다.',
     })
     @ApiResponse({
@@ -64,7 +64,7 @@ export class RankController {
     @Get('/traffic')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
-        summary: '기수 내 트래픽 랭킹',
+        summary: '기수 내 전체 데이터 트래픽 랭킹',
         description: '요청받은 기수의 기수 내 트래픽 랭킹을 반환합니다.',
     })
     @ApiResponse({

@@ -18,8 +18,8 @@ export class SuccessRateController {
     @Get('')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
-        summary: '기수 내 응답 성공률',
-        description: '요청받은 기수의 기수 내 응답 성공률를 반환합니다.',
+        summary: '기수 내 전체 기간 응답 성공률',
+        description: '요청받은 기수의 기수 내 전체 기간 트래픽의 응답 성공률를 반환합니다.',
     })
     @ApiResponse({
         status: HttpStatus.OK,
@@ -33,12 +33,12 @@ export class SuccessRateController {
     @Get('/project')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({
-        summary: '프로젝트 별 응답 성공률',
+        summary: '프로젝트 별 전체 기간 응답 성공률',
         description: '요청받은 프로젝트의 응답 성공률을 반환합니다.',
     })
     @ApiResponse({
         status: HttpStatus.OK,
-        description: '프로젝트 별 응답 성공률이 성공적으로 반환됨.',
+        description: '프로젝트 별 전체 기간의 응답 성공률이 성공적으로 반환됨.',
         type: GetProjectSuccessRateResponseDto,
     })
     async getProjectSuccessRate(@Query() getProjectSuccessRateDto: GetProjectSuccessRateDto) {
