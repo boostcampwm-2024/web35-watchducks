@@ -13,7 +13,7 @@ export class ProxyHandler {
             request.protocol,
         );
 
-        this.sendProxyRequest(targetUrl, request, reply);
+        return this.sendProxyRequest(targetUrl, request, reply);
     }
 
     async sendProxyRequest(
@@ -21,7 +21,7 @@ export class ProxyHandler {
         request: FastifyRequest,
         reply: FastifyReply,
     ): Promise<void> {
-        reply.from(targetUrl, {
+        return reply.from(targetUrl, {
             onError: (reply, error) => {
                 throw new ProxyError('프록시 요청 처리 중 오류가 발생했습니다.', 502, error.error);
             },
