@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import type { ErrorHandler } from 'server/error.handler';
-import type {ProxyHandler} from 'domain/proxy/proxy.handler';
+import type { ProxyHandler } from 'domain/proxy/proxy.handler';
 import type { LogHandler } from 'domain/log/log.handler';
 
 export class ServerInitializer {
@@ -9,9 +9,9 @@ export class ServerInitializer {
         private readonly proxyHandler: ProxyHandler,
         private readonly errorHandler: ErrorHandler,
         private readonly logHandler: LogHandler,
-    ){}
+    ) {}
 
-    initialize():void{
+    initialize(): void {
         this.initializeHooks();
         this.initializeRoutes();
         this.initializeErrorHandler();
@@ -19,14 +19,14 @@ export class ServerInitializer {
 
     private initializeHooks(): void {
         this.server.addHook('onResponse', async (request, reply) => {
-            await this.logHandler.handleLogResponse(request, reply);
+            this.logHandler.handleLogResponse(request, reply);
         });
     }
 
     private initializeRoutes(): void {
         this.server.all('*', async (request: FastifyRequest, reply: FastifyReply) => {
             try {
-                await this.proxyHandler.handleProxyRequest(request, reply);
+                this.proxyHandler.handleProxyRequest(request, reply);
             } catch (error) {
                 throw error;
             }
@@ -43,5 +43,4 @@ export class ServerInitializer {
             });
         });
     }
-
 }
