@@ -10,10 +10,11 @@ import { HostCountMetric } from './metric/host-count.metric';
 export class RankRepository {
     constructor(private readonly clickhouse: Clickhouse) {}
 
-    async findSuccessRateOrderByCount() {
+    async findSuccessRateOrderByCount(date: string) {
         const { query, params } = new TimeSeriesQueryBuilder()
             .metrics([{ name: 'host' }, { name: 'is_error', aggregation: 'rate' }])
             .from('http_log')
+            .filter({ timestamp: date })
             .groupBy(['host'])
             .orderBy(['is_error_rate'])
             .build();

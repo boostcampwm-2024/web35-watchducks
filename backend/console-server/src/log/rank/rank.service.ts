@@ -28,7 +28,9 @@ export class RankService {
     ) {}
 
     async getSuccessRateRank(_getSuccessRateRankDto: GetSuccessRateRankDto) {
-        const results = await this.rankRepository.findSuccessRateOrderByCount();
+        const results = await this.rankRepository.findSuccessRateOrderByCount(
+            this.getYesterdayDateString(),
+        );
         const hosts = results.map((result) => result.host);
 
         const projectMap = await this.hostsToProjectMap(hosts);
