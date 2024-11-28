@@ -8,7 +8,6 @@ import { GetElapsedTimeRankDto } from './dto/get-elapsed-time-rank.dto';
 import { GetDAURankDto } from './dto/get-dau-rank.dto';
 import { GetDAURankResponseDto } from './dto/get-dau-rank-response.dto';
 import { GetTrafficRankDto } from './dto/get-traffic-rank.dto';
-import { GetTrafficRankResponseDto } from './dto/get-traffic-rank-response.dto';
 import { CacheTTLUntilMidnight, CustomCacheInterceptor } from '../../common/cache';
 import { GetTrafficRankResponseDto } from './dto/get-traffic-rank-response.dto';
 
