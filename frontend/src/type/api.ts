@@ -49,12 +49,11 @@ type ProjectDAU = {
 
 type ProjectTraffic = {
   projectName: string;
-  trafficData: [
-    {
-      timestamp: string;
-      count: number;
-    }
-  ];
+  timeRange: string;
+  trafficData: {
+    timestamp: string;
+    count: number;
+  }[];
 };
 
 type ProjectExist = {

@@ -11,7 +11,7 @@ export default function PolarAreaChart({ series, options: additionalOptions }: P
   const PolarChartOption: ApexCharts.ApexOptions = {
     chart: {
       type: 'polarArea',
-      height: 350
+      height: 300
     },
     plotOptions: {
       polarArea: {

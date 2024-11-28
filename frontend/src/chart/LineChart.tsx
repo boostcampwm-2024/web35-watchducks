@@ -1,5 +1,5 @@
 import { CHART_COLORS } from '@constant/Chart';
-import { DATE_FORMAT_OPTIONS, TIME_FORMAT_OPTIONS } from '@constant/Time';
+import { DATE_FORMAT_OPTIONS, TIME_FORMAT_OPTIONS } from '@constant/Date';
 import { merge } from 'lodash-es';
 
 import { Chart } from './Chart';

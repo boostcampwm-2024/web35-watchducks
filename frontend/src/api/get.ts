@@ -89,7 +89,7 @@ const getElapsedTime = async (project: string) => {
 
 const getTraffic = async (project: string, dateType: string) => {
   const response = await api.get<ProjectTraffic>(
-    `/log/traffic/project?projectName=${project}&timeUnit=${dateType}`
+    `/log/traffic/project?projectName=${project}&timeRange=${dateType}`
   );
   return response.data;
 };

@@ -1,3 +1,5 @@
+import { DateType } from '@type/Date';
+
 const DAY_TO_MS_SECOND = 24 * 60 * 60 * 1000;
 
 const DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
@@ -15,4 +17,10 @@ const TIME_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
   hour12: false
 };
 
-export { DAY_TO_MS_SECOND, DATE_FORMAT_OPTIONS, TIME_FORMAT_OPTIONS };
+const DATE_OPTIONS: { value: DateType; label: string }[] = [
+  { value: 'day', label: 'Day' },
+  { value: 'week', label: 'Week' },
+  { value: 'month', label: 'Month' }
+];
+
+export { DAY_TO_MS_SECOND, DATE_FORMAT_OPTIONS, TIME_FORMAT_OPTIONS, DATE_OPTIONS };

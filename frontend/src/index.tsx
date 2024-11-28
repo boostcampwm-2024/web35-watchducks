@@ -10,13 +10,11 @@ import './index.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <>
-      <CustomQueryProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </CustomQueryProvider>
-      <ToastContainer />
-    </>
+    <CustomQueryProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </CustomQueryProvider>
+    <ToastContainer />
   </StrictMode>
 );
