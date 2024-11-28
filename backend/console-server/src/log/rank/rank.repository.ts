@@ -19,7 +19,7 @@ export class RankRepository {
             ])
             .from('http_log')
             .filter({ timestamp: date })
-            .groupBy(['host'])
+            .groupBy(['host', 'timestamp'])
             .orderBy(['is_error_rate'])
             .build();
 
