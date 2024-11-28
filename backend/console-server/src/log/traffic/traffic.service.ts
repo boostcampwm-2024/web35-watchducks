@@ -31,18 +31,18 @@ export class TrafficService {
     ) {}
 
     async getTrafficTop5(_getTrafficTop5Dto: GetTrafficTop5Dto) {
-        const [data] = await this.trafficRepository.findTop5CountByHost();
-        const hosts = data.rank.map((item) => item.host);
+        const result = await this.trafficRepository.findTop5CountByHost();
+        const hosts = result.map((item) => item.host);
         const projectMap = await this.hostsToProjectMap(hosts);
 
-        const result = data.rank.map<TrafficRankData>((item) => {
+        const rank = result.map<TrafficRankData>((item) => {
             return {
                 projectName: projectMap.get(item.host) || 'Unknown',
                 count: item.count || 0,
             };
         });
 
-        return plainToInstance(GetTrafficTop5ResponseDto, result);
+        return plainToInstance(GetTrafficTop5ResponseDto, { rank });
     }
 
     async getTrafficByGeneration(_getTrafficByGenerationDto: GetTrafficByGenerationDto) {
