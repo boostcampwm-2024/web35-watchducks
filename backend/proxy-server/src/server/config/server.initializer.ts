@@ -26,7 +26,7 @@ export class ServerInitializer {
     private initializeRoutes(): void {
         this.server.all('*', async (request: FastifyRequest, reply: FastifyReply) => {
             try {
-                this.proxyHandler.handleProxyRequest(request, reply);
+                await this.proxyHandler.handleProxyRequest(request, reply);
             } catch (error) {
                 throw error;
             }
