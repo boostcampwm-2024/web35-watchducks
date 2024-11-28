@@ -18,9 +18,9 @@ export class ServerInitializer {
     }
 
     private initializeHooks(): void {
-        this.server.addHook('onResponse', async (request, reply) => {
-            this.logHandler.handleLogResponse(request, reply);
-        });
+        // this.server.addHook('onResponse', async (request, reply) => {
+        //     this.logHandler.handleLogResponse(request, reply);
+        // });
     }
 
     private initializeRoutes(): void {
