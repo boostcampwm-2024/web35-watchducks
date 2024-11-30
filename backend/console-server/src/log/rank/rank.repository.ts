@@ -49,10 +49,6 @@ export class RankRepository {
             .orderBy(['dau'], true)
             .build();
 
-        console.log('=== ClickHouse Query ===');
-        console.log('Query:', query);
-        console.log('Params:', params);
-
         return await this.clickhouse.query<HostDauMetric>(query, params);
     }
 

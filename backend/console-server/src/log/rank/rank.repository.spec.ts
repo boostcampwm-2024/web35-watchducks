@@ -163,8 +163,8 @@ describe('RankRepository', () => {
     describe('findDAUOrderByCount()는', () => {
         const testDate = '2024-11-25';
         const mockQueryResult = {
-            query: 'SELECT domain as host, SUM(access) as dau FROM dau WHERE date = {date} GROUP BY domain ORDER BY dau DESC',
-            params: { date: testDate },
+            query: 'SELECT host, count(DISTINCT user_ip) as dau FROM http_log GROUP BY host, timestamp ORDER BY dau DESC',
+            params: { timestamp: testDate },
         };
 
         const mockResults = [
@@ -192,12 +192,13 @@ describe('RankRepository', () => {
             const queryBuilder = (TimeSeriesQueryBuilder as jest.Mock).mock.results[0].value;
 
             expect(queryBuilder.metrics).toHaveBeenCalledWith([
-                { name: 'domain as host' },
-                { name: 'SUM(access) as dau' },
+                { name: 'host' },
+                { name: 'count(DISTINCT user_ip) as dau' },
+                { name: 'toDate(timestamp) as timestamp' },
             ]);
-            expect(queryBuilder.from).toHaveBeenCalledWith('dau');
-            expect(queryBuilder.filter).toHaveBeenCalledWith({ date: testDate });
-            expect(queryBuilder.groupBy).toHaveBeenCalledWith(['domain']);
+            expect(queryBuilder.from).toHaveBeenCalledWith('http_log');
+            expect(queryBuilder.filter).toHaveBeenCalledWith({ timestamp: testDate });
+            expect(queryBuilder.groupBy).toHaveBeenCalledWith(['host', 'timestamp']);
             expect(queryBuilder.orderBy).toHaveBeenCalledWith(['dau'], true);
         });
 
