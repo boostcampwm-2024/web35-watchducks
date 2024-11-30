@@ -6,12 +6,14 @@ import { DauMetric } from './metric/dau.metric';
 @Injectable()
 export class AnalyticsRepository {
     constructor(private readonly clickhouse: Clickhouse) {}
-
     async findDAUsByProject(domain: string, start: Date, end: Date) {
         const { query, params } = new TimeSeriesQueryBuilder()
-            .metrics([{ name: `date` }, { name: `SUM(access) as dau` }])
-            .from('dau')
-            .filter({ domain })
+            .metrics([
+                { name: `toDate(timestamp) as date` },
+                { name: `count(DISTINCT user_ip) as dau` },
+            ])
+            .from('http_log')
+            .filter({ host: domain })
             .timeBetween(start, end, 'date')
             .groupBy(['date'])
             .orderBy(['date'])
