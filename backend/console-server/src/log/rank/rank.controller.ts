@@ -54,7 +54,7 @@ export class RankController {
     })
     @ApiResponse({
         status: HttpStatus.OK,
-        description: '기수 내 DAU 랭킹이 송공적으로 반환됨.',
+        description: '기수 내 DAU 랭킹이 성공적으로 반환됨.',
         type: GetDAURankResponseDto,
     })
     async getDAURank(@Query() getDAURankDto: GetDAURankDto) {

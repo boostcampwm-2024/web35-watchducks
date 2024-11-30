@@ -38,12 +38,20 @@ export class RankRepository {
 
     async findCountOrderByDAU(date: string) {
         const { query, params } = new TimeSeriesQueryBuilder()
-            .metrics([{ name: 'domain as host' }, { name: 'SUM(access) as dau' }])
-            .from('dau')
-            .filter({ date })
-            .groupBy(['domain'])
+            .metrics([
+                { name: 'host' },
+                { name: 'count(DISTINCT user_ip) as dau' },
+                { name: 'toDate(timestamp) as timestamp' },
+            ])
+            .from('http_log')
+            .filter({ timestamp: date })
+            .groupBy(['host', 'timestamp'])
             .orderBy(['dau'], true)
             .build();
+
+        console.log('=== ClickHouse Query ===');
+        console.log('Query:', query);
+        console.log('Params:', params);
 
         return await this.clickhouse.query<HostDauMetric>(query, params);
     }
