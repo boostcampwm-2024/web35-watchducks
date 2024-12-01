@@ -14,6 +14,8 @@
       "@chart/*": ["./src/chart/*"],
       "@util/*": ["./src/util/*"],
       "@api/*": ["./src/api/*"],
+      "@store/*": ["./src/store/*"],
+      "@router/*": ["./src/router/*"],
       "@asset/*": ["./asset/*"]
     }
   }
