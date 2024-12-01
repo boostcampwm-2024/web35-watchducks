@@ -1,8 +1,10 @@
-import type { BaseLog } from '../core/base-log';
-
-interface HttpLog extends BaseLog {
+interface HttpLog {
+    method: string;
+    host: string;
+    path?: string;
     statusCode: number;
     responseTime: number;
+    userIp: string;
 }
 
 export class HttpLogEntity {
@@ -11,6 +13,7 @@ export class HttpLogEntity {
     readonly path: string | undefined;
     readonly statusCode: number;
     readonly responseTime: number;
+    readonly userIp: string;
 
     constructor(log: HttpLog) {
         this.method = log.method;
@@ -18,5 +21,6 @@ export class HttpLogEntity {
         this.path = log.path;
         this.statusCode = log.statusCode;
         this.responseTime = log.responseTime;
+        this.userIp = log.userIp;
     }
 }

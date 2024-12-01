@@ -6,13 +6,21 @@ export default registerAs('typeOrmConfig', () => {
     return (
         isDevEnv
             ? {
-                  type: 'sqlite',
-                  database: ':memory:',
-                  dropSchema: true,
+                  type: 'mysql',
+                  host: process.env.DEV_MYSQL_HOST,
+                  port: process.env.DEV_MYSQL_PORT,
+                  username: process.env.DEV_MYSQL_USERNAME,
+                  password: process.env.DEV_MYSQL_PASSWORD,
+                  database: process.env.DEV_MYSQL_DATABASE,
                   autoLoadEntities: true,
-                  synchronize: true,
-                  logging: ['query', 'error'],
-                  logger: 'advanced-console',
+                  synchronize: false,
+                  // type: 'sqlite',
+                  // database: ':memory:',
+                  // dropSchema: true,
+                  // autoLoadEntities: true,
+                  // synchronize: true,
+                  // logging: ['query', 'error'],
+                  // logger: 'advanced-console',
               }
             : {
                   type: 'mysql',

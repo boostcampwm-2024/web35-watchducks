@@ -1,25 +1,25 @@
 import { ClickhouseDatabase } from '../clickhouse/clickhouse-database';
-import { DatabaseQueryError } from '../../common/error/database-query.error';
-import { LogRepository } from '../../domain/log/log.repository';
-import { HttpLogEntity } from '../../domain/log/http-log.entity';
+import { DatabaseQueryError } from 'common/error/database-query.error';
+import { LogRepository } from 'domain/port/output/log.repository';
+import { HttpLogEntity } from 'domain/vo/http-log.entity';
 import { ClickHouseClient } from '@clickhouse/client';
-import { formatDateTime } from '../../common/utils/date.util';
+import { formatDateTime } from 'common/utils/date.util';
 import { LogBufferConfig } from 'domain/config/log-buffer.config';
-import { FastifyLogger } from 'common/logger/fastify.logger';
 
-type httpLogRecord = {
+type HttpLogRecord = {
     method: string;
     path: string;
     host: string;
     status_code: number;
     elapsed_time: number;
     timestamp: string;
+    user_ip: string;
 };
 
 export class LogRepositoryClickhouse implements LogRepository {
     private readonly clickhouse: ClickHouseClient;
     private readonly config: LogBufferConfig;
-    private logBuffer: httpLogRecord[] = [];
+    private logBuffer: HttpLogRecord[] = [];
     private flushTimer: NodeJS.Timeout | null = null;
     private isProcessing: boolean = false;
 
@@ -65,13 +65,14 @@ export class LogRepositoryClickhouse implements LogRepository {
     }
 
     public async insertHttpLog(log: HttpLogEntity): Promise<void> {
-        const httpLogRecord: httpLogRecord = {
+        const httpLogRecord: HttpLogRecord = {
             method: log.method,
             path: log.path || '',
             host: log.host,
             status_code: log.statusCode,
             elapsed_time: Math.round(log.responseTime),
             timestamp: formatDateTime(new Date()),
+            user_ip: log.userIp,
         };
 
         this.logBuffer.push(httpLogRecord);

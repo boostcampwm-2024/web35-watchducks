@@ -1,7 +1,9 @@
-import { buildTargetUrl, validateHost, validateIp } from 'server/utils';
+import type { ProjectRepository } from 'domain/port/output/project.repository';
+import { buildTargetUrl, validateHost, validateIp } from 'domain/utils';
 import { ProxyError } from 'common/core/proxy.error';
 import { DatabaseQueryError } from 'common/error/database-query.error';
-import type { ProjectService } from 'domain/project/project.service';
+import type { ProjectCacheRepository } from 'domain/port/output/project-cache.repository';
+import type { ProjectUseCase } from 'domain/port/input/project.use-case';
 
 enum Protocol {
     HTTP = 'https://',
@@ -9,8 +11,11 @@ enum Protocol {
     HTTPS = 'https://',
 }
 
-export class ProxyService {
-    constructor(private readonly projectService: ProjectService) {}
+export class ProjectService implements ProjectUseCase {
+    constructor(
+        private readonly projectRepository: ProjectRepository,
+        private readonly projectCacheRepository: ProjectCacheRepository,
+    ) {}
 
     async resolveTargetUrl(host: string, url: string, protocol: string): Promise<string> {
         const validatedHost = validateHost(host);
@@ -20,17 +25,17 @@ export class ProxyService {
         return buildTargetUrl(ip, url, targetProtocol);
     }
 
-    async resolveDomain(host: string): Promise<string> {
+    private async resolveDomain(host: string): Promise<string> {
         try {
-            const cachedIp = await this.projectService.getCachedIpByDomain(host);
+            const cachedIp = await this.projectCacheRepository.findIpByDomain(host);
 
             if (cachedIp) {
                 return cachedIp;
             }
-            const ip = await this.projectService.getIpByDomain(host);
+            const ip = await this.projectRepository.findIpByDomain(host);
 
             validateIp(host, ip);
-            this.projectService.cacheIpByDomain(host, ip);
+            this.projectCacheRepository.cacheIpByDomain(host, ip);
 
             return ip;
         } catch (error) {

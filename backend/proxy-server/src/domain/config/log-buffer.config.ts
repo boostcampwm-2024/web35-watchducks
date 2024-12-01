@@ -1,4 +1,4 @@
-export type LogBufferConfig = {
+export interface LogBufferConfig {
     maxSize: number;
     flushIntervalSecond: number;
-};
+}

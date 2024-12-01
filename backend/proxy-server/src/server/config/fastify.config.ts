@@ -31,3 +31,14 @@ export const fastifyConfig = {
               },
     bodyLimit: Number(process.env.BODY_LIMIT),
 };
+
+export const replyFromConfig = {
+    undici: {
+        connections: Number(process.env.DEFAULT_CONNECTIONS),
+        pipelining: Number(process.env.DEFAULT_PIPELINING),
+        keepAliveTimeout: Number(process.env.DEFAULT_KEEP_ALIVE),
+        connect: {
+            rejectUnauthorized: false,
+        },
+    },
+};
