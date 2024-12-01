@@ -14,14 +14,6 @@ export default function ProjectTrafficChart({ id }: Props) {
   const [dateType, setDateType] = useState<DateType>('day');
   const { data } = useProjectTraffic(id, dateType);
 
-  if (data.trafficData.length === 0) {
-    return (
-      <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full h-full justify-center'>
-        <span className='text-center'>No data availiable</span>
-      </DataLayout>
-    );
-  }
-
   const handleDateTypeChange = (type: DateType) => {
     setDateType(type);
   };
@@ -149,6 +141,14 @@ export default function ProjectTrafficChart({ id }: Props) {
       }
     };
   }, [dateType]);
+
+  if (data.trafficData.length === 0) {
+    return (
+      <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full h-full justify-center'>
+        <span className='text-center'>No data availiable</span>
+      </DataLayout>
+    );
+  }
 
   return (
     <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full h-full'>
