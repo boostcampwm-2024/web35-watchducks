@@ -9,6 +9,7 @@ export const proxyHandler = async (
     projectAdapter: ProjectAdapter,
 ) => {
     const targetUrl = await projectAdapter.resolveTargetUrl(request);
+    console.log(targetUrl);
 
     return sendProxyRequest(targetUrl, reply);
 };

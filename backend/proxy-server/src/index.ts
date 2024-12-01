@@ -1,11 +1,13 @@
 import { fastifyServer } from 'server/fastify.server';
 import type { FastifyInstance } from 'fastify';
 import type { Logger } from 'common/logger/createFastifyLogger';
+import { createTLSHandshakeBypassServer } from 'server/TLS-bypass.server';
 
 const SIGNALS = ['SIGINT', 'SIGTERM'];
 
 async function main() {
     const { server, logger } = await fastifyServer.listen();
+    await createTLSHandshakeBypassServer();
 
     SIGNALS.forEach((signal) => {
         process.on(signal, async () => await handleShutdown(signal, server, logger));
