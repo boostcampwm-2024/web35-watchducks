@@ -1,4 +1,4 @@
-import type { HttpLogEntity } from '../vo/http-log.entity';
+import type { HttpLogEntity } from 'domain/entity/http-log.entity';
 import type { LogRepository } from 'domain/port/output/log.repository';
 import type { LogUseCase } from 'domain/port/input/log.use-case';
 

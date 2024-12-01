@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type { ErrorLog } from './logger.interface';
-import type { HttpLogEntity } from '../../domain/vo/http-log.entity';
+import type { HttpLogEntity } from 'domain/entity/http-log.entity';
 
 export interface Logger {
     info(log: HttpLogEntity | { message: string }): void;

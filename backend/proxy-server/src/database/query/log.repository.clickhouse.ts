@@ -1,7 +1,7 @@
 import { ClickhouseDatabase } from '../clickhouse/clickhouse-database';
 import { DatabaseQueryError } from 'common/error/database-query.error';
 import { LogRepository } from 'domain/port/output/log.repository';
-import { HttpLogEntity } from 'domain/vo/http-log.entity';
+import { HttpLogEntity } from 'domain/entity/http-log.entity';
 import { ClickHouseClient } from '@clickhouse/client';
 import { formatDateTime } from 'common/utils/date.util';
 import { LogBufferConfig } from 'domain/config/log-buffer.config';
