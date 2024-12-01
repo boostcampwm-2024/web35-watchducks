@@ -1,18 +1,15 @@
 import Select from '@component/atom/Select';
 import { GENERATION_OPTION } from '@constant/NavbarSelect';
 import { PATH } from '@constant/Path';
-import { NavbarSelectProps } from '@type/Navbar';
+import useNavbarStore from '@store/NavbarStore';
 import { useLocation } from 'react-router-dom';
 
-type Props = NavbarSelectProps;
+type Props = {
+  groupOption: Array<{ label: string; value: string }>;
+};
 
-export default function NavbarSelect({
-  generation,
-  selectedGroup,
-  setGeneration,
-  setSelectedGroup,
-  groupOption
-}: Props) {
+export default function NavbarSelect({ groupOption }: Props) {
+  const { generation, selectedGroup, setGeneration, setSelectedGroup } = useNavbarStore();
   const { pathname } = useLocation();
   const isProjectPath = pathname.includes(PATH.PROJECT);
 

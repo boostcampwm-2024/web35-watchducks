@@ -3,14 +3,12 @@ import P from '@component/atom/P';
 import Span from '@component/atom/Span';
 import { MEDALS } from '@constant/Medals';
 import useRankings from '@hook/api/useRankings';
+import useNavbarStore from '@store/NavbarStore';
 import { Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-type Props = {
-  generation: string;
-};
-
-export default function NavbarRanking({ generation }: Props) {
+export default function NavbarRanking() {
+  const { generation } = useNavbarStore();
   const navigate = useNavigate();
   const { data } = useRankings(generation);
 
@@ -32,6 +30,7 @@ export default function NavbarRanking({ generation }: Props) {
                 <Img
                   src={MEDALS[rank as keyof typeof MEDALS].image}
                   cssOption='flex-shrink-0 w-5'
+                  alt={`${rank + 1}번째 메달`}
                 />
                 <P
                   cssOption={`truncate ${MEDALS[rank as keyof typeof MEDALS].color} max-w-[140px] text-[clamp(12px,1.5vw,14px)]`}

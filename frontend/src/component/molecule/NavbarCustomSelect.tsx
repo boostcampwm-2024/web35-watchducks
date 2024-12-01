@@ -1,26 +1,27 @@
 import NavbarSelect from '@component/molecule/NavbarSelect';
 import useGroupNames from '@hook/api/useGroupNames';
-import { NavbarSelectProps } from '@type/Navbar';
+import useNavbarStore from '@store/NavbarStore';
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
-type Props = NavbarSelectProps;
-
-export default function NavbarCustomSelect(props: Props) {
-  const { data = [] } = useGroupNames(props.generation);
+export default function NavbarCustomSelect() {
+  const { generation, setSelectedGroup } = useNavbarStore();
+  const { data = [] } = useGroupNames(generation);
   const location = useLocation();
+  const prevProjectGroupRef = useRef<string | null>(null);
   const projectGroup = location.pathname.split('/project/')[1];
-  const initializedRef = useRef<boolean>(false);
 
   useEffect(() => {
-    if (!initializedRef.current && data.length > 0) {
+    if (data.length > 0 && projectGroup !== prevProjectGroupRef.current) {
       const groupToSelect =
-        projectGroup && data.some((g) => g.value === projectGroup) ? projectGroup : data[0]?.value;
+        projectGroup && data.some((item) => item.value === projectGroup)
+          ? projectGroup
+          : data[0].value;
 
-      props.setSelectedGroup(groupToSelect);
-      initializedRef.current = true;
+      setSelectedGroup(groupToSelect);
+      prevProjectGroupRef.current = projectGroup;
     }
-  }, [data, props.setSelectedGroup, projectGroup]);
+  }, [data, setSelectedGroup, projectGroup]);
 
-  return <NavbarSelect {...props} groupOption={data} />;
+  return <NavbarSelect groupOption={data} />;
 }
