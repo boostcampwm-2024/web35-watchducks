@@ -19,7 +19,7 @@ export default function NavbarMenu() {
           }`}>
           <Img
             src={isActive ? item.activeIcon : item.inactiveIcon}
-            alt='메뉴제목 텍스트'
+            alt={`${item.label} 아이콘`}
             cssOption='w-4 md:w-6'
           />
           <P content={item.label} cssOption='text-12 md:text-14 whitespace-nowrap' />
