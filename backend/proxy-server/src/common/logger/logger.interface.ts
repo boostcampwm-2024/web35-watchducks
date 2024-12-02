@@ -1,7 +1,7 @@
-import type { HttpLogEntity } from '../../domain/log/http-log.entity';
-import type { BaseLog } from '../../domain/core/base-log';
-
-export interface ErrorLog extends BaseLog {
+export interface ErrorLog {
+    method: string;
+    host: string;
+    path: string;
     request: {
         method: string;
         host: string;
@@ -18,9 +18,4 @@ export interface ErrorLog extends BaseLog {
         stack?: string;
         originalError?: unknown;
     };
-}
-
-export interface Logger {
-    info(log: HttpLogEntity | { message: string }): void;
-    error(log: ErrorLog): void;
 }

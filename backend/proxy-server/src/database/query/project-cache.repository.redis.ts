@@ -1,5 +1,5 @@
 import { RedisClient } from 'database/redis/redis-database';
-import { ProjectCacheRepository } from 'domain/project/project-cache.repository';
+import { ProjectCacheRepository } from 'domain/port/output/project-cache.repository';
 
 export class ProjectCacheRepositoryRedis implements ProjectCacheRepository {
     readonly TTL_DAY = 24 * 60 * 60;
