@@ -25,11 +25,13 @@ RUN npm install --production
 # 빌드 결과물 복사
 COPY --from=build /usr/src/app/dist ./dist
 
-# PM2 설치 (옵션)
-RUN npm install pm2 -g
+CMD ["node", "./dist/index.js"]
 
-# PM2 설정 파일 복사 (옵션)
-COPY ecosystem.config.cjs ./
-
-# 애플리케이션 실행
-CMD ["pm2-runtime", "ecosystem.config.cjs"]
+## PM2 설치 (옵션)
+#RUN npm install pm2 -g
+#
+## PM2 설정 파일 복사 (옵션)
+#COPY ecosystem.config.cjs ./
+#
+## 애플리케이션 실행
+#CMD ["pm2-runtime", "ecosystem.config.cjs"]
