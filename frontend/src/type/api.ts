@@ -52,6 +52,7 @@ type ProjectDAU = {
 type ProjectTraffic = {
   projectName: string;
   timeRange: string;
+  total: number;
   trafficData: {
     timestamp: string;
     count: number;
