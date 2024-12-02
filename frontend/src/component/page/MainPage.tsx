@@ -2,14 +2,10 @@ import CustomErrorBoundary from '@boundary/CustomErrorBoundary';
 import MainData from '@component/organism/MainData';
 import MainResponse from '@component/organism/MainResponse';
 import MainTrafficChart from '@component/organism/MainTrafficChart';
-import { useNavContext } from '@hook/useNavContext';
-
-type Props = {
-  generation: string;
-};
+import useNavbarStore from '@store/NavbarStore';
 
 export default function MainPage() {
-  const { generation } = useNavContext<Props>();
+  const generation = useNavbarStore((state) => state.generation);
 
   return (
     <div className='flex h-screen w-full flex-col gap-8 bg-lightgray p-8 dark:bg-lightblack'>

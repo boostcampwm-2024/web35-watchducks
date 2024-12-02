@@ -5,19 +5,16 @@ import NavbarRanking from '@component/molecule/NavbarRanking';
 import NavbarTitle from '@component/molecule/NavbarTitle';
 import NavigateButton from '@component/molecule/NavigateButton';
 import NavbarSelectWrapper from '@component/organism/NavbarSelectWrapper';
-import { NavbarSelectProps } from '@type/Navbar';
 
-type Props = NavbarSelectProps;
-
-export default function Navbar(props: Props) {
+export default function Navbar() {
   return (
-    <aside className='bg-lightblue dark:bg-darkblue flex h-screen flex-col px-24'>
+    <aside className='flex h-screen flex-col bg-lightblue px-24 dark:bg-darkblue'>
       <div className='flex flex-col gap-16 pt-24'>
         <NavbarTitle />
-        <NavbarSelectWrapper {...props} />
+        <NavbarSelectWrapper />
         <NavbarMenu />
         <CustomErrorBoundary>
-          <NavbarRanking generation={props.generation} />
+          <NavbarRanking />
         </CustomErrorBoundary>
         <NavigateButton
           path='/register'
