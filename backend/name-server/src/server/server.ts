@@ -8,19 +8,28 @@ import { DNSResponseBuilder } from './utils/dns-response-builder';
 import { RESPONSE_CODE } from './constant/dns-packet.constant';
 import { logger } from '../common/utils/logger/console.logger';
 import { ServerError } from './error/server.error';
-import type { ProjectQueryInterface } from 'database/query/project.query.interface';
-import type { DAURecorderInterface } from 'database/query/dau-recorder';
+import type { ProjectQueryInterface } from '../database/query/project.query.interface';
 import { MESSAGE_TYPE } from '../server/constant/message-type.constants';
+import { HealthCheckService } from '../server/service/health-check.service';
+
+interface ResolvedRoute{
+    targetIp: string;
+    isValid: boolean;
+}
 
 export class Server {
     private server: Socket;
+    private healthCheckService :HealthCheckService;
 
     constructor(
         private readonly config: ServerConfig,
-        private readonly dauRecorder: DAURecorderInterface,
         private readonly projectQuery: ProjectQueryInterface,
     ) {
         this.server = createSocket('udp4');
+        this.healthCheckService = new HealthCheckService(
+            config.proxyServerIp,
+            config.proxyHealthCheckEndpoint
+        )
         this.initializeServer();
     }
 
@@ -28,9 +37,25 @@ export class Server {
         this.server.on('message', this.handleMessage.bind(this));
         this.server.on('error', this.handleError.bind(this));
         this.server.on('listening', this.handleListening.bind(this));
+        this.healthCheckService.startHealthCheck();
     }
 
-    private async handleMessage(msg: Buffer, remoteInfo: RemoteInfo): Promise<void> {
+    private async resolveRoute(domainName: string): Promise<ResolvedRoute> {
+        try {
+            const clientIp = await this.projectQuery.getClientIpByDomain(domainName);
+
+            const targetIp = this.healthCheckService.isProxyHealthy()
+                ? this.config.proxyServerIp
+                : clientIp;
+
+            return { targetIp, isValid: true };
+        } catch (error) {
+            logger.error('Failed to resolve route:', error);
+            return { targetIp: '', isValid: false };
+        }
+    }
+
+        private async handleMessage(msg: Buffer, remoteInfo: RemoteInfo): Promise<void> {
         try {
             const messageType = PacketValidator.validateMessageType(msg);
 
@@ -45,9 +70,11 @@ export class Server {
             logger.logQuery(question.name, remoteInfo);
 
             await this.validateRequest(question.name);
-            this.dauRecorder.recordAccess(question.name).catch((err) => {
-                logger.error(`DAU recording failed for ${question.name}: ${err.message}`);
-            });
+
+            const route = await this.resolveRoute(question.name);
+            if (!route.isValid) {
+                throw new Error('Invalid domain name');
+            }
 
             const response = new DNSResponseBuilder(this.config, query)
                 .addAnswer(RESPONSE_CODE.NOERROR, question)
@@ -136,6 +163,7 @@ export class Server {
     }
 
     public stop(): void {
+        this.healthCheckService.stopHealthCheck();
         this.server.close();
     }
 }

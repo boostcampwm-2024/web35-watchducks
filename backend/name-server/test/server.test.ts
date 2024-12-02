@@ -1,11 +1,23 @@
 import * as dgram from 'dgram';
-import type { Packet } from 'dns-packet';
+import type { DecodedPacket, Packet } from 'dns-packet';
 import { encode, decode } from 'dns-packet';
 import { Server } from '../src/server/server';
 import type { ServerConfig } from '../src/common/utils/validator/configuration.validator';
 import { NORMAL_PACKET, NOT_EXIST_DOMAIN_PACKET } from './constant/packet';
-import { DAURecorder } from '../src/database/query/dau-recorder';
 import { TestProjectQuery } from './database/test-project.query';
+
+interface ARecord {
+    type: 'A';
+    name: string;
+    class: 'IN';
+    ttl: number;
+    data: string;
+}
+
+interface DNSResponse extends DecodedPacket {
+    rcode: unknown;
+    answers: ARecord[];
+}
 
 describe('DNS 서버는 ', () => {
     let server: Server;
@@ -17,6 +29,7 @@ describe('DNS 서버는 ', () => {
     const TEST_TTL = 86400;
     const TEST_AUTHORITATIVE_NAME_SERVERS = ['ns1.test-ns.com', 'ns2.test-ns.com'];
     const TEST_NAME_SERVER_IP = '192.0.0.1';
+    const TEST_PROXY_HEALTH_CHECK_ENDPOINT = '/health-check';
 
     const config: ServerConfig = {
         proxyServerIp: TEST_PROXY_SERVER_IP,
@@ -24,29 +37,32 @@ describe('DNS 서버는 ', () => {
         ttl: TEST_TTL,
         authoritativeNameServers: TEST_AUTHORITATIVE_NAME_SERVERS,
         nameServerIp: TEST_NAME_SERVER_IP,
-    } as unknown as ServerConfig;
+        proxyHealthCheckEndpoint: TEST_PROXY_HEALTH_CHECK_ENDPOINT,
+    };
 
     beforeAll(async () => {
         client = dgram.createSocket('udp4');
 
-        server = new Server(config, new DAURecorder(), new TestProjectQuery());
+        server = new Server(config, new TestProjectQuery());
         server.start();
 
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
     });
 
-    afterAll(() => {
-        server.stop();
-        client.close();
+    afterAll(async () => {
+        await new Promise<void>((resolve) => {
+            server.stop();
+            client.close(() => resolve());
+        })
     });
 
-    const sendQuery = (packet: Packet): Promise<any> => {
+    const sendQuery = (packet: Packet): Promise<DNSResponse> => {
         return new Promise((resolve, reject) => {
             const queryBuffer = encode(packet);
 
             client.once('message', (msg) => {
                 try {
-                    const response = decode(msg);
+                    const response = decode(msg) as DNSResponse;
                     resolve(response);
                 } catch (error) {
                     reject(error);
