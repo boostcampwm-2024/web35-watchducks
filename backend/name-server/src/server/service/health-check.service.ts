@@ -1,4 +1,5 @@
-import * as http from 'http';
+import * as https from 'https';
+import type * as http from 'http';
 import { logger } from '../../common/utils/logger/console.logger';
 
 export class HealthCheckService {
@@ -46,17 +47,17 @@ export class HealthCheckService {
         logger.error(message, error);
     }
 
-    private createRequestOptions(): http.RequestOptions {
+    private createRequestOptions(): https.RequestOptions {
         return {
             hostname: this.proxyServerIp,
             port: 443,
             path: this.proxyHealthCheckEndpoint,
             method: 'GET',
-            timeout: this.timeoutMs
+            timeout: this.timeoutMs,
         };
     }
 
-    private handleResponse(res: http.IncomingMessage): void {
+    private handleResponse(res: http.IncomingMessage): void {  // http.IncomingMessage 사용
         let data = '';
         const timeoutId = setTimeout(() => {
             this.proxyServerHealthy = false;
@@ -64,9 +65,9 @@ export class HealthCheckService {
             logger.error('Response reading timeout');
         }, this.timeoutMs);
 
-        res.on('data', chunk => data += chunk);
+        res.on('data', (chunk: Buffer | string) => data += chunk);
 
-        res.on('error', error => {
+        res.on('error', (error: Error) => {
             clearTimeout(timeoutId);
             this.handleHealthCheckFailure(error, 'Error reading response:');
         });
@@ -88,12 +89,12 @@ export class HealthCheckService {
         this.cleanActiveRequest();
 
         try {
-            this.activeRequest = http.request(
+            this.activeRequest = https.request(
                 this.createRequestOptions(),
                 this.handleResponse.bind(this)
             );
 
-            this.activeRequest.on('error', error =>
+            this.activeRequest.on('error', (error: Error) =>
                 this.handleHealthCheckFailure(error, 'Proxy server health check failed:')
             );
 
