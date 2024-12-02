@@ -75,9 +75,9 @@ describe('RankService', () => {
                 expect(result.total).toBe(mockRankResults.length);
                 expect(result.rank).toHaveLength(mockRankResults.length);
                 expect(result.rank[0].projectName).toBe('Project 1');
-                expect(result.rank[0].successRate).toBe(90);
+                expect(result.rank[0].value).toBe(90);
                 expect(result.rank[1].projectName).toBe('Project 2');
-                expect(result.rank[1].successRate).toBe(80);
+                expect(result.rank[1].value).toBe(80);
             });
 
             it('프로젝트 정보가 없는 경우 Unknown으로 표시해야 한다', async () => {
@@ -121,9 +121,9 @@ describe('RankService', () => {
                 mockProjectRepository.find.mockResolvedValue(mockProjects);
 
                 const result = await service.getElapsedTimeRank(mockDto);
-                expect(result.rank[0].elapsedTime).toBe(100);
+                expect(result.rank[0].value).toBe(100);
                 expect(result.rank[1].projectName).toBe('Project 2');
-                expect(result.rank[1].elapsedTime).toBe(150);
+                expect(result.rank[1].value).toBe(150);
             });
 
             it('프로젝트 정보가 없는 경우 Unknown으로 표시해야 한다', async () => {
@@ -184,7 +184,7 @@ describe('RankService', () => {
                 expect(result.total).toBe(mockRankResults.length);
                 expect(result.rank).toHaveLength(mockRankResults.length);
                 result.rank.forEach((rankItem, index) => {
-                    expect(rankItem.dau).toBe(mockRankResults[index].dau);
+                    expect(rankItem.value).toBe(mockRankResults[index].dau);
                 });
             });
 
@@ -232,9 +232,9 @@ describe('RankService', () => {
                 mockProjectRepository.find.mockResolvedValue(mockProjects);
 
                 const result = await service.getTrafficRank(mockDto);
-                expect(result.rank[0].count).toBe(9999);
+                expect(result.rank[0].value).toBe(9999);
                 expect(result.rank[1].projectName).toBe('Project 2');
-                expect(result.rank[1].count).toBe(9090);
+                expect(result.rank[1].value).toBe(9090);
             });
 
             it('프로젝트 정보가 없는 경우 Unknown으로 표시해야 한다', async () => {

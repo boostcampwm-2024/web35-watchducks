@@ -3,10 +3,13 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { AnalyticsRepository } from './analytics.repository';
 import type { DauMetric } from './metric/dau.metric';
+import { TimeSeriesQueryBuilder } from '../../clickhouse/query-builder/time-series.query-builder';
+
+jest.mock('../../clickhouse/query-builder/time-series.query-builder');
 
 describe('AnalyticsRepository 테스트', () => {
     let repository: AnalyticsRepository;
-    let clickhouse: Clickhouse;
+    let _clickhouse: Clickhouse;
 
     const mockClickhouse = {
         query: jest.fn(),
@@ -24,10 +27,23 @@ describe('AnalyticsRepository 테스트', () => {
         }).compile();
 
         repository = module.get<AnalyticsRepository>(AnalyticsRepository);
-        clickhouse = module.get<Clickhouse>(Clickhouse);
+        _clickhouse = module.get<Clickhouse>(Clickhouse);
 
         jest.useFakeTimers();
         jest.setSystemTime(new Date('2024-11-26T00:00:00.000Z'));
+
+        (TimeSeriesQueryBuilder as jest.Mock).mockImplementation(() => ({
+            metrics: jest.fn().mockReturnThis(),
+            from: jest.fn().mockReturnThis(),
+            filter: jest.fn().mockReturnThis(),
+            timeBetween: jest.fn().mockReturnThis(),
+            groupBy: jest.fn().mockReturnThis(),
+            orderBy: jest.fn().mockReturnThis(),
+            build: jest.fn().mockReturnValue({
+                query: 'SELECT toDate(timestamp) as date, count(DISTINCT user_ip) as dau FROM http_log',
+                params: {},
+            }),
+        }));
     });
 
     afterEach(() => {
@@ -54,10 +70,13 @@ describe('AnalyticsRepository 테스트', () => {
             const result = await repository.findDAUsByProject(domain, start, end);
 
             expect(result).toEqual(mockResult);
-            expect(clickhouse.query).toHaveBeenCalledWith(
-                expect.any(String),
-                expect.objectContaining({ domain, startTime: start, endTime: end }),
-            );
+            const queryBuilder = (TimeSeriesQueryBuilder as jest.Mock).mock.results[0].value;
+            expect(queryBuilder.metrics).toHaveBeenCalledWith([
+                { name: 'toDate(timestamp) as date' },
+                { name: 'count(DISTINCT user_ip) as dau' },
+            ]);
+            expect(queryBuilder.filter).toHaveBeenCalledWith({ host: domain });
+            expect(queryBuilder.timeBetween).toHaveBeenCalledWith(start, end, 'date');
         });
 
         it('DAU 데이터가 없을 경우 빈 배열을 반환해야 한다.', async () => {
@@ -66,10 +85,9 @@ describe('AnalyticsRepository 테스트', () => {
             const result = await repository.findDAUsByProject(domain, start, end);
 
             expect(result).toEqual([]);
-            expect(clickhouse.query).toHaveBeenCalledWith(
-                expect.any(String),
-                expect.objectContaining({ domain, startTime: start, endTime: end }),
-            );
+            const queryBuilder = (TimeSeriesQueryBuilder as jest.Mock).mock.results[0].value;
+            expect(queryBuilder.filter).toHaveBeenCalledWith({ host: domain });
+            expect(queryBuilder.timeBetween).toHaveBeenCalledWith(start, end, 'date');
         });
 
         it('Clickhouse 호출 중 에러가 발생하면 예외를 throw 해야 한다.', async () => {
@@ -79,11 +97,9 @@ describe('AnalyticsRepository 테스트', () => {
             await expect(repository.findDAUsByProject(domain, start, end)).rejects.toThrow(
                 'Clickhouse query failed',
             );
-
-            expect(clickhouse.query).toHaveBeenCalledWith(
-                expect.any(String),
-                expect.objectContaining({ domain, startTime: start, endTime: end }),
-            );
+            const queryBuilder = (TimeSeriesQueryBuilder as jest.Mock).mock.results[0].value;
+            expect(queryBuilder.filter).toHaveBeenCalledWith({ host: domain });
+            expect(queryBuilder.timeBetween).toHaveBeenCalledWith(start, end, 'date');
         });
     });
 });
