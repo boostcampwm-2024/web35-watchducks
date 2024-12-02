@@ -5,6 +5,8 @@ import { Server } from '../src/server/server';
 import type { ServerConfig } from '../src/common/utils/validator/configuration.validator';
 import { NORMAL_PACKET, NOT_EXIST_DOMAIN_PACKET } from './constant/packet';
 import { TestProjectQuery } from './database/test-project.query';
+import { CacheQuery } from '../src/database/query/cache.query';
+import { TestCacheQuery } from './database/test-cache.query';
 
 interface ARecord {
     type: 'A';
@@ -29,11 +31,13 @@ describe('DNS 서버는 ', () => {
     const TEST_TTL = 86400;
     const TEST_AUTHORITATIVE_NAME_SERVERS = ['ns1.test-ns.com', 'ns2.test-ns.com'];
     const TEST_NAME_SERVER_IP = '192.0.0.1';
+    const TEST_HEALTH_CHECK_IP = '192.0.0.2';
     const TEST_PROXY_HEALTH_CHECK_ENDPOINT = '/health-check';
 
     const config: ServerConfig = {
-        proxyServerIp: TEST_PROXY_SERVER_IP,
         nameServerPort: TEST_PORT,
+        proxyServerIp: TEST_PROXY_SERVER_IP,
+        healthCheckIp: TEST_HEALTH_CHECK_IP,
         ttl: TEST_TTL,
         authoritativeNameServers: TEST_AUTHORITATIVE_NAME_SERVERS,
         nameServerIp: TEST_NAME_SERVER_IP,
@@ -43,7 +47,7 @@ describe('DNS 서버는 ', () => {
     beforeAll(async () => {
         client = dgram.createSocket('udp4');
 
-        server = new Server(config, new TestProjectQuery());
+        server = new Server(config, new TestProjectQuery(), new TestCacheQuery());
         server.start();
 
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -53,7 +57,7 @@ describe('DNS 서버는 ', () => {
         await new Promise<void>((resolve) => {
             server.stop();
             client.close(() => resolve());
-        })
+        });
     });
 
     const sendQuery = (packet: Packet): Promise<DNSResponse> => {
