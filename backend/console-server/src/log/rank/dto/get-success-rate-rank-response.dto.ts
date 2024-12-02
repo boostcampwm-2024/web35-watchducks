@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { IsNumber, IsString } from 'class-validator';
 
 export class SuccessRateRank {
@@ -7,8 +7,9 @@ export class SuccessRateRank {
     projectName: string;
 
     @Type(() => Number)
+    @Transform(({ value }) => Math.floor(value))
     @IsNumber()
-    successRate: number;
+    value: number;
 }
 
 export class GetSuccessRateRankResponseDto {
@@ -24,15 +25,15 @@ export class GetSuccessRateRankResponseDto {
         example: [
             {
                 projectName: 'test059',
-                successRate: 98.23100936524453,
+                value: 98,
             },
             {
                 projectName: 'test007',
-                successRate: 98.1094527363184,
+                value: 98,
             },
             {
                 projectName: 'test079',
-                successRate: 98.0083857442348,
+                value: 98,
             },
         ],
     })

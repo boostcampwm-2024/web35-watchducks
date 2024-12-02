@@ -8,6 +8,7 @@ import type { GetSuccessRateRankResponseDto } from './dto/get-success-rate-rank-
 import type { GetTrafficRankDto } from './dto/get-traffic-rank.dto';
 import type { GetTrafficRankResponseDto } from './dto/get-traffic-rank-response.dto';
 import type { GetElapsedTimeRankDto } from './dto/get-elapsed-time-rank.dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('RankController', () => {
     let controller: RankController;
@@ -19,6 +20,11 @@ describe('RankController', () => {
         getDAURank: jest.fn(),
         getTrafficRank: jest.fn(),
     };
+    const mockCacheManager = {
+        get: jest.fn(),
+        set: jest.fn(),
+        del: jest.fn(),
+    };
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -27,6 +33,10 @@ describe('RankController', () => {
                 {
                     provide: RankService,
                     useValue: mockRankService,
+                },
+                {
+                    provide: CACHE_MANAGER,
+                    useValue: mockCacheManager,
                 },
             ],
         }).compile();
@@ -54,11 +64,11 @@ describe('RankController', () => {
                     rank: [
                         {
                             projectName: 'watchducks001',
-                            successRate: 98.5,
+                            value: 98.5,
                         },
                         {
                             projectName: 'watchducks002',
-                            successRate: 97.2,
+                            value: 97.2,
                         },
                     ],
                 };
@@ -136,11 +146,11 @@ describe('RankController', () => {
                     rank: [
                         {
                             projectName: 'watchducks001',
-                            count: 10000,
+                            value: 10000,
                         },
                         {
                             projectName: 'watchducks002',
-                            count: 9998,
+                            value: 9998,
                         },
                     ],
                 };

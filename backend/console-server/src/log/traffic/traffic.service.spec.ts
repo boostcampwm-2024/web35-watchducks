@@ -40,7 +40,7 @@ describe('TrafficService 테스트', () => {
                 },
                 {
                     provide: getRepositoryToken(Project),
-                    useValue: { findOne: jest.fn() },
+                    useValue: { find: jest.fn(), findOne: jest.fn() },
                 },
             ],
         }).compile();
@@ -57,37 +57,82 @@ describe('TrafficService 테스트', () => {
 
     describe('trafficRank()는 ', () => {
         it('top 5 traffic rank를 리턴할 수 있어야 한다.', async () => {
+            const projectRepository = service['projectRepository'];
             const mockRanks = [
-                { host: 'api1.example.com', count: 1000 },
-                { host: 'api2.example.com', count: 800 },
-                { host: 'api3.example.com', count: 600 },
-                { host: 'api4.example.com', count: 400 },
-                { host: 'api5.example.com', count: 200 },
+                { host: 'example1.com', count: 1000 },
+                { host: 'example2.com', count: 800 },
+                { host: 'example3.com', count: 600 },
+                { host: 'example4.com', count: 400 },
+                { host: 'example5.com', count: 200 },
             ];
+            const mockProject = [
+                {
+                    name: 'example1',
+                    domain: 'example1.com',
+                },
+                {
+                    name: 'example2',
+                    domain: 'example2.com',
+                },
+                {
+                    name: 'example3',
+                    domain: 'example3.com',
+                },
+                {
+                    name: 'example4',
+                    domain: 'example4.com',
+                },
+                {
+                    name: 'example5',
+                    domain: 'example5.com',
+                },
+            ];
+            projectRepository.find = jest.fn().mockResolvedValue(mockProject);
             mockTrafficRepository.findTop5CountByHost.mockResolvedValue(mockRanks);
 
             const result = await service.getTrafficTop5(
                 plainToInstance(GetTrafficTop5Dto, { generation: 9 }),
             );
 
-            expect(result).toHaveLength(5);
-            expect(result).toEqual(mockRanks.slice(0, 5));
+            expect(result.rank).toHaveLength(5);
+            expect(result.rank).toEqual([
+                { projectName: 'example1', count: 1000 },
+                { projectName: 'example2', count: 800 },
+                { projectName: 'example3', count: 600 },
+                { projectName: 'example4', count: 400 },
+                { projectName: 'example5', count: 200 },
+            ]);
             expect(repository.findTop5CountByHost).toHaveBeenCalled();
         });
 
         it('5개 이하의 결과에 대해서 올바르게 처리할 수 있어야 한다.', async () => {
+            const projectRepository = service['projectRepository'];
             const mockRanks = [
-                { host: 'api1.example.com', count: 1000 },
-                { host: 'api2.example.com', count: 800 },
+                { host: 'example1.com', count: 1000 },
+                { host: 'example2.com', count: 800 },
             ];
+            const mockProject = [
+                {
+                    name: 'example1',
+                    domain: 'example1.com',
+                },
+                {
+                    name: 'example2',
+                    domain: 'example2.com',
+                },
+            ];
+            projectRepository.find = jest.fn().mockResolvedValue(mockProject);
             mockTrafficRepository.findTop5CountByHost.mockResolvedValue(mockRanks);
 
             const result = await service.getTrafficTop5(
                 plainToInstance(GetTrafficTop5Dto, { generation: 9 }),
             );
 
-            expect(result).toHaveLength(2);
-            expect(result).toEqual(mockRanks);
+            expect(result.rank).toHaveLength(2);
+            expect(result.rank).toEqual([
+                { projectName: 'example1', count: 1000 },
+                { projectName: 'example2', count: 800 },
+            ]);
         });
     });
 
