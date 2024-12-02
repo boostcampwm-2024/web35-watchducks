@@ -4,16 +4,19 @@ export default function useIsMobile(breakpoint: number = 768) {
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   useEffect(() => {
-    const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < breakpoint);
+    const mediaQuery = `(max-width: ${breakpoint}px)`;
+
+    const mediaQueryList = window.matchMedia(mediaQuery);
+    setIsMobile(mediaQueryList.matches);
+
+    const handleChange = (event: MediaQueryListEvent) => {
+      setIsMobile(event.matches);
     };
 
-    checkScreenSize();
-
-    window.addEventListener('resize', checkScreenSize);
+    mediaQueryList.addEventListener('change', handleChange);
 
     return () => {
-      window.removeEventListener('resize', checkScreenSize);
+      mediaQueryList.removeEventListener('change', handleChange);
     };
   }, [breakpoint]);
 
