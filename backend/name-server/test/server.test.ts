@@ -4,7 +4,6 @@ import { encode, decode } from 'dns-packet';
 import { Server } from '../src/server/server';
 import type { ServerConfig } from '../src/common/utils/validator/configuration.validator';
 import { NORMAL_PACKET, NOT_EXIST_DOMAIN_PACKET } from './constant/packet';
-import { DAURecorder } from '../src/database/query/dau-recorder';
 import { TestProjectQuery } from './database/test-project.query';
 
 describe('DNS 서버는 ', () => {
@@ -29,7 +28,7 @@ describe('DNS 서버는 ', () => {
     beforeAll(async () => {
         client = dgram.createSocket('udp4');
 
-        server = new Server(config, new DAURecorder(), new TestProjectQuery());
+        server = new Server(config, new TestProjectQuery());
         server.start();
 
         await new Promise((resolve) => setTimeout(resolve, 100));

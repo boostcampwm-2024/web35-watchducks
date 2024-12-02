@@ -9,7 +9,6 @@ import { RESPONSE_CODE } from './constant/dns-packet.constant';
 import { logger } from '../common/utils/logger/console.logger';
 import { ServerError } from './error/server.error';
 import type { ProjectQueryInterface } from 'database/query/project.query.interface';
-import type { DAURecorderInterface } from 'database/query/dau-recorder';
 import { MESSAGE_TYPE } from '../server/constant/message-type.constants';
 
 export class Server {
@@ -17,7 +16,6 @@ export class Server {
 
     constructor(
         private readonly config: ServerConfig,
-        private readonly dauRecorder: DAURecorderInterface,
         private readonly projectQuery: ProjectQueryInterface,
     ) {
         this.server = createSocket('udp4');
@@ -45,9 +43,6 @@ export class Server {
             logger.logQuery(question.name, remoteInfo);
 
             await this.validateRequest(question.name);
-            this.dauRecorder.recordAccess(question.name).catch((err) => {
-                logger.error(`DAU recording failed for ${question.name}: ${err.message}`);
-            });
 
             const response = new DNSResponseBuilder(this.config, query)
                 .addAnswer(RESPONSE_CODE.NOERROR, question)
