@@ -35,11 +35,9 @@
     "ts-jest": "^29.2.5",
     "tsc-alias": "^1.8.10",
     "tsx": "^4.19.2",
-    "tsyringe": "^4.8.0",
     "typescript": "^5.6.3"
   },
   "dependencies": {
-    "tsyringe": "^4.8.0",
     "@clickhouse/client": "^1.8.0",
     "@fastify/reply-from": "^11.0.1",
     "@types/supertest": "^6.0.2",
@@ -49,6 +47,7 @@
     "mysql2": "^3.11.4",
     "redis": "^4.7.0",
     "reflect-metadata": "^0.2.2",
-    "supertest": "^7.0.0"
+    "supertest": "^7.0.0",
+    "tsyringe": "^4.8.0"
   }
 }
