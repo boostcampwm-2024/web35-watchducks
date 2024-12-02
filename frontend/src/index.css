@@ -8,6 +8,14 @@ body {
   height: 100%;
 }
 
+body {
+  @apply bg-[#fcfcfc] dark:bg-[#00142B];
+}
+
+.apexcharts-menu-item {
+  color: black;
+}
+
 .apexcharts-xaxistooltip {
   display: none !important;
 }
