@@ -44,6 +44,10 @@ export class Server {
 
     private async resolveRoute(domainName: string): Promise<ResolvedRoute> {
         try {
+            if (this.healthCheckService.isProxyHealthy()) {
+                return { targetIp: this.config.proxyServerIp, isValid: true };
+            }
+
             let clientIp = await this.cacheQuery.findIpByDomain(domainName);
 
             if (!clientIp) {
@@ -55,11 +59,7 @@ export class Server {
                     );
             }
 
-            const targetIp = this.healthCheckService.isProxyHealthy()
-                ? this.config.proxyServerIp
-                : clientIp;
-
-            return { targetIp, isValid: true };
+            return { targetIp: clientIp, isValid: true };
         } catch (error) {
             logger.error('Failed to resolve route:', error);
             return { targetIp: '', isValid: false };
