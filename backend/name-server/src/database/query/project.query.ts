@@ -7,7 +7,7 @@ interface ProjectExists extends RowDataPacket {
 }
 
 interface ProjectClientIp extends RowDataPacket {
-    client_ip: string;
+    ip: string;
 }
 
 export class ProjectQuery implements ProjectQueryInterface {
