@@ -1,5 +1,5 @@
 import type { ProjectRepository } from 'domain/port/output/project.repository';
-import { buildTargetUrl, validateHost, validateIp } from 'domain/utils';
+import { buildTargetUrl, validateHost, validateIp } from 'domain/util/utils';
 import { ProxyError } from 'common/core/proxy.error';
 import { DatabaseQueryError } from 'common/error/database-query.error';
 import type { ProjectCacheRepository } from 'domain/port/output/project-cache.repository';

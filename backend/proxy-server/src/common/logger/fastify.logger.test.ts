@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
-import { FastifyLogger } from '../../../src/common/logger/fastify.logger';
-import type { HttpLogEntity } from '../../../src/domain/log/http-log.entity';
+import type { HttpLogEntity } from 'domain/entity/http-log.entity';
+import type { Logger } from 'common/logger/createFastifyLogger';
+import { createFastifyLogger } from 'common/logger/createFastifyLogger';
 
 const mockFastifyInstance = {
     log: {
@@ -10,11 +11,11 @@ const mockFastifyInstance = {
 } as unknown as FastifyInstance;
 
 describe('FastifyLogger 테스트', () => {
-    let logger: FastifyLogger;
+    let logger: Logger;
 
     beforeEach(() => {
         jest.clearAllMocks();
-        logger = new FastifyLogger(mockFastifyInstance);
+        logger = createFastifyLogger(mockFastifyInstance);
     });
 
     describe('info()는 ', () => {
@@ -44,6 +45,7 @@ describe('FastifyLogger 테스트', () => {
             const errorLog = {
                 method: 'GET',
                 host: 'www.example.com',
+                path: '/test',
                 request: {
                     method: 'POST',
                     host: 'localhost',

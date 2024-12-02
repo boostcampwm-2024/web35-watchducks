@@ -6,6 +6,6 @@ export class LogService implements LogUseCase {
     constructor(private readonly logRepository: LogRepository) {}
 
     async saveHttpLog(log: HttpLogEntity): Promise<void> {
-        this.logRepository.insertHttpLog(log);
+        return this.logRepository.insertHttpLog(log);
     }
 }

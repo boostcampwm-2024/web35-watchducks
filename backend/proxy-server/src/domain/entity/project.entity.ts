@@ -1,4 +1,4 @@
-import type { ProjectRow } from '../../database/query/project.repository.mysql';
+import type { ProjectRow } from 'database/query/project.repository.mysql';
 
 type Project = ProjectRow;
 

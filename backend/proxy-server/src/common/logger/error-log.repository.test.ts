@@ -1,4 +1,4 @@
-import { ErrorLogRepository } from '../../../src/common/logger/error-log.repository';
+import { ErrorLogRepository } from './error-log.repository';
 import fs from 'fs';
 import path from 'path';
 
@@ -34,6 +34,7 @@ describe('ErrorLogRepository 테스트', () => {
             const errorLog = {
                 method: 'GET',
                 host: 'www.example.com',
+                path: '/test',
                 request: {
                     method: 'POST',
                     host: 'localhost',
@@ -64,6 +65,7 @@ describe('ErrorLogRepository 테스트', () => {
             const errorLog = {
                 method: 'GET',
                 host: 'www.example.com',
+                path: '/test',
                 request: {
                     method: 'POST',
                     host: 'localhost',

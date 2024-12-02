@@ -4,7 +4,7 @@ import { LogRepository } from 'domain/port/output/log.repository';
 import { HttpLogEntity } from 'domain/entity/http-log.entity';
 import { ClickHouseClient } from '@clickhouse/client';
 import { formatDateTime } from 'common/utils/date.util';
-import { LogBufferConfig } from 'domain/config/log-buffer.config';
+import { BufferConfig, logBufferConfig } from 'database/clickhouse/config/buffer.config';
 
 type HttpLogRecord = {
     method: string;
@@ -18,14 +18,14 @@ type HttpLogRecord = {
 
 export class LogRepositoryClickhouse implements LogRepository {
     private readonly clickhouse: ClickHouseClient;
-    private readonly config: LogBufferConfig;
+    private readonly config: BufferConfig;
     private logBuffer: HttpLogRecord[] = [];
     private flushTimer: NodeJS.Timeout | null = null;
     private isProcessing: boolean = false;
 
-    constructor(config: LogBufferConfig) {
+    constructor() {
         this.clickhouse = ClickhouseDatabase.getInstance();
-        this.config = config;
+        this.config = logBufferConfig;
         this.startFlushTimer();
     }
 
@@ -64,7 +64,7 @@ export class LogRepositoryClickhouse implements LogRepository {
         }
     }
 
-    public async insertHttpLog(log: HttpLogEntity): Promise<void> {
+    async insertHttpLog(log: HttpLogEntity): Promise<void> {
         const httpLogRecord: HttpLogRecord = {
             method: log.method,
             path: log.path || '',

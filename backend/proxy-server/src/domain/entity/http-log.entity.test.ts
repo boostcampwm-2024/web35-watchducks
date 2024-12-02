@@ -1,15 +1,21 @@
-import { HttpLogEntity } from '../../../src/domain/log/http-log.entity';
+import { HttpLogEntity } from 'domain/entity/http-log.entity';
+import type { HttpLogType } from 'domain/port/input/log.use-case';
 
 describe('HttpLogEntity 테스트', () => {
-    it('모든 속성을 가지고 인스턴스를 생성해야 한다.', () => {
-        const log = {
+    let log: HttpLogType;
+
+    beforeEach(() => {
+        log = {
             method: 'GET',
             host: 'api.example.com',
             path: '/users',
             statusCode: 200,
             responseTime: 100,
+            userIp: '127.0.0.1',
         };
+    });
 
+    it('모든 속성을 가지고 인스턴스를 생성해야 한다.', () => {
         const httpLogEntity = new HttpLogEntity(log);
 
         expect(httpLogEntity.method).toBe(log.method);
@@ -20,13 +26,7 @@ describe('HttpLogEntity 테스트', () => {
     });
 
     it('path 속성이 undefined인 경우에 올바르게 처리해야 한다.', () => {
-        const log = {
-            method: 'POST',
-            host: 'api.example.com',
-            path: undefined,
-            statusCode: 201,
-            responseTime: 150,
-        };
+        log.path = undefined;
 
         const httpLogEntity = new HttpLogEntity(log);
 

@@ -1,7 +1,7 @@
-import { LogService } from '../../../src/domain/log/log.service';
-import { HttpLogEntity } from '../../../src/domain/log/http-log.entity';
-import { DatabaseQueryError } from '../../../src/common/error/database-query.error';
-import { LogRepositoryClickhouse } from '../../../src/database/query/log.repository.clickhouse';
+import { LogService } from './log.service';
+import { HttpLogEntity } from '../entity/http-log.entity';
+import { DatabaseQueryError } from 'common/error/database-query.error';
+import { LogRepositoryClickhouse } from 'database/query/log.repository.clickhouse';
 
 describe('LogService 테스트', () => {
     let logService: LogService;
@@ -16,7 +16,6 @@ describe('LogService 테스트', () => {
         logService = new LogService(mockLogRepository);
     });
 
-
     const createTestLog = () =>
         new HttpLogEntity({
             method: 'GET',
@@ -24,6 +23,7 @@ describe('LogService 테스트', () => {
             path: '/users',
             statusCode: 200,
             responseTime: 100,
+            userIp: '127.0.0.1',
         });
 
     describe('saveHttpLog()는 ', () => {
@@ -41,7 +41,7 @@ describe('LogService 테스트', () => {
             const error = new DatabaseQueryError(new Error('DB connection failed'));
             mockLogRepository.insertHttpLog.mockRejectedValue(error);
 
-            await expect(logService.saveHttpLog(log)).rejects.toThrow(DatabaseQueryError);
+            expect(logService.saveHttpLog(log)).rejects.toThrow(DatabaseQueryError);
             expect(mockLogRepository.insertHttpLog).toHaveBeenCalledWith(log);
         });
     });

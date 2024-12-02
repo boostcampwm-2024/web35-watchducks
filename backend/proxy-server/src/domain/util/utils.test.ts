@@ -1,6 +1,6 @@
-import { validateHost, validateIp, buildTargetUrl } from '../../src/server/utils';
-import { MissingHostHeaderError } from '../../src/common/error/missing-host-header.error';
-import { DomainNotFoundError } from '../../src/common/error/domain-not-found.error';
+import { validateHost, validateIp, buildTargetUrl } from './utils';
+import { MissingHostHeaderError } from 'common/error/missing-host-header.error';
+import { DomainNotFoundError } from 'common/error/domain-not-found.error';
 
 describe('Utils 테스트', () => {
     describe('validateHost()는 ', () => {
@@ -24,7 +24,7 @@ describe('Utils 테스트', () => {
         });
 
         it('IP가 비어있는 경우, DomainNotFoundError를 던져야 한다.', () => {
-            expect(() => validateIp('', 'example.com')).toThrow(DomainNotFoundError);
+            expect(() => validateIp('example.com', '')).toThrow(DomainNotFoundError);
         });
 
         it('에러 메시지에 host를 포함해야 한다.', () => {
