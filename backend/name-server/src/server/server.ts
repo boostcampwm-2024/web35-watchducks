@@ -27,7 +27,7 @@ export class Server {
     ) {
         this.server = createSocket('udp4');
         this.healthCheckService = new HealthCheckService(
-            config.proxyServerIp,
+            config.healthCheckIp,
             config.proxyHealthCheckEndpoint
         )
         this.initializeServer();
