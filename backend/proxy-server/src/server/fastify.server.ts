@@ -9,13 +9,9 @@ import { listenConfig } from './config/server.configuration';
 import { logHandler } from 'server/handler/log.handler';
 import { proxyHandler } from 'server/handler/proxy.handler';
 import { healthCheck } from 'server/handler/health-check.handler';
-import { LogRepositoryClickhouse } from 'database/query/log.repository.clickhouse';
-import { LogService } from 'domain/service/log.service';
-import { LogAdapter } from 'server/adapter/log.adapter';
-import { ProjectRepositoryMysql } from 'database/query/project.repository.mysql';
-import { ProjectCacheRepositoryRedis } from 'database/query/project-cache.repository.redis';
-import { ProjectService } from 'domain/service/project.service';
-import { ProjectAdapter } from './adapter/project.adapter';
+import type { LogAdapter } from 'server/adapter/log.adapter';
+import type { ProjectAdapter } from './adapter/project.adapter';
+import { container, TOKENS } from 'common/container/container';
 
 interface FastifyServer {
     listen: () => Promise<{ server: FastifyInstance; logger: Logger }>;
@@ -88,9 +84,7 @@ const addPlugins = (server: FastifyInstance) => {
 };
 
 const addHooks = (server: FastifyInstance, logger: Logger) => {
-    const logRepository = new LogRepositoryClickhouse({ maxSize: 1000, flushIntervalSecond: 5 });
-    const logService = new LogService(logRepository);
-    const logAdapter = new LogAdapter(logService);
+    const logAdapter = container.resolve<LogAdapter>(TOKENS.LOG_ADAPTER);
 
     server.addHook('onResponse', async (request, reply) =>
         logHandler(request, reply, logger, logAdapter),
@@ -98,10 +92,7 @@ const addHooks = (server: FastifyInstance, logger: Logger) => {
 };
 
 const addRouters = (server: FastifyInstance) => {
-    const projectRepository = new ProjectRepositoryMysql();
-    const projectCacheRepository = new ProjectCacheRepositoryRedis();
-    const projectService = new ProjectService(projectRepository, projectCacheRepository);
-    const projectAdapter = new ProjectAdapter(projectService);
+    const projectAdapter = container.resolve<ProjectAdapter>(TOKENS.PROJECT_ADAPTER);
 
     server.get('/health-check', (request, reply) => healthCheck(request, reply));
 

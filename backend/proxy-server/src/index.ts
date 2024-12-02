@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { fastifyServer } from 'server/fastify.server';
 import type { FastifyInstance } from 'fastify';
 import type { Logger } from 'common/logger/createFastifyLogger';
