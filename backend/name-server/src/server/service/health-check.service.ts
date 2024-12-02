@@ -57,7 +57,7 @@ export class HealthCheckService {
         };
     }
 
-    private handleResponse(res: http.IncomingMessage): void {  // http.IncomingMessage 사용
+    private handleResponse(res: http.IncomingMessage): void {
         let data = '';
         const timeoutId = setTimeout(() => {
             this.proxyServerHealthy = false;
