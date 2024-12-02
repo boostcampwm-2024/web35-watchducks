@@ -2,7 +2,7 @@ import Select from '@component/atom/Select';
 import { GENERATION_OPTION } from '@constant/NavbarSelect';
 import { PATH } from '@constant/Path';
 import useNavbarStore from '@store/NavbarStore';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 type Props = {
   groupOption: Array<{ label: string; value: string }>;
@@ -12,6 +12,11 @@ export default function NavbarSelect({ groupOption }: Props) {
   const { generation, selectedGroup, setGeneration, setSelectedGroup } = useNavbarStore();
   const { pathname } = useLocation();
   const isProjectPath = pathname.includes(PATH.PROJECT);
+  const navigate = useNavigate();
+  const handleSelect = (value: string) => {
+    setSelectedGroup(value);
+    navigate(PATH.PROJECT + '/' + value);
+  };
 
   return (
     <div className='flex w-full min-w-0 items-center justify-between rounded-1.5 border-1.5 border-solid border-gray p-4 md:gap-[4px] md:p-8'>
@@ -27,7 +32,7 @@ export default function NavbarSelect({ groupOption }: Props) {
         cssOption='text-12 md:text-14 md:px-2 text-ellipsis cursor-pointer text-gray hover:font-semibold truncate flex-1'
         options={groupOption}
         value={selectedGroup}
-        onChange={setSelectedGroup}
+        onChange={handleSelect}
       />
     </div>
   );
