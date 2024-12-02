@@ -27,7 +27,7 @@ export default function RankingItem({ data }: Props) {
 
     return absoluteIndex <= 2 ? (
       <div
-        className='flex w-full justify-between rounded-[4px] bg-[#3692EF]/[0.2] p-8 text-black dark:text-white'
+        className='flex w-full justify-between rounded-[4px] bg-[#3692EF]/[0.2] p-[8px] text-black dark:text-white'
         key={item.projectName}>
         <div className='flex items-center gap-4'>
           <div className='flex gap-4'>
@@ -45,12 +45,12 @@ export default function RankingItem({ data }: Props) {
         />
         <P
           content={item.value.toString()}
-          cssOption='w-[140px] mr-16 text-right text-[clamp(12px,1.5vw,14px)]'
+          cssOption='w-[140px] mr-[16px]16 text-right text-[clamp(12px,1.5vw,14px)]'
         />
       </div>
     ) : (
       <div
-        className='flex w-full justify-between rounded-[4px] bg-[#3692EF]/[0.2] p-8 text-black dark:text-white'
+        className='flex w-full justify-between rounded-[4px] bg-[#3692EF]/[0.2] p-[8px] text-black dark:text-white'
         key={item.projectName}>
         <div className='flex items-center gap-4'>
           <div className='flex gap-4'>
@@ -65,7 +65,7 @@ export default function RankingItem({ data }: Props) {
         />
         <P
           content={item.value.toString()}
-          cssOption='w-[140px] mr-16 text-right text-[clamp(12px,1.5vw,14px)]'
+          cssOption='w-[140px] mr-[16px]16 text-right text-[clamp(12px,1.5vw,14px)]'
         />
       </div>
     );
@@ -75,13 +75,13 @@ export default function RankingItem({ data }: Props) {
     <button
       key={pageNum}
       onClick={() => setCurrentPage(pageNum)}
-      className={`flex h-8 w-8 items-center justify-center rounded ${currentPage === pageNum ? 'text-dark dark:white' : 'text-gray hover:text-black dark:hover:text-white'} `}>
+      className={`flex h-[8px] w-[8px] items-center justify-center rounded ${currentPage === pageNum ? 'text-dark dark:white' : 'text-gray hover:text-black dark:hover:text-white'} `}>
       {pageNum}
     </button>
   );
 
   return (
-    <div className='flex w-full flex-col gap-8'>
+    <div className='flex w-full flex-col gap-[8px]'>
       {getPageItems().map((item, index) => renderRankingItem(item, index))}
 
       <div className='mt-4 flex items-center justify-center gap-2'>

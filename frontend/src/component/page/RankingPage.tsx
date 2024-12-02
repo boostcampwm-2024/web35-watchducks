@@ -6,7 +6,7 @@ export default function RankingPage() {
   const { generation } = useNavbarStore();
 
   return (
-    <div className='flex h-screen w-full flex-col gap-8 bg-lightgray p-16 dark:bg-lightblack'>
+    <div className='flex h-screen w-full flex-col gap-[8px] p-[16px]'>
       <CustomErrorBoundary>
         <RankingList generation={generation} />
       </CustomErrorBoundary>

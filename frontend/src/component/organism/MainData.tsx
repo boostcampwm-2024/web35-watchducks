@@ -22,16 +22,16 @@ export default function MainData({ generation }: Props) {
     : { symbol: '▼', color: 'text-red' };
 
   return (
-    <DataLayout cssOption='p-8 rounded-lg shadow-md w-full justify-center flex-col flex'>
-      <h2 className='text-navy mb-8 text-center text-2xl font-bold'>9기 Total Data</h2>
+    <DataLayout cssOption='p-[8px] rounded-lg shadow-md w-full justify-center flex-col flex'>
+      <h2 className='text-navy mb-[8px] text-center text-2xl font-bold'>9기 Total Data</h2>
 
-      <div className='mt-4 grid grid-cols-2 place-items-center gap-10'>
+      <div className='mt-4 grid grid-cols-2 place-items-center gap-[10px]'>
         <div className='flex flex-col items-center text-center'>
           <TextMotionDiv
             content={`${totalProjectCount}개`}
             cssOption='text-navy text-2xl font-bold'
           />
-          <p className='mt-2 text-sm text-gray-500'>등록된 프로젝트 수</p>
+          <p className='text-gray-500 mt-2 text-sm'>등록된 프로젝트 수</p>
         </div>
 
         <div className='flex flex-col items-center text-center'>
@@ -39,7 +39,7 @@ export default function MainData({ generation }: Props) {
             content={`${(totalTraffic / 1000000).toFixed(1)}M`}
             cssOption='text-navy text-2xl font-bold'
           />
-          <p className='mt-2 text-sm text-gray-500'>총 트래픽</p>
+          <p className='text-gray-500 mt-2 text-sm'>총 트래픽</p>
         </div>
 
         <div className='flex flex-col items-center text-center'>
@@ -47,7 +47,7 @@ export default function MainData({ generation }: Props) {
             content={elapsedTime?.toFixed(0) + 'ms'}
             cssOption='text-navy text-2xl font-bold'
           />
-          <p className='mt-2 text-sm text-gray-500'>평균 응답시간</p>
+          <p className='text-gray-500 mt-2 text-sm'>평균 응답시간</p>
         </div>
 
         <div className='flex flex-col items-center text-center'>
@@ -55,7 +55,7 @@ export default function MainData({ generation }: Props) {
             content={`+${Math.trunc(totalResponseRate)}%`}
             cssOption='text-navy text-2xl font-bold'
           />
-          <p className='mt-2 text-sm text-gray-500'>트래픽 응답 성공률</p>
+          <p className='text-gray-500 mt-2 text-sm'>트래픽 응답 성공률</p>
         </div>
       </div>
 

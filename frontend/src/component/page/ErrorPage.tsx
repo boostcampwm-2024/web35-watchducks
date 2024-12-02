@@ -42,7 +42,7 @@ export default function ErrorPage() {
         <NavigateButton
           path='/'
           content='Go To Main'
-          cssOption='text-white bg-blue px-8 py-3 rounded-md hover:bg-blue-600 transition-all duration-300 shadow-md hover:shadow-lg font-semibold mt-4 hover:text-black'
+          cssOption='text-white bg-blue px-[8px] py-3 rounded-md hover:bg-blue-600 transition-all duration-300 shadow-md hover:shadow-lg font-semibold mt-4 hover:text-black'
         />
       </div>
     </div>

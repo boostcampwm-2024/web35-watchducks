@@ -19,17 +19,17 @@ export default function NavbarSelect({ groupOption }: Props) {
   };
 
   return (
-    <div className='flex w-full min-w-0 items-center justify-between rounded-1.5 border-1.5 border-solid border-gray p-4 md:gap-[4px] md:p-8'>
+    <div className='flex w-full min-w-0 items-center justify-between rounded-[1.5px] border-[1.5px] border-solid border-gray p-4 md:gap-[4px] md:p-[8px]'>
       {isProjectPath && (
         <Select
-          cssOption='text-12 md:text-14 md:px-2 text-ellipsis cursor-pointer hover:font-semibold truncate dark:text-white'
+          cssOption='text-[12px] md:text-[14px] md:px-2 text-ellipsis cursor-pointer hover:font-semibold truncate dark:text-white'
           options={GENERATION_OPTION}
           value={generation}
           onChange={setGeneration}
         />
       )}
       <Select
-        cssOption='text-12 md:text-14 md:px-2 text-ellipsis cursor-pointer text-gray hover:font-semibold truncate flex-1'
+        cssOption='text-[12px] md:text-[14px] md:px-2 text-ellipsis cursor-pointer text-gray hover:font-semibold truncate flex-1'
         options={groupOption}
         value={selectedGroup}
         onChange={handleSelect}

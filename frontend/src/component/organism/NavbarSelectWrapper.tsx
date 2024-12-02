@@ -14,7 +14,7 @@ export default function NavbarSelectWrapper() {
   const duckAnimation = useDuckAnimation({ containerRef });
 
   return (
-    <div className='relative mt-8 w-full'>
+    <div className='relative mt-[8px] w-full'>
       <div ref={containerRef}>
         {!isProjectPath ? (
           <NavbarDefaultSelect />

@@ -3,10 +3,9 @@ import H1 from '@component/atom/H1';
 import H2 from '@component/atom/H2';
 import Select from '@component/atom/Select';
 import ValidateTextInput from '@component/molecule/ValidateTextInput';
+import { GENERATION_OPTION } from '@constant/NavbarSelect';
 import useRegisterForm from '@hook/useRegisterForm';
 import { useRef, useEffect } from 'react';
-
-import { GENERATION_OPTION } from '@/constant/NavbarSelect';
 
 type Props = {
   showAlert: (message: string) => void;
@@ -34,9 +33,12 @@ export default function RegisterForm({ showAlert }: Props) {
   }, []);
 
   return (
-    <div className='mx-auto flex w-full max-w-[600px] flex-col items-center gap-16 rounded-lg bg-white/25 p-6 shadow-[4px_9px_50px_-1px_rgba(0,0,0,0.25)] backdrop-blur-[30px] md:gap-24 md:rounded-31 md:p-50 dark:shadow-[4px_9px_50px_-1px_rgba(255,255,255,0.2)]'>
-      <H1 cssOption='text-blue font-bold text-24 md:text-50' content='Register' />
-      <H2 cssOption='text-gray text-18 md:text-24' content='그룹 프로젝트를 등록해 주세요' />
+    <div className='mx-6 mx-auto flex w-full max-w-[600px] flex-col items-center gap-[16px] rounded-lg bg-white/25 p-6 shadow-[4px_9px_50px_-1px_rgba(0,0,0,0.25)] backdrop-blur-[30px] dark:shadow-[4px_9px_50px_-1px_rgba(255,255,255,0.1)] md:gap-[24px] md:rounded-[31px] md:p-[50px]'>
+      <H1 cssOption='text-blue font-bold text-[24px] md:text-[50px]' content='Register' />
+      <H2
+        cssOption='text-gray text-[18px] md:text-[24px]'
+        content='그룹 프로젝트를 등록해 주세요'
+      />
 
       <ValidateTextInput
         ref={nameInputRef}
@@ -72,17 +74,17 @@ export default function RegisterForm({ showAlert }: Props) {
       />
 
       <Select
-        cssOption='w-full py-2 px-4 rounded-1.5 border border-gray'
+        cssOption='w-full py-2 px-4 rounded-[1.5px] border border-gray'
         options={GENERATION_OPTION}
         value={formData.generation}
         onChange={handleSelectChange('generation')}
       />
 
       <Button
-        cssOption={`bg-blue rounded-10 text-white
-                   text-16 md:text-24
-                   px-16 md:px-130
-                   py-8 md:py-15
+        cssOption={`bg-blue rounded-[10px] text-white
+                   text-16 md:text-[24px]
+                   px-[16px] md:px-[130px]
+                   py-[8px] md:py-[15px]
                    flex items-center justify-center whitespace-nowrap
                    hover:text-black
                    disabled:opacity-50

@@ -18,17 +18,16 @@ export default function NavbarLayout() {
 
   return (
     <div
-      className='relative'
+      className='relative h-screen w-[20%] rounded-[11px] bg-lightblue dark:bg-darkblue'
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}>
       <AnimatePresence>
         {isNavbarOpen && (
           <motion.div
             initial={{ width: 0, opacity: 0, x: -50 }}
-            animate={{ width: '300px', opacity: 1, x: 0 }}
+            animate={{ width: '100%', opacity: 1, x: 0 }}
             exit={{ width: 0, opacity: 0, x: -50 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className='border-gray-200 border-r'>
+            transition={{ duration: 0.3, ease: 'easeInOut' }}>
             <Navbar />
             {isHovered && (
               <motion.button

@@ -9,16 +9,19 @@ type MenuItem = {
   activeIcon: string;
   inactiveIcon: string;
 };
-type NavbarSelectProps = {
+
+type NavbarState = {
   generation: string;
   selectedGroup: string;
-  setGeneration: (value: string) => void;
-  setSelectedGroup: (value: string) => void;
-  groupOption?: GroupOption[];
+  isNavbarOpen: boolean;
+  setGeneration: (generation: string) => void;
+  setSelectedGroup: (group: string) => void;
+  toggleNavbar: (isOpen?: boolean) => void;
 };
+
 type Dimensions = {
   width: number;
   height: number;
 };
 
-export type { Generation, GroupOption, MenuItem, NavbarSelectProps, Dimensions };
+export type { Generation, GroupOption, MenuItem, NavbarState, Dimensions };

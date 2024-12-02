@@ -2,7 +2,6 @@ import DataLayout from '@component/template/DataLayout';
 import useProjectDAU from '@hook/api/useProjectDAU';
 import { ResponsiveTimeRange } from '@nivo/calendar';
 import { validateDAU } from '@util/Validate';
-import { useMemo } from 'react';
 
 type Props = {
   id: string;
@@ -10,24 +9,21 @@ type Props = {
 
 export default function ProjectDAU({ id }: Props) {
   const { data } = useProjectDAU(id);
+  const today = new Date();
+  const thirtyDaysAgo = new Date(today);
+  thirtyDaysAgo.setDate(today.getDate() - 30);
 
-  const series = useMemo(() => {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    return data.dauRecords
-      .filter(({ date }) => new Date(date) >= thirtyDaysAgo)
-      .map(({ date, dau }) => ({
-        day: date,
-        value: dau
-      }));
-  }, [data]);
-
+  const series = data.dauRecords
+    .filter(({ date }) => new Date(date) >= thirtyDaysAgo)
+    .map(({ date, dau }) => ({
+      day: date,
+      value: dau
+    }));
 
   if (validateDAU(data)) {
     return (
-      <DataLayout cssOption='flex flex-col items-center justify-center p-8 rounded-lg shadow-md w-full bg-white h-full'>
-        <div className='mb-8 text-center'>
+      <DataLayout cssOption='flex flex-col items-center justify-center p-[8px] rounded-lg shadow-md w-full bg-white h-full'>
+        <div className='mb-[8px] text-center'>
           <h2 className='text-navy text-2xl font-bold'>DAU</h2>
         </div>
         <div className='text-gray-500 flex w-full flex-1 items-center justify-center text-center'>
@@ -37,25 +33,21 @@ export default function ProjectDAU({ id }: Props) {
     );
   }
 
-  const today = new Date();
-  const thirtyDaysAgo = new Date(today);
-  thirtyDaysAgo.setDate(today.getDate() - 30);
-
   return (
-    <DataLayout cssOption='flex flex-col items-center justify-center p-8 rounded-lg shadow-md w-full bg-white h-full'>
-      <div className='mb-8 text-center'>
-        <h2 className='text-navy text-2xl font-bold'>DAU</h2>
+    <DataLayout cssOption='flex flex-col items-center justify-center p-[8px] rounded-lg shadow-md w-full bg-white h-full'>
+      <div className='mb-[8px] text-center'>
+        <h2 className='text-navy text-[1.5vw] font-bold'>DAU</h2>
       </div>
-      <div className='h-full w-full'>
+      <div className='flex h-[90%] w-[100%] items-center'>
         <ResponsiveTimeRange
           data={series}
           from={thirtyDaysAgo}
           to={today}
           colors={['#ebedf0', '#40c463', '#30a14e', '#216e39']}
-          margin={{ top: 20, right: 40, bottom: 20, left: 40 }}
           dayBorderWidth={2}
           dayBorderColor='#ffffff'
           weekdayTicks={[]}
+          margin={{ top: 20, bottom: 100 }}
           tooltip={({ day, value }) => (
             <div
               style={{
@@ -68,6 +60,13 @@ export default function ProjectDAU({ id }: Props) {
               {new Date(day).toLocaleDateString('ko-KR')}: {value.toLocaleString()}명
             </div>
           )}
+          theme={{
+            labels: {
+              text: {
+                fill: '#9CA3AF'
+              }
+            }
+          }}
         />
       </div>
     </DataLayout>

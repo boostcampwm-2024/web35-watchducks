@@ -61,8 +61,8 @@ export default function NavbarRanking() {
   };
 
   return (
-    <div className='mt-8 rounded-10 border-1.5 border-solid border-gray p-4'>
-      <P cssOption='text-12 mb-1 font-bold dark:text-white' content='TRAFFIC RANKING' />
+    <div className='mt-[8px] rounded-[10px] border-[1.5px] border-solid border-gray p-4'>
+      <P cssOption='text-[0.9vw] mb-1 font-bold dark:text-white' content='TRAFFIC RANKING' />
       {data.rank.map((item, index) => renderRankingItem(item, index))}
     </div>
   );
