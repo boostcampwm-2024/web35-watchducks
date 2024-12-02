@@ -7,19 +7,21 @@ export interface ServerConfig {
     ttl: number;
     authoritativeNameServers: string[];
     nameServerIp: string;
+    proxyHealthCheckEndpoint: string;
 }
 
 export class ConfigurationValidator {
     static validate(): ServerConfig {
         const { PROXY_SERVER_IP, NAME_SERVER_PORT } = process.env;
-        const { TTL, AUTHORITATIVE_NAME_SERVERS, NAME_SERVER_IP } = process.env;
+        const { TTL, AUTHORITATIVE_NAME_SERVERS, NAME_SERVER_IP, PROXY_HEALTH_CHECK_ENDPOINT } = process.env;
 
         if (
             !PROXY_SERVER_IP ||
             !NAME_SERVER_PORT ||
             !TTL ||
             !AUTHORITATIVE_NAME_SERVERS ||
-            !NAME_SERVER_IP
+            !NAME_SERVER_IP ||
+            !PROXY_HEALTH_CHECK_ENDPOINT
         ) {
             throw new ConfigurationError('Missing required environment variables');
         }
@@ -30,6 +32,7 @@ export class ConfigurationValidator {
             ttl: parseInt(TTL, 10),
             authoritativeNameServers: AUTHORITATIVE_NAME_SERVERS.split(',').map((s) => s.trim()),
             nameServerIp: NAME_SERVER_IP,
+            proxyHealthCheckEndpoint: PROXY_HEALTH_CHECK_ENDPOINT
         };
     }
 }
