@@ -1,4 +1,4 @@
-import { ClickHouseClientConfigOptions } from '@clickhouse/client';
+import type { ClickHouseClientConfigOptions } from '@clickhouse/client';
 
 export const clickhouseConfig: ClickHouseClientConfigOptions =
     process.env.NODE_ENV === 'development'

@@ -10,7 +10,7 @@ export class HealthCheckService {
         private readonly proxyServerIp: string,
         private readonly proxyHealthCheckEndpoint: string,
         private readonly healthCheckIntervalMs: number = 5000,
-        private readonly timeoutMs: number = 3000
+        private readonly timeoutMs: number = 5000
     ) {}
 
     public isProxyHealthy(): boolean {
@@ -55,18 +55,15 @@ export class HealthCheckService {
 
         try {
             this.activeRequest = http.request(options, (res) => {
-                let data = '';
-                let timeoutId: NodeJS.Timeout;
-
-                // 응답 읽기 타임아웃 설정
-                timeoutId = setTimeout(() => {
+                let _data = '';
+                const timeoutId = setTimeout(() => {
                     this.proxyServerHealthy = false;
                     res.destroy();
                     logger.error('Response reading timeout');
                 }, this.timeoutMs);
 
                 res.on('data', (chunk) => {
-                    data += chunk;
+                    _data += chunk;
                 });
 
                 res.on('error', (error) => {
