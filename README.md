@@ -29,18 +29,17 @@
   * [🙇 팀원소개](#-팀원소개)
 
 
-## 🚀 주요 기능
+## 🚀 사용 방법
 
 ### 1. 프로젝트 등록
-![image](https://github.com/user-attachments/assets/121ec705-edda-437f-8b4c-24b3f60f9b56)
+<img width="1624" alt="Screenshot 2024-12-02 at 5 50 54 PM" src="https://github.com/user-attachments/assets/30eb60a9-92aa-4282-8361-d4224361ae7f">
 - 프로젝트 정보를 작성해 등록합니다.
 - 중복된 도메인은 작성할 수 없습니다.
 - 유효성 검사 후, 사용자에게 왓치덕스의 네임서버 주소를 메일로 전송합니다.
 - 상용 DNS 서비스의 기본제공 네임서버를 ➡️ 왓치덕스가 제공한 네임서버로 변경합니다.
 
 ### 2. 기수별 전체 프로젝트 메트릭 확인
-![image](https://github.com/user-attachments/assets/0bb74460-4759-44ec-9dd8-641a704ac2da)
-- 랜딩페이지로, 다른 페이지와 마찬가지로 로그인이 필요없습니다.
+<img width="1624" alt="Screenshot 2024-12-02 at 5 54 32 PM" src="https://github.com/user-attachments/assets/a669aed5-3556-4920-a9e7-ace933034167">
 - 사이드바에서 기수를 선택할 수 있습니다.
 - 선택한 기수의 전체 프로젝트와 관련된 메트릭을 확인합니다.
     - 등록 프로젝트 수
@@ -52,7 +51,7 @@
     - Top5 트래픽
 
 ### 3. 개별 프로젝트 메트릭 확인
-![image](https://github.com/user-attachments/assets/0c66b2d0-28a4-43b9-bc78-3c91ba21bd5a)
+![image](https://github.com/user-attachments/assets/c9960482-05f6-4e30-9f8d-a52d44349c4b)
 - 사이드바에서 개별 프로젝트를 선택할 수 있습니다.
 - 선택한 프로젝트와 관련된 메트릭을 확인합니다.
     - 경로별(`/project`, `/login`, `...`) 응답 시간
@@ -62,7 +61,7 @@
     - 단위별(월/일/시간/분) 실시간 트래픽
 
 ### 4. 기수별 프로젝트 순위 확인
-![image](https://github.com/user-attachments/assets/27078073-e609-478a-875e-8223dc9e9ff0)
+<img width="1624" alt="Screenshot 2024-12-02 at 5 54 03 PM" src="https://github.com/user-attachments/assets/ec62ba84-513e-4703-88d1-3f84d35d90e2">
 - 사이드바에서 기수를 선택할 수 있습니다.
 - 선택한 기수의 등록된 프로젝트 관련 메트릭을 토대로 전체 순위를 표시합니다.
     - 총 트래픽, 요청 성공률, 평균 응답 시간, DAU를 선택해 기준으로 확인할 수 있습니다.
