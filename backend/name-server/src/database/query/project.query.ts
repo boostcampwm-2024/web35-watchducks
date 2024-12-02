@@ -37,6 +37,6 @@ export class ProjectQuery implements ProjectQueryInterface {
             throw new Error(`No client IP found for domain: ${domain}`);
         }
 
-        return rows[0].client_ip;
+        return rows[0].ip;
     }
 }
