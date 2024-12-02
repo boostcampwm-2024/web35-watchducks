@@ -4,7 +4,7 @@ import DataLayout from '@component/template/DataLayout';
 import { DATE_OPTIONS } from '@constant/Date';
 import useProjectTraffic from '@hook/api/useProjectTraffic';
 import { DateType } from '@type/Date';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 
 type Props = {
   id: string;
@@ -19,117 +19,109 @@ export default function ProjectTrafficChart({ id }: Props) {
     setDateType(type);
   };
 
-  const series = useMemo(
-    () => [
-      {
-        name: data.projectName || 'Unknown',
-        data: data.trafficData.map((item) => ({
-          x: new Date(item.timestamp),
-          y: Number(item.count)
-        }))
-      }
-    ],
-    [data]
-  );
+  const series = [
+    {
+      name: data.projectName || 'Unknown',
+      data: data.trafficData.map((item) => ({
+        x: new Date(item.timestamp),
+        y: Number(item.count)
+      }))
+    }
+  ];
 
-  const options: ApexCharts.ApexOptions = useMemo(() => {
-    const getXAxisFormatter = (type: DateType) => {
-      switch (type) {
-        case 'day':
-          return {
-            formatter: function (value: string, timestamp: number) {
-              if (!timestamp) return value;
-              const date = new Date(timestamp);
+  const getXAxisFormatter = (type: DateType) => {
+    switch (type) {
+      case 'day':
+        return {
+          formatter: function (value: string, timestamp: number) {
+            if (!timestamp) return value;
+            const date = new Date(timestamp);
+            return date.toLocaleString('ko-KR', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true
+            });
+          },
+          tickAmount: 24
+        };
+      case 'week':
+        return {
+          formatter: function (value: string, timestamp: number) {
+            if (!timestamp) return value;
+            const date = new Date(timestamp);
+            return date.toLocaleString('ko-KR', {
+              month: 'short',
+              day: 'numeric',
+              weekday: 'short'
+            });
+          },
+          tickAmount: 7
+        };
+      case 'month':
+        return {
+          formatter: function (value: string, timestamp: number) {
+            if (!timestamp) return value;
+            const date = new Date(timestamp);
+            return date.toLocaleString('ko-KR', {
+              month: 'short',
+              day: 'numeric'
+            });
+          },
+          tickAmount: 31
+        };
+    }
+  };
+
+  const xAxisConfig = getXAxisFormatter(dateType);
+
+  const options: ApexCharts.ApexOptions = {
+    xaxis: {
+      type: 'datetime',
+      ...xAxisConfig,
+      labels: {
+        style: {
+          colors: '#64748B',
+          fontSize: '12px'
+        },
+        ...xAxisConfig,
+        rotateAlways: false,
+        hideOverlappingLabels: true
+      }
+    },
+    yaxis: {
+      labels: {
+        style: {
+          colors: '#6B7280'
+        }
+      }
+    },
+    tooltip: {
+      x: {
+        formatter: function (val: number) {
+          const date = new Date(val);
+          switch (dateType) {
+            case 'day':
               return date.toLocaleString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: true
               });
-            },
-            tickAmount: 24
-          };
-        case 'week':
-          return {
-            formatter: function (value: string, timestamp: number) {
-              if (!timestamp) return value;
-              const date = new Date(timestamp);
+            case 'week':
+            case 'month':
               return date.toLocaleString('ko-KR', {
-                month: 'short',
+                year: 'numeric',
+                month: 'long',
                 day: 'numeric',
-                weekday: 'short'
+                weekday: 'long'
               });
-            },
-            tickAmount: 7
-          };
-        case 'month':
-          return {
-            formatter: function (value: string, timestamp: number) {
-              if (!timestamp) return value;
-              const date = new Date(timestamp);
-              return date.toLocaleString('ko-KR', {
-                month: 'short',
-                day: 'numeric'
-              });
-            },
-            tickAmount: 31
-          };
-      }
-    };
-
-    const xAxisConfig = getXAxisFormatter(dateType);
-
-    return {
-      xaxis: {
-        type: 'datetime',
-        ...xAxisConfig,
-        style: {
-          colors: '#6B7280'
-        },
-        labels: {
-          style: {
-            colors: '#64748B',
-            fontSize: '12px'
-          },
-          ...xAxisConfig,
-          rotateAlways: false,
-          hideOverlappingLabels: true
-        }
-      },
-      yaxis: {
-        labels: {
-          style: {
-            colors: '#6B7280'
-          }
-        }
-      },
-      tooltip: {
-        x: {
-          formatter: function (val: number) {
-            const date = new Date(val);
-            switch (dateType) {
-              case 'day':
-                return date.toLocaleString('ko-KR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  hour12: true
-                });
-              case 'week':
-              case 'month':
-                return date.toLocaleString('ko-KR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  weekday: 'long'
-                });
-            }
           }
         }
       }
-    };
-  }, [dateType]);
+    }
+  };
 
   if (data.trafficData.length === 0) {
     return (

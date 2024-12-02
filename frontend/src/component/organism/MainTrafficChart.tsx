@@ -3,7 +3,6 @@ import DataLayout from '@component/template/DataLayout';
 import { DAY_TO_MS_SECOND } from '@constant/Date';
 import useTop5Traffic from '@hook/api/useTop5Traffic';
 import { fillEmptySlots } from '@util/Time';
-import { useMemo } from 'react';
 
 type Props = {
   generation: string;
@@ -12,15 +11,13 @@ type Props = {
 export default function MainTrafficChart({ generation }: Props) {
   const { data } = useTop5Traffic(generation);
 
-  const series = useMemo(() => {
-    return data.trafficCharts.map((chart) => ({
-      name: chart.name || 'Unknown',
-      data: fillEmptySlots(chart.traffic).map(([timestamp, value]) => ({
-        x: new Date(timestamp),
-        y: Number(value)
-      }))
-    }));
-  }, [data]);
+  const series = data.trafficCharts.map((chart) => ({
+    name: chart.name || 'Unknown',
+    data: fillEmptySlots(chart.traffic).map(([timestamp, value]) => ({
+      x: new Date(timestamp),
+      y: Number(value)
+    }))
+  }));
 
   const options: ApexCharts.ApexOptions = {
     chart: {

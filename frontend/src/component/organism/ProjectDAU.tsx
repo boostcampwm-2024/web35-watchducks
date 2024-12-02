@@ -2,7 +2,6 @@ import DataLayout from '@component/template/DataLayout';
 import useProjectDAU from '@hook/api/useProjectDAU';
 import { ResponsiveTimeRange } from '@nivo/calendar';
 import { validateDAU } from '@util/Validate';
-import { useMemo } from 'react';
 
 type Props = {
   id: string;
@@ -10,18 +9,16 @@ type Props = {
 
 export default function ProjectDAU({ id }: Props) {
   const { data } = useProjectDAU(id);
+  const today = new Date();
+  const thirtyDaysAgo = new Date(today);
+  thirtyDaysAgo.setDate(today.getDate() - 30);
 
-  const series = useMemo(() => {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    return data.dauRecords
-      .filter(({ date }) => new Date(date) >= thirtyDaysAgo)
-      .map(({ date, dau }) => ({
-        day: date,
-        value: dau
-      }));
-  }, [data]);
+  const series = data.dauRecords
+    .filter(({ date }) => new Date(date) >= thirtyDaysAgo)
+    .map(({ date, dau }) => ({
+      day: date,
+      value: dau
+    }));
 
   if (validateDAU(data)) {
     return (
@@ -35,10 +32,6 @@ export default function ProjectDAU({ id }: Props) {
       </DataLayout>
     );
   }
-
-  const today = new Date();
-  const thirtyDaysAgo = new Date(today);
-  thirtyDaysAgo.setDate(today.getDate() - 30);
 
   return (
     <DataLayout cssOption='flex flex-col items-center justify-center p-[8px] rounded-lg shadow-md w-full bg-white h-full'>
