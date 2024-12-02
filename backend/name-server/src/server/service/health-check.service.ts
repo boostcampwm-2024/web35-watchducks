@@ -49,7 +49,7 @@ export class HealthCheckService {
     private createRequestOptions(): http.RequestOptions {
         return {
             hostname: this.proxyServerIp,
-            port: 80,
+            port: 443,
             path: this.proxyHealthCheckEndpoint,
             method: 'GET',
             timeout: this.timeoutMs
