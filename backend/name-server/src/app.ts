@@ -5,7 +5,6 @@ import { Server } from 'server/server';
 import { db } from 'database/mysql/mysql-database';
 import { logger } from 'common/utils/logger/console.logger';
 import { ProjectQuery } from 'database/query/project.query';
-import { DAURecorder } from 'database/query/dau-recorder';
 
 config();
 
@@ -16,10 +15,9 @@ export class Application {
         await this.initializeDatabase();
 
         const config = await this.initializeConfig();
-        const dauRecorder = new DAURecorder();
         const projectQuery = new ProjectQuery();
 
-        return new Server(config, dauRecorder, projectQuery);
+        return new Server(config, projectQuery);
     }
 
     public async cleanup(): Promise<void> {

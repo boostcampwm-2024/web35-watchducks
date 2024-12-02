@@ -10,8 +10,8 @@ describe('DNSResponseBuilder의', () => {
         ttl: 86400,
         authoritativeNameServers: ['ns1.test-ns.com', 'ns2.test-ns.com'],
         nameServerIp: '192.0.0.1',
+        proxyHealthCheckEndpoint: '/health-check',
     };
-
     const mockQuery: Packet = {
         type: 'query',
         id: 1234,

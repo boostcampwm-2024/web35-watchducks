@@ -30,7 +30,7 @@ export class TestDatabase {
         `);
     }
 
-    public async query<T>(sql: string, params: any[] = []): Promise<T> {
+    public async query<T>(sql: string, params: unknown[] = []): Promise<T> {
         try {
             const sqliteSql = this.convertToSqlite(sql);
 
