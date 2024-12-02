@@ -16,8 +16,8 @@ export default function ProjectElapsedTimeLegend({ averageTime }: Props) {
   return (
     <div className='flex flex-col items-center gap-4'>
       <div className='text-center'>
-        <H2 cssOption='text-navy mb-4 text-xl font-bold' content='TOP3 Average Response Speed' />
-        <div className='mb-4 text-2xl font-bold' style={{ color: getColorByTime(averageTime) }}>
+        <H2 cssOption='text-navy mb-4 text-[1vw] font-bold' content='TOP3 Average Response Speed' />
+        <div className='mb-4 text-[2vw] font-bold' style={{ color: getColorByTime(averageTime) }}>
           {averageTime || 0}ms
         </div>
       </div>

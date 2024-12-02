@@ -12,7 +12,7 @@ export default function NavbarMenu() {
     return (
       <Link to={item.path}>
         <div
-          className={`flex cursor-pointer items-center gap-4 md:gap-8 ${
+          className={`flex cursor-pointer items-center gap-4 md:gap-[8px] ${
             isActive
               ? 'dark:text-white dark:hover:text-white'
               : 'text-gray hover:text-black dark:hover:text-white'
@@ -22,15 +22,18 @@ export default function NavbarMenu() {
             alt={`${item.label} 아이콘`}
             cssOption='w-4 md:w-6'
           />
-          <P content={item.label} cssOption='text-12 md:text-14 whitespace-nowrap' />
+          <P content={item.label} cssOption='text-[1vw] trunacte' />
         </div>
       </Link>
     );
   }
 
   return (
-    <div className='flex flex-col gap-8 md:gap-16'>
-      <H1 cssOption='mt-8 text-14 md:text-16 whitespace-nowrap dark:text-white' content='MENU' />
+    <div className='flex flex-col gap-[8px] md:gap-[16px]'>
+      <H1
+        cssOption='mt-[8px] text-[14px] md:text-16 whitespace-nowrap dark:text-white'
+        content='MENU'
+      />
       {MENU_ITEMS.map((item) => (
         <MenuItem
           key={item.path}

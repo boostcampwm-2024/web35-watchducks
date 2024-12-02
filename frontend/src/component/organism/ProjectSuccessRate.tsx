@@ -59,9 +59,9 @@ export default function ProjectSuccessRate({ id }: Props) {
   };
 
   return (
-    <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full h-full'>
-      <div className='mb-8 text-center'>
-        <h2 className='text-navy text-2xl font-bold'>Request Success Rate</h2>
+    <DataLayout cssOption='flex flex-col p-[8px] rounded-lg shadow-md w-full h-full'>
+      <div className='mb-[8px] text-center'>
+        <h2 className='text-navy text-[1.5vw] font-bold'>Request Success Rate</h2>
       </div>
       <div className='w-full flex-1'>
         <PieChart options={options} series={series} />

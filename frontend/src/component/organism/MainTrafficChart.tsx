@@ -72,7 +72,8 @@ export default function MainTrafficChart({ generation }: Props) {
       title: {
         text: 'Traffic Count',
         style: {
-          color: '#64748B'
+          color: '#64748B',
+          fontSize: '12px'
         }
       },
       min: 0
@@ -80,8 +81,8 @@ export default function MainTrafficChart({ generation }: Props) {
   };
 
   return (
-    <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full h-full'>
-      <div className='m-16'>
+    <DataLayout cssOption='flex flex-col p-[8px] rounded-lg shadow-md w-full h-full'>
+      <div className='m-[16px]'>
         <h2 className='text-navy text-center text-2xl font-bold'>TOP5 DAILY TRAFFIC</h2>
       </div>
       <div className='w-full flex-1'>

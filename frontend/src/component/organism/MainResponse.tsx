@@ -55,8 +55,8 @@ export default function MainResponse({ generation }: Props) {
   };
 
   return (
-    <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full'>
-      <div className='mb-8 text-center'>
+    <DataLayout cssOption='flex flex-col p-[8px] rounded-lg shadow-md w-full'>
+      <div className='mb-[8px] text-center'>
         <h2 className='text-navy text-2xl font-bold'>TOP5 Response Speed</h2>
       </div>
       <div className='w-full flex-1'>

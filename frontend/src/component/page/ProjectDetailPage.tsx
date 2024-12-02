@@ -22,8 +22,8 @@ export default function ProjectDetailPage() {
   }
 
   return (
-    <div className='flex h-screen w-full flex-col bg-lightgray p-8 dark:bg-lightblack'>
-      <div className='flex h-1/2 gap-8'>
+    <div className='flex h-screen w-full flex-col p-[8px]'>
+      <div className='flex h-1/2 gap-[8px]'>
         <div className='h-full w-1/3'>
           <CustomErrorBoundary>
             <ProjectElapsedTime id={id} />
@@ -41,7 +41,7 @@ export default function ProjectDetailPage() {
         </div>
       </div>
 
-      <div className='mt-8 h-1/2'>
+      <div className='mt-[8px] h-1/2'>
         <CustomErrorBoundary>
           <ProjectTrafficChart id={id} />
         </CustomErrorBoundary>

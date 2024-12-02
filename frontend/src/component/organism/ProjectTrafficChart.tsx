@@ -13,6 +13,7 @@ type Props = {
 export default function ProjectTrafficChart({ id }: Props) {
   const [dateType, setDateType] = useState<DateType>('day');
   const { data } = useProjectTraffic(id, dateType);
+  console.log(data);
 
   const handleDateTypeChange = (type: DateType) => {
     setDateType(type);
@@ -78,22 +79,6 @@ export default function ProjectTrafficChart({ id }: Props) {
     const xAxisConfig = getXAxisFormatter(dateType);
 
     return {
-      chart: {
-        toolbar: {
-          show: true,
-          tools: {
-            download: true,
-            zoomin: false,
-            zoomout: false,
-            pan: false,
-            reset: false,
-            selection: false
-          }
-        },
-        zoom: {
-          enabled: false
-        }
-      },
       xaxis: {
         type: 'datetime',
         ...xAxisConfig,
@@ -101,6 +86,10 @@ export default function ProjectTrafficChart({ id }: Props) {
           colors: '#6B7280'
         },
         labels: {
+          style: {
+            colors: '#64748B',
+            fontSize: '12px'
+          },
           ...xAxisConfig,
           rotateAlways: false,
           hideOverlappingLabels: true
@@ -144,19 +133,20 @@ export default function ProjectTrafficChart({ id }: Props) {
 
   if (data.trafficData.length === 0) {
     return (
-      <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full h-full justify-center'>
+      <DataLayout cssOption='flex flex-col p-[8px] rounded-lg shadow-md w-full h-full justify-center'>
         <span className='text-center'>No data availiable</span>
       </DataLayout>
     );
   }
 
   return (
-    <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full h-full'>
-      <div className='mb-8 flex items-center justify-between'>
-        <div className='flex-1'></div>
-        <h2 className='text-navy text-center text-2xl font-bold'>
-          {data.projectName} Traffic Chart
-        </h2>
+    <DataLayout cssOption='flex flex-col p-[8px] rounded-lg shadow-md w-full h-full'>
+      <div className='mb-[8px] flex items-center justify-between'>
+        <div className='flex-1 items-center pl-12 pt-2 text-xl text-gray'>Total: {data.total}</div>
+        <div className='text-navy items-center text-center text-xl'>
+          <span className='mr-2 text-2xl font-bold'>{data.projectName}</span>
+          Traffic Chart
+        </div>
         <div className='flex flex-1 justify-end'>
           <Select
             cssOption='p-2 border rounded'

@@ -10,10 +10,10 @@ type Props = {
 export default function ProjectElapsedTime({ id }: Props) {
   const { data } = useProjectElapsedTime(id);
 
-  if (!data?.fastestPaths?.length && !data?.slowestPaths?.length) {
+  if (!data?.fastestPaths?.length || !data?.slowestPaths?.length) {
     return (
-      <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full h-full'>
-        <div className='mb-8 text-center'>
+      <DataLayout cssOption='flex flex-col p-[8px] rounded-lg shadow-md w-full h-full'>
+        <div className='mb-[8px] text-center'>
           <h2 className='text-navy text-2xl font-bold'>Response Speed</h2>
         </div>
         <div className='text-gray-500 flex w-full flex-1 items-center justify-center text-center'>
@@ -23,37 +23,22 @@ export default function ProjectElapsedTime({ id }: Props) {
     );
   }
 
-  const fastestPaths = data.fastestPaths;
-  const slowestPaths = data.slowestPaths;
-  const allPaths = [...fastestPaths, ...slowestPaths];
-  const pathNames = allPaths.map((item) => item.path);
-  const series = allPaths.map((item) => item.avgResponseTime);
-
   const getAverageResponseTime = () => {
     return Number(
       (
-        fastestPaths.reduce((acc, cur) => acc + cur.avgResponseTime, 0) / fastestPaths.length
+        data.fastestPaths.reduce((acc, cur) => acc + cur.avgResponseTime, 0) /
+        data.fastestPaths.length
       ).toFixed(0)
     );
   };
 
-  const getLabelType = (index: number) => {
-    if (index < fastestPaths.length) return 'Fastest';
-    return 'Slowest';
-  };
-
-  const options: ApexCharts.ApexOptions = {
-    colors: [
-      ...Array(fastestPaths.length).fill('#4ADE80'),
-      ...Array(slowestPaths.length).fill('#FF4444')
-    ],
-    labels: pathNames,
+  const createChartOptions = (color: string): ApexCharts.ApexOptions => ({
+    colors: [color],
     tooltip: {
-      custom: function ({ seriesIndex }) {
-        const path = pathNames[seriesIndex];
-        const value = series[seriesIndex];
-        const type = getLabelType(seriesIndex);
-        const color = seriesIndex < fastestPaths.length ? '#4ADE80' : '#FF4444';
+      custom: function ({ seriesIndex, w }) {
+        const path = w.config.labels[seriesIndex];
+        const value = w.config.series[seriesIndex];
+        const type = color === '#4ADE80' ? 'Fastest' : 'Slowest';
 
         return `
           <div style="
@@ -82,17 +67,50 @@ export default function ProjectElapsedTime({ id }: Props) {
     },
     legend: {
       show: false
+    },
+    yaxis: {
+      labels: {
+        style: {
+          colors: '#D1D5DB'
+        }
+      }
     }
-  };
+  });
+
+  const fastestOptions = createChartOptions('#4ADE80');
+  const slowestOptions = createChartOptions('#FF4444');
 
   return (
-    <DataLayout cssOption='flex flex-col p-8 rounded-lg shadow-md w-full h-full'>
+    <DataLayout cssOption='flex flex-col p-[8px] rounded-lg shadow-md w-full h-full'>
       <div className='flex h-full flex-col'>
         <div className='mb-4'>
-          <h2 className='text-navy text-center text-2xl font-bold'>Response Speed</h2>
+          <h2 className='text-navy text-center text-[1.5vw] font-bold'>Response Speed</h2>
         </div>
-        <div className='min-h-0 flex-1'>
-          <PolarAreaChart options={options} series={series} />
+        <div className='grid min-h-0 flex-1 grid-cols-2 gap-4'>
+          <div className='flex flex-col'>
+            <h3 className='mb-2 text-center text-[1vw] font-semibold text-green'>Fastest Paths</h3>
+            <div className='min-h-0 flex-1'>
+              <PolarAreaChart
+                options={{
+                  ...fastestOptions,
+                  labels: data.fastestPaths.map((item) => item.path)
+                }}
+                series={data.fastestPaths.map((item) => item.avgResponseTime)}
+              />
+            </div>
+          </div>
+          <div className='flex flex-col'>
+            <h3 className='mb-2 text-center text-[1vw] font-semibold text-red'>Slowest Paths</h3>
+            <div className='min-h-0 flex-1'>
+              <PolarAreaChart
+                options={{
+                  ...slowestOptions,
+                  labels: data.slowestPaths.map((item) => item.path)
+                }}
+                series={data.slowestPaths.map((item) => item.avgResponseTime)}
+              />
+            </div>
+          </div>
         </div>
         <div className='mt-auto pt-4'>
           <ProjectElapsedTimeLegend averageTime={getAverageResponseTime()} />
