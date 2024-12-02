@@ -26,7 +26,9 @@ export default function RankingItem({ data }: Props) {
     const absoluteIndex = index + (currentPage - 1) * 10;
 
     return absoluteIndex <= 2 ? (
-      <div className='flex w-full justify-between rounded-[4px] bg-[#3692EF]/[0.2] p-8 text-black dark:text-white'>
+      <div
+        className='flex w-full justify-between rounded-[4px] bg-[#3692EF]/[0.2] p-8 text-black dark:text-white'
+        key={item.projectName}>
         <div className='flex items-center gap-4'>
           <div className='flex gap-4'>
             <Img
@@ -47,7 +49,9 @@ export default function RankingItem({ data }: Props) {
         />
       </div>
     ) : (
-      <div className='flex w-full justify-between rounded-[4px] bg-[#3692EF]/[0.2] p-8 text-black dark:text-white'>
+      <div
+        className='flex w-full justify-between rounded-[4px] bg-[#3692EF]/[0.2] p-8 text-black dark:text-white'
+        key={item.projectName}>
         <div className='flex items-center gap-4'>
           <div className='flex gap-4'>
             <P cssOption='flex-shrink-0 w-5' />

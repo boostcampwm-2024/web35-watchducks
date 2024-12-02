@@ -14,6 +14,8 @@ export default defineConfig({
       { find: '@util', replacement: '/src/util' },
       { find: '@api', replacement: '/src/api' },
       { find: '@chart', replacement: '/src/chart' },
+      { find: '@store', replacement: '/src/store' },
+      { find: '@router', replacement: '/src/router' },
       { find: '@asset', replacement: '/asset' }
     ]
   },

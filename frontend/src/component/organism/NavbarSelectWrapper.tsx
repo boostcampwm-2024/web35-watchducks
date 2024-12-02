@@ -4,13 +4,10 @@ import NavbarCustomSelect from '@component/molecule/NavbarCustomSelect';
 import NavbarDefaultSelect from '@component/molecule/NavbarDefaultSelect';
 import { PATH } from '@constant/Path';
 import { useDuckAnimation } from '@hook/useDarkModeAnimation';
-import { NavbarSelectProps } from '@type/Navbar';
 import { useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
-type Props = NavbarSelectProps;
-
-export default function NavbarSelectWrapper(props: Props) {
+export default function NavbarSelectWrapper() {
   const { pathname } = useLocation();
   const isProjectPath = pathname.includes(PATH.PROJECT);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -20,10 +17,10 @@ export default function NavbarSelectWrapper(props: Props) {
     <div className='relative mt-8 w-full'>
       <div ref={containerRef}>
         {!isProjectPath ? (
-          <NavbarDefaultSelect {...props} />
+          <NavbarDefaultSelect />
         ) : (
           <CustomErrorBoundary>
-            <NavbarCustomSelect {...props} />
+            <NavbarCustomSelect />
           </CustomErrorBoundary>
         )}
       </div>
