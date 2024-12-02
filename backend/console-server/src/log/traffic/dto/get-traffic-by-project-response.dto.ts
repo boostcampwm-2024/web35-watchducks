@@ -1,7 +1,8 @@
 import { Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { ValidateNested } from 'class-validator';
 
-export class TrafficCountByTimeunit {
+export class TrafficCountByTimeUnit {
     @ApiProperty({
         example: '2024-11-07 23:00:00',
         description: '시간 단위 별 타임스탬프',
@@ -34,10 +35,18 @@ export class GetTrafficByProjectResponseDto {
     timeRange: string;
 
     @ApiProperty({
-        type: [TrafficCountByTimeunit],
+        example: '30',
+        description: '프로젝트 개수',
+    })
+    @Expose()
+    total: number;
+
+    @ApiProperty({
+        type: [TrafficCountByTimeUnit],
         description: '시간 범위 별 트래픽 데이터',
     })
     @Expose()
-    @Type(() => TrafficCountByTimeunit)
-    trafficData: TrafficCountByTimeunit[];
+    @Type(() => TrafficCountByTimeUnit)
+    @ValidateNested()
+    trafficData: TrafficCountByTimeUnit[];
 }

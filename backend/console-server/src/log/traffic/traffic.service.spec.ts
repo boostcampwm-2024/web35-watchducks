@@ -167,6 +167,7 @@ describe('TrafficService 테스트', () => {
         const mockResponseDto = {
             projectName: 'example-project',
             timeRange: 'month',
+            total: 2,
             trafficData: mockTrafficData,
         };
 
@@ -274,6 +275,7 @@ describe('TrafficService 테스트', () => {
             expect(result).toEqual({
                 projectName: mockRequestDto.projectName,
                 timeRange: mockRequestDto.timeRange,
+                total: 0,
                 trafficData: [],
             });
         });
