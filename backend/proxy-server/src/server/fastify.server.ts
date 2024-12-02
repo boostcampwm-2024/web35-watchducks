@@ -6,7 +6,6 @@ import { createFastifyLogger } from 'common/logger/createFastifyLogger';
 import { createErrorLog } from 'common/error/system.error';
 import replyFrom from '@fastify/reply-from';
 import { listenConfig } from './config/server.configuration';
-import { logHandler } from 'server/handler/log.handler';
 import { proxyHandler } from 'server/handler/proxy.handler';
 import { healthCheck } from 'server/handler/health-check.handler';
 import type { LogAdapter } from 'server/adapter/log.adapter';
@@ -74,29 +73,21 @@ const stopFastifyServer = async (server: FastifyInstance, logger: Logger) => {
 };
 
 const initialize = (server: FastifyInstance, logger: Logger) => {
-    addHooks(server, logger);
     addPlugins(server);
-    addRouters(server);
+    addRouters(server, logger);
 };
 
 const addPlugins = (server: FastifyInstance) => {
     server.register(replyFrom, replyFromConfig);
 };
 
-const addHooks = (server: FastifyInstance, logger: Logger) => {
-    const logAdapter = container.resolve<LogAdapter>(TOKENS.LOG_ADAPTER);
-
-    server.addHook('onResponse', async (request, reply) =>
-        logHandler(request, reply, logger, logAdapter),
-    );
-};
-
-const addRouters = (server: FastifyInstance) => {
+const addRouters = (server: FastifyInstance, logger: Logger) => {
     const projectAdapter = container.resolve<ProjectAdapter>(TOKENS.PROJECT_ADAPTER);
+    const logAdapter = container.resolve<LogAdapter>(TOKENS.LOG_ADAPTER);
 
     server.get('/health-check', (request, reply) => healthCheck(request, reply));
 
     server.all('*', async (request: FastifyRequest, reply: FastifyReply) =>
-        proxyHandler(request, reply, projectAdapter),
+        proxyHandler(request, reply, projectAdapter, logAdapter, logger),
     );
 };
