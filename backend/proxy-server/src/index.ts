@@ -1,53 +1,23 @@
-import { Application } from 'app';
-import { FastifyLogger } from 'common/logger/fastify.logger';
-import fastify from 'fastify';
-import { SystemErrorFactory } from 'common/error/factories/system-error.factory';
+import 'reflect-metadata';
+import { fastifyServer } from 'server/fastify.server';
+import type { FastifyInstance } from 'fastify';
+import type { Logger } from 'common/logger/createFastifyLogger';
 
-async function handleShutdown(
-    server: Awaited<ReturnType<Application['initialize']>>,
-    logger: FastifyLogger,
-    signal: string,
-): Promise<void> {
-    try {
-        await server.stop();
-        logger.info({ message: `Server stopped on ${signal}` });
-        process.exit(0);
-    } catch (error) {
-        logger.error(
-            SystemErrorFactory.createErrorLog({
-                originalError: error,
-                path: '/shutdown',
-                message: `Error during shutdown on ${signal}`,
-            }),
-        );
-        process.exit(1);
-    }
+const SIGNALS = ['SIGINT', 'SIGTERM'];
+
+async function main() {
+    const { server, logger } = await fastifyServer.listen();
+
+    SIGNALS.forEach((signal) => {
+        process.on(signal, async () => await handleShutdown(signal, server, logger));
+    });
 }
 
-async function main(): Promise<void> {
-    const initializer = new Application();
-    const logger = new FastifyLogger(fastify());
+async function handleShutdown(signal: string, server: FastifyInstance, logger: Logger) {
+    await fastifyServer.stop(server, logger);
 
-    try {
-        const server = await initializer.initialize();
-        const signals = ['SIGINT', 'SIGTERM'];
-
-        await server.start();
-        signals.forEach((signal) => {
-            process.on(signal, async () => {
-                await handleShutdown(server, logger, signal);
-            });
-        });
-    } catch (error) {
-        logger.error(
-            SystemErrorFactory.createErrorLog({
-                originalError: error,
-                path: '/startup',
-                message: 'Fatal error during startup',
-            }),
-        );
-        process.exit(1);
-    }
+    console.log({ message: `Server stopped on ${signal}` });
+    process.exit(0);
 }
 
 main().catch((error) => {

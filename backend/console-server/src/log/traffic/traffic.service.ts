@@ -9,7 +9,7 @@ import type { GetTrafficByProjectDto } from './dto/get-traffic-by-project.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import {
     GetTrafficByProjectResponseDto,
-    TrafficCountByTimeunit,
+    TrafficCountByTimeUnit,
 } from './dto/get-traffic-by-project-response.dto';
 import { Project } from '../../project/entities/project.entity';
 import { In, Repository } from 'typeorm';
@@ -119,7 +119,8 @@ export class TrafficService {
         return plainToInstance(GetTrafficByProjectResponseDto, {
             projectName,
             timeRange,
-            trafficData: results.map((result) => plainToInstance(TrafficCountByTimeunit, result)),
+            total: results.length,
+            trafficData: results.map<TrafficCountByTimeUnit>((result) => result),
         });
     }
 
