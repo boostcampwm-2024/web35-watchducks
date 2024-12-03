@@ -46,10 +46,18 @@
 <img width="800" src= "https://github.com/user-attachments/assets/f6198851-2dfa-4494-84e8-39610b4e9746">
 
 ### 3. 기수별, 팀별 프로젝트 트래픽 정보를 확인
+**기수 별 트래픽 정보 확인**<br>
+<img width="800" src= "https://github.com/user-attachments/assets/65937a10-2e0c-4475-90d4-045f87877d2d">
+<br><br>
+**개별 프로젝트 메트릭 확인**<br>
+<img width="800" src= "https://github.com/user-attachments/assets/e9a8aeeb-94b3-4689-b65f-81a981a8adfa">
+<br><br>
+**기수별 프로젝트 순위 확인**<br>
+<img width="800" src= "https://github.com/user-attachments/assets/ce5c9467-78c6-47bf-b096-1e22574a3a21">
+<br><br>
 
-
-[자세한 가이드 보러가기](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EC%82%AC%EC%9A%A9-%EA%B0%80%EC%9D%B4%EB%93%9C) <br>
-[FAQ](https://github.com/boostcampwm-2024/web35-watchducks/wiki/FAQ)
+[🔍 자세한 가이드 보러가기](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EC%82%AC%EC%9A%A9-%EA%B0%80%EC%9D%B4%EB%93%9C) <br>
+[❓ FAQ](https://github.com/boostcampwm-2024/web35-watchducks/wiki/FAQ)
 
 <br>
 
@@ -81,7 +89,7 @@
 | 부하테스트와 성능 개선에 도전! | [부하테스트와 성능 개선에 도전!](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EB%B6%80%ED%95%98%ED%85%8C%EC%8A%A4%ED%8A%B8%EC%99%80-%EC%84%B1%EB%8A%A5-%EA%B0%9C%EC%84%A0%EC%97%90-%EB%8F%84%EC%A0%84!) |
 <br>
 
-[더 많은 개발 과정을 보고 싶다면...](https://github.com/boostcampwm-2024/web35-watchducks/wiki)
+[📝 더 많은 개발 과정을 보고 싶다면...](https://github.com/boostcampwm-2024/web35-watchducks/wiki)
 
 <br>
 
@@ -134,4 +142,4 @@
     </tr>
 </table>
 
-[팀 와치덕스가 궁금하다면](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EC%9A%B0%EB%A6%AC%EB%93%A4%EC%9D%98-%ED%98%91%EC%97%85-%EB%B0%A9%EC%8B%9D)
+[🧑‍🧑‍🧒‍🧒 팀 와치덕스가 궁금하다면](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EC%9A%B0%EB%A6%AC%EB%93%A4%EC%9D%98-%ED%98%91%EC%97%85-%EB%B0%A9%EC%8B%9D)
