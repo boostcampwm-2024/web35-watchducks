@@ -36,6 +36,7 @@
 ## 🚀 사용 방법
 ### 1. [프로젝트 등록페이지](https://watchducks.site/register)에서 프로젝트 정보 등록
 <img width="1000" src= "https://github.com/user-attachments/assets/88e3d637-27af-40e6-9c24-6d26bd86c5d7">
+<img width="1000" src= "https://github.com/user-attachments/assets/bf043bfc-1c1b-4e9e-9966-cbaa63eeceb0">
 
 - 그룹 프로젝트에 필요한 정보를 등록해주세요
 - 유효성 검사 후, 사용자에게 왓치덕스의 네임서버 주소를 메일로 전송합니다.
@@ -46,10 +47,10 @@
 
 ### 3. 기수별, 팀별 프로젝트 트래픽 정보를 확인
 **기수 별 트래픽 정보 확인**<br>
-<img width="800" src= "https://github.com/user-attachments/assets/65937a10-2e0c-4475-90d4-045f87877d2d">
+<img width="800" src= "https://github.com/user-attachments/assets/ddc2b297-7b65-4ab7-86f3-86321bb1ae7a">
 <br><br>
 **개별 프로젝트 메트릭 확인**<br>
-<img width="800" src= "https://github.com/user-attachments/assets/e9a8aeeb-94b3-4689-b65f-81a981a8adfa">
+<img width="800" alt="스크린샷 2024-12-04 오전 12 52 50" src="https://github.com/user-attachments/assets/eb5c38e0-6f5b-4ff8-9e40-c4986fe40998">
 <br><br>
 **기수별 프로젝트 순위 확인**<br>
 <img width="800" src= "https://github.com/user-attachments/assets/ce5c9467-78c6-47bf-b096-1e22574a3a21">
