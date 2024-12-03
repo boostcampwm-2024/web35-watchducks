@@ -119,7 +119,7 @@ export class TrafficService {
         return plainToInstance(GetTrafficByProjectResponseDto, {
             projectName,
             timeRange,
-            total: results.length,
+            total: results.reduce((acc, curr) => acc + curr.count, 0),
             trafficData: results.map<TrafficCountByTimeUnit>((result) => result),
         });
     }

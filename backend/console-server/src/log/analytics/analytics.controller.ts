@@ -1,10 +1,20 @@
-import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GetProjectDauResponseDto } from './dto/get-project-dau-response.dto';
 import { GetDAUsByProjectDto } from './dto/get-project-dau.dto';
 import { AnalyticsService } from './analytics.service';
+import {
+    CacheRefreshThreshold,
+    CustomCacheInterceptor,
+    ONE_MINUTE,
+    THREE_MINUTES,
+} from '../../common/cache';
+import { CacheTTL } from '@nestjs/cache-manager';
 
 @Controller('log/analytics')
+@UseInterceptors(CustomCacheInterceptor)
+@CacheTTL(THREE_MINUTES)
+@CacheRefreshThreshold(ONE_MINUTE)
 export class AnalyticsController {
     constructor(private readonly analyticService: AnalyticsService) {}
 

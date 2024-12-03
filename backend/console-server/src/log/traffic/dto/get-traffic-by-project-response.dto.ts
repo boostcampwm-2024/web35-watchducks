@@ -36,7 +36,7 @@ export class GetTrafficByProjectResponseDto {
 
     @ApiProperty({
         example: '30',
-        description: '프로젝트 개수',
+        description: '해당 기간 트래픽 총합',
     })
     @Expose()
     total: number;

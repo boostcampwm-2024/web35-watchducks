@@ -11,13 +11,19 @@ import { GetTrafficDailyDifferenceDto } from './dto/get-traffic-daily-difference
 import { GetTrafficTop5ChartResponseDto } from './dto/get-traffic-top5-chart-response.dto';
 import { GetTrafficTop5ChartDto } from './dto/get-traffic-top5-chart.dto';
 import { TrafficService } from './traffic.service';
-import { CustomCacheInterceptor, FIVE_MINUTES, THREE_MINUTES } from '../../common/cache';
+import {
+    CacheRefreshThreshold,
+    CacheTTLUntilMidnight,
+    CustomCacheInterceptor,
+    ONE_MINUTE_HALF,
+    THREE_MINUTES,
+} from '../../common/cache';
 import { CacheTTL } from '@nestjs/cache-manager';
 
 @Controller('log/traffic')
 @UseInterceptors(CustomCacheInterceptor)
-@CacheTTL(FIVE_MINUTES)
 @CacheTTL(THREE_MINUTES)
+@CacheRefreshThreshold(ONE_MINUTE_HALF)
 export class TrafficController {
     constructor(private readonly trafficService: TrafficService) {}
 
@@ -96,6 +102,7 @@ export class TrafficController {
         description: '프로젝트별 작일 데이터 전체 타임스탬프가 정상적으로 반환됨',
         type: GetTrafficTop5ChartResponseDto,
     })
+    @CacheTTLUntilMidnight()
     async getTrafficTop5Chart(@Query() getTrafficTop5ChartDto: GetTrafficTop5ChartDto) {
         return await this.trafficService.getTrafficTop5Chart(getTrafficTop5ChartDto);
     }
