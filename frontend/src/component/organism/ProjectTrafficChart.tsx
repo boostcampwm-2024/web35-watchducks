@@ -138,7 +138,7 @@ export default function ProjectTrafficChart({ id }: Props) {
           <span className='mr-2 text-2xl font-bold'>{data.projectName}</span>
           Traffic Chart
         </div>
-        <div className='flex flex-1 justify-end'>
+        <div className='flex flex-1 justify-end p-4'>
           <Select
             cssOption='p-2 border rounded'
             options={DATE_OPTIONS}
