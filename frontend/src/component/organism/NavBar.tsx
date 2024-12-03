@@ -19,7 +19,7 @@ export default function Navbar() {
             <div className='flex-shrink-0'>
               <NavbarMenu />
             </div>
-            <div className='min-h-0 flex-1 overflow-y-scroll'>
+            <div className='scrollbar-hide min-h-0 flex-1 overflow-y-scroll'>
               <CustomErrorBoundary>
                 <NavbarRanking />
               </CustomErrorBoundary>
