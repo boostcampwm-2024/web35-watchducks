@@ -29,7 +29,7 @@ export default function NavbarRanking() {
               <Fragment>
                 <Img
                   src={MEDALS[rank as keyof typeof MEDALS].image}
-                  cssOption='flex-shrink-0 w-5'
+                  cssOption='flex-shrink-0 w-4'
                   alt={`${rank + 1}번째 메달`}
                 />
                 <P
@@ -40,7 +40,7 @@ export default function NavbarRanking() {
             ) : (
               <Fragment>
                 <Span
-                  cssOption='w-6 flex-shrink-0 font-medium dark:text-white'
+                  cssOption='w-5 h-5 flex-shrink-0 font-medium dark:text-white'
                   content={`${rank + 1}th`}
                 />
                 <P cssOption='truncate dark:text-white max-w-[140px]' content={item.projectName} />
@@ -61,9 +61,11 @@ export default function NavbarRanking() {
   };
 
   return (
-    <div className='mt-[8px] rounded-[10px] border-[1.5px] border-solid border-gray p-4'>
-      <P cssOption='text-[0.9vw] mb-1 font-bold dark:text-white' content='TRAFFIC RANKING' />
-      {data.rank.map((item, index) => renderRankingItem(item, index))}
+    <div className='rounded-[10px] border-[1.5px] border-solid border-gray p-4'>
+      <P cssOption='text-xs mb-2 font-bold dark:text-white' content='TRAFFIC RANKING' />
+      <div className='overflow-y-auto'>
+        {data.rank.map((item, index) => renderRankingItem(item, index))}
+      </div>
     </div>
   );
 }
