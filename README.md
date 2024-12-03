@@ -78,7 +78,7 @@
 | Testing & Documentation | ![Jest](https://img.shields.io/badge/-jest-%23C21325?style=flat-square&logo=jest&logoColor=white) ![Artillery](https://img.shields.io/badge/Artillery-%23000000.svg?style=flat-square&logo=artillery&logoColor=white) ![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=flat-square&logo=swagger&logoColor=white) |
 | CI/CD | ![GitHub Container Registry](https://img.shields.io/badge/GitHub%20Container%20Registry-%23121011.svg?style=flat-square&logo=github&logoColor=white) ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=flat-square&logo=githubactions&logoColor=white) ![Netlify](https://img.shields.io/badge/netlify-%23000000.svg?style=flat-square&logo=netlify&logoColor=#00C7B7) |
 
-[Watchducks의 기술에 대해 더 알고 싶다면](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EA%B8%B0%EC%88%A0-%EA%B4%80%EB%A0%A8-%EC%9E%84%EC%8B%9C-%ED%8E%98%EC%9D%B4%EC%A7%80)
+[⌨️ Watchducks의 기술에 대해 더 알고 싶다면](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EA%B8%B0%EC%88%A0-%EA%B4%80%EB%A0%A8-%EC%9E%84%EC%8B%9C-%ED%8E%98%EC%9D%B4%EC%A7%80)
 
 <br>
 
@@ -141,5 +141,7 @@
         </td>
     </tr>
 </table>
+
+<br>
 
 [🧑‍🧑‍🧒‍🧒 팀 와치덕스가 궁금하다면](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EC%9A%B0%EB%A6%AC%EB%93%A4%EC%9D%98-%ED%98%91%EC%97%85-%EB%B0%A9%EC%8B%9D)
