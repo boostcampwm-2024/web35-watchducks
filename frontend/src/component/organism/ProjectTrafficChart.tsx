@@ -13,7 +13,6 @@ type Props = {
 export default function ProjectTrafficChart({ id }: Props) {
   const [dateType, setDateType] = useState<DateType>('day');
   const { data } = useProjectTraffic(id, dateType);
-  console.log(data);
 
   const handleDateTypeChange = (type: DateType) => {
     setDateType(type);
