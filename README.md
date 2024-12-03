@@ -34,7 +34,6 @@
   * [🙇 팀원소개](#-팀원소개)
 
 ## 🚀 사용 방법
-## 📋 간단한 사용 가이드
 ### 1. [프로젝트 등록페이지](https://watchducks.site/register)에서 프로젝트 정보 등록
 <img width="1000" src= "https://github.com/user-attachments/assets/88e3d637-27af-40e6-9c24-6d26bd86c5d7">
 
