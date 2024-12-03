@@ -47,7 +47,12 @@ export default function ProjectDAU({ id }: Props) {
           dayBorderWidth={2}
           dayBorderColor='#ffffff'
           weekdayTicks={[]}
-          margin={{ top: 20, bottom: 100 }}
+          margin={{
+            top: 20,
+            right: 40,
+            bottom: 100,
+            left: 40
+          }}
           tooltip={({ day, value }) => (
             <div
               style={{
@@ -55,7 +60,8 @@ export default function ProjectDAU({ id }: Props) {
                 background: 'white',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 borderRadius: '4px',
-                color: 'gray'
+                color: 'gray',
+                pointerEvents: 'none'
               }}>
               {new Date(day).toLocaleDateString('ko-KR')}: {value.toLocaleString()}명
             </div>
