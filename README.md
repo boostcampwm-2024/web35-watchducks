@@ -1,4 +1,4 @@
-# WatchDucks 🐥
+# WatchDucks <img width=30px height=30px alt="logo" src="https://github.com/user-attachments/assets/6eaa5168-266f-4b47-bd0b-0d8205a2a4ae">
 
 <img width="1063" alt="image" src="https://github.com/user-attachments/assets/3845c953-5d2a-4c95-9610-14a67ce85d38">
 
@@ -35,14 +35,13 @@
 
 ## 🚀 사용 방법
 ### 1. [프로젝트 등록페이지](https://watchducks.site/register)에서 프로젝트 정보 등록
-<img width="1000" src= "https://github.com/user-attachments/assets/88e3d637-27af-40e6-9c24-6d26bd86c5d7">
-<img width="1000" src= "https://github.com/user-attachments/assets/bf043bfc-1c1b-4e9e-9966-cbaa63eeceb0">
+<img width="800" src= "https://github.com/user-attachments/assets/bf043bfc-1c1b-4e9e-9966-cbaa63eeceb0">
 
 - 그룹 프로젝트에 필요한 정보를 등록해주세요
 - 유효성 검사 후, 사용자에게 왓치덕스의 네임서버 주소를 메일로 전송합니다.
 
 ### 2. 네임서버 변경하기
-- 메일로 받은 네임서버로 네임서버 설정을 변경합니다.
+- 메일로 받은 네임서버로 네임서버 설정을 변경합니다. (예시 사진: 가비아)
 <img width="800" src= "https://github.com/user-attachments/assets/f6198851-2dfa-4494-84e8-39610b4e9746">
 
 ### 3. 기수별, 팀별 프로젝트 트래픽 정보를 확인
@@ -55,16 +54,16 @@
 **기수별 프로젝트 순위 확인**<br>
 <img width="800" alt="스크린샷 2024-12-04 오전 12 52 50" src="https://github.com/user-attachments/assets/d36a070c-1006-46f6-a31d-67c473793df1">
 
-<br><br>
+<br>
 
-[🔍 자세한 가이드 보러가기](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EC%82%AC%EC%9A%A9-%EA%B0%80%EC%9D%B4%EB%93%9C) <br>
-[❓ FAQ](https://github.com/boostcampwm-2024/web35-watchducks/wiki/FAQ)
+[🔍 자세한 가이드 ↗️](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EC%82%AC%EC%9A%A9-%EA%B0%80%EC%9D%B4%EB%93%9C) <br>
+[❓ FAQ  ↗️](https://github.com/boostcampwm-2024/web35-watchducks/wiki/FAQ)
 
 <br>
 
 ## 📈 아키텍처
 
-<img width="1200" alt="WatchDucks Architecture Page 1" src="https://github.com/user-attachments/assets/16ecd233-6081-40f1-8041-939dfaa9c0f5">
+<img width="800" alt="WatchDucks Architecture Page 1" src="https://github.com/user-attachments/assets/16ecd233-6081-40f1-8041-939dfaa9c0f5">
 
 
 ## 🛠 기술 스택
