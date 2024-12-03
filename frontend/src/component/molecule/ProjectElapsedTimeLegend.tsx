@@ -14,18 +14,24 @@ export default function ProjectElapsedTimeLegend({ averageTime }: Props) {
   };
 
   return (
-    <div className='flex flex-col items-center gap-4'>
+    <div className='flex w-full flex-col items-center gap-4'>
       <div className='text-center'>
-        <H2 cssOption='text-navy mb-4 text-[1vw] font-bold' content='TOP3 Average Response Speed' />
-        <div className='mb-4 text-[2vw] font-bold' style={{ color: getColorByTime(averageTime) }}>
+        <H2
+          cssOption='text-navy mb-2 text-[0.9vw] font-bold'
+          content='TOP3 Average Response Speed'
+        />
+        <div className='text-[1.5vw] font-bold' style={{ color: getColorByTime(averageTime) }}>
           {averageTime || 0}ms
         </div>
       </div>
-      <div className='text-gray-500 flex items-center justify-center gap-4 text-[10px]'>
+      <div className='flex items-center justify-center gap-4'>
         {RESPONSE_TIME_LEGENDS.map((item, index) => (
           <div key={index} className='flex items-center gap-2'>
-            <Span cssOption='h-3 w-3 rounded-full block' style={{ backgroundColor: item.color }} />
-            <Span cssOption='text-gray-500' content={`${item.range} ${item.description}`} />
+            <Span cssOption='h-2 w-2 rounded-full block' style={{ backgroundColor: item.color }} />
+            <Span
+              cssOption='text-gray-500 text-[0.7vw]'
+              content={`${item.range} ${item.description}`}
+            />
           </div>
         ))}
       </div>

@@ -83,13 +83,18 @@ export default function ProjectElapsedTime({ id }: Props) {
   return (
     <DataLayout cssOption='flex flex-col p-[8px] rounded-lg shadow-md w-full h-full'>
       <div className='flex h-full flex-col'>
-        <div className='mb-4'>
+        {/* 제목 */}
+        <div className='mb-6'>
           <h2 className='text-navy text-center text-[1.5vw] font-bold'>Response Speed</h2>
         </div>
-        <div className='grid min-h-0 flex-1 grid-cols-2 gap-4'>
+
+        {/* 차트 영역 */}
+        <div className='grid h-[50%] flex-1 grid-cols-2 gap-4'>
+          {' '}
+          {/* 고정된 높이 비율 */}
           <div className='flex flex-col'>
             <h3 className='mb-2 text-center text-[1vw] font-semibold text-green'>Fastest Paths</h3>
-            <div className='min-h-0 flex-1'>
+            <div className='flex-1'>
               <PolarAreaChart
                 options={{
                   ...fastestOptions,
@@ -101,7 +106,7 @@ export default function ProjectElapsedTime({ id }: Props) {
           </div>
           <div className='flex flex-col'>
             <h3 className='mb-2 text-center text-[1vw] font-semibold text-red'>Slowest Paths</h3>
-            <div className='min-h-0 flex-1'>
+            <div className='flex-1'>
               <PolarAreaChart
                 options={{
                   ...slowestOptions,
@@ -112,7 +117,7 @@ export default function ProjectElapsedTime({ id }: Props) {
             </div>
           </div>
         </div>
-        <div className='mt-auto pt-4'>
+        <div className='flex flex-1 items-center justify-center'>
           <ProjectElapsedTimeLegend averageTime={getAverageResponseTime()} />
         </div>
       </div>
