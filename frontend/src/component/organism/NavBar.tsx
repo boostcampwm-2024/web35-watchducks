@@ -8,8 +8,8 @@ import NavbarSelectWrapper from '@component/organism/NavbarSelectWrapper';
 
 export default function Navbar() {
   return (
-    <aside className='flex h-screen flex-col bg-lightblue px-24 dark:bg-darkblue'>
-      <div className='flex flex-col gap-16 pt-24'>
+    <aside className='border-3 flex h-screen flex-col rounded-[11px] bg-lightblue p-[24px] dark:bg-darkblue'>
+      <div className='flex flex-col gap-[16px] pt-[24px]'>
         <NavbarTitle />
         <NavbarSelectWrapper />
         <NavbarMenu />
@@ -19,10 +19,10 @@ export default function Navbar() {
         <NavigateButton
           path='/register'
           content='프로젝트 등록하러가기'
-          cssOption='flex items-center mt-24 whitespace-nowrap rounded-10 bg-blue p-16 text-10 text-white hover:text-black md:text-12'
+          cssOption='text-center mt-[24px] whitespace-nowrap rounded-[10px] bg-blue p-[16px] text-[1vw] text-white hover:text-black w-[100%]'
         />
       </div>
-      <div className='mt-auto pb-24'>
+      <div className='mt-auto pb-[24px]'>
         <NavbarContact />
       </div>
     </aside>

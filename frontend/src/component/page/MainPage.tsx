@@ -8,8 +8,8 @@ export default function MainPage() {
   const generation = useNavbarStore((state) => state.generation);
 
   return (
-    <div className='flex h-screen w-full flex-col gap-8 bg-lightgray p-8 dark:bg-lightblack'>
-      <div className='mt-8 grid h-1/2 grid-cols-1 gap-8 lg:grid-cols-2'>
+    <div className='flex h-screen w-full flex-col gap-[8px] p-[8px]'>
+      <div className='mt-[8px] grid h-1/2 grid-cols-1 gap-[8px] md:grid-cols-2'>
         <CustomErrorBoundary>
           <MainData generation={generation} />
         </CustomErrorBoundary>

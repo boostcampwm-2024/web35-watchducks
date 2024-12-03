@@ -1,5 +1,6 @@
+import FaviconImg from '@asset/image/Favicon.svg';
 import H1 from '@component/atom/H1';
-import P from '@component/atom/P';
+import Img from '@component/atom/Img';
 import { useNavigate } from 'react-router-dom';
 
 export default function NavbarTitle() {
@@ -14,11 +15,8 @@ export default function NavbarTitle() {
       <div
         className='flex min-w-0 cursor-pointer items-center gap-2 md:gap-4'
         onClick={navigateMain}>
-        <P cssOption='text-16 md:text-20 lg:text-24 shrink-0' content='🐥' />
-        <H1
-          cssOption='font-bold text-16 md:text-20 lg:text-24 truncate dark:text-white'
-          content='WatchDucks'
-        />
+        <Img src={FaviconImg} cssOption='w-[36px]' alt='와치덕스 로고 이미지' />
+        <H1 cssOption='font-bold text-[1.6vw] truncate dark:text-white' content='WatchDucks' />
       </div>
     </div>
   );

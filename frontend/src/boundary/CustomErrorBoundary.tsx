@@ -1,9 +1,8 @@
+import CustomErrorFallback from '@boundary/CustomErrorFallback';
 import Loading from '@component/atom/Loading';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-
-import CustomErrorFallback from './CustomErrorFallback';
 
 type Props = {
   children: React.ReactNode;
