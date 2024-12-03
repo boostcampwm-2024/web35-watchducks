@@ -2,15 +2,13 @@ import RankingItem from '@component/molecule/RankingItem';
 import RankingTab from '@component/molecule/RankingTab';
 import DataLayout from '@component/template/DataLayout';
 import useRankData from '@hook/api/useRankData';
+import useNavbarStore from '@store/NavbarStore';
 import { RankType } from '@type/Rank';
 import { useState } from 'react';
 
-type Props = {
-  generation: string;
-};
-
-export default function RankingList({ generation }: Props) {
+export default function RankingList() {
   const [rankType, setRankType] = useState<RankType>('traffic');
+  const { generation } = useNavbarStore();
   const { data } = useRankData(rankType, generation);
 
   return (
