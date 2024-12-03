@@ -38,7 +38,7 @@ export default function ProjectDAU({ id }: Props) {
       <div className='mb-[8px] text-center'>
         <h2 className='text-navy text-[1.5vw] font-bold'>DAU</h2>
       </div>
-      <div className='flex h-[90%] w-[100%] items-center'>
+      <div className='flex h-[90%] w-[100%] items-center overflow-hidden px-[40px]'>
         <ResponsiveTimeRange
           data={series}
           from={thirtyDaysAgo}
@@ -49,9 +49,9 @@ export default function ProjectDAU({ id }: Props) {
           weekdayTicks={[]}
           margin={{
             top: 20,
-            right: 40,
+            right: 0,
             bottom: 100,
-            left: 40
+            left: 0
           }}
           tooltip={({ day, value }) => (
             <div
