@@ -14,13 +14,6 @@ export default registerAs('typeOrmConfig', () => {
                   database: process.env.DEV_MYSQL_DATABASE,
                   autoLoadEntities: true,
                   synchronize: false,
-                  // type: 'sqlite',
-                  // database: ':memory:',
-                  // dropSchema: true,
-                  // autoLoadEntities: true,
-                  // synchronize: true,
-                  // logging: ['query', 'error'],
-                  // logger: 'advanced-console',
               }
             : {
                   type: 'mysql',

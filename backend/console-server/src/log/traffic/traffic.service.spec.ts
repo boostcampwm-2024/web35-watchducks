@@ -167,7 +167,7 @@ describe('TrafficService 테스트', () => {
         const mockResponseDto = {
             projectName: 'example-project',
             timeRange: 'month',
-            total: 2,
+            total: 24,
             trafficData: mockTrafficData,
         };
 

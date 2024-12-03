@@ -5,11 +5,16 @@ import { GetSuccessRateResponseDto } from './dto/get-success-rate-response.dto';
 import { GetSuccessRateDto } from './dto/get-success-rate.dto';
 import { GetProjectSuccessRateResponseDto } from './dto/get-project-success-rate-response.dto';
 import { GetProjectSuccessRateDto } from './dto/get-project-success-rate.dto';
-import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
-import { CacheRefreshThreshold, ONE_MINUTE, THREE_MINUTES } from '../../common/cache';
+import { CacheTTL } from '@nestjs/cache-manager';
+import {
+    CacheRefreshThreshold,
+    CustomCacheInterceptor,
+    ONE_MINUTE,
+    THREE_MINUTES,
+} from '../../common/cache';
 
 @Controller('log/success-rate')
-@UseInterceptors(CacheInterceptor)
+@UseInterceptors(CustomCacheInterceptor)
 @CacheTTL(THREE_MINUTES)
 @CacheRefreshThreshold(ONE_MINUTE)
 export class SuccessRateController {

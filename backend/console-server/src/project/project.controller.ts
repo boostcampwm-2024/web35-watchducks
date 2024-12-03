@@ -14,7 +14,7 @@ import { ExistsProjectResponseDto } from './dto/exists-project-response.dto';
 import {
     CacheRefreshThreshold,
     CustomCacheInterceptor,
-    ONE_MINUTE_HALF,
+    ONE_MINUTE,
     THREE_MINUTES,
 } from '../common/cache';
 import { CacheTTL } from '@nestjs/cache-manager';
@@ -22,7 +22,7 @@ import { CacheTTL } from '@nestjs/cache-manager';
 @Controller('project')
 @UseInterceptors(CustomCacheInterceptor)
 @CacheTTL(THREE_MINUTES)
-@CacheRefreshThreshold(ONE_MINUTE_HALF)
+@CacheRefreshThreshold(ONE_MINUTE)
 export class ProjectController {
     constructor(private readonly projectService: ProjectService) {}
 
