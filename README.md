@@ -53,7 +53,8 @@
 <img width="800" alt="스크린샷 2024-12-04 오전 12 52 50" src="https://github.com/user-attachments/assets/eb5c38e0-6f5b-4ff8-9e40-c4986fe40998">
 <br><br>
 **기수별 프로젝트 순위 확인**<br>
-<img width="800" src= "https://github.com/user-attachments/assets/ce5c9467-78c6-47bf-b096-1e22574a3a21">
+<img width="800" alt="스크린샷 2024-12-04 오전 12 52 50" src="https://github.com/user-attachments/assets/d36a070c-1006-46f6-a31d-67c473793df1">
+
 <br><br>
 
 [🔍 자세한 가이드 보러가기](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EC%82%AC%EC%9A%A9-%EA%B0%80%EC%9D%B4%EB%93%9C) <br>
