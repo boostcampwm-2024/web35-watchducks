@@ -11,25 +11,27 @@ import { ServerError } from './error/server.error';
 import type { ProjectQueryInterface } from '../database/query/project.query.interface';
 import { MESSAGE_TYPE } from '../server/constant/message-type.constants';
 import { HealthCheckService } from '../server/service/health-check.service';
+import type { CacheQueryInterface } from 'database/query/cache.query.interface';
 
-interface ResolvedRoute{
+interface ResolvedRoute {
     targetIp: string;
     isValid: boolean;
 }
 
 export class Server {
     private server: Socket;
-    private healthCheckService :HealthCheckService;
+    private healthCheckService: HealthCheckService;
 
     constructor(
         private readonly config: ServerConfig,
         private readonly projectQuery: ProjectQueryInterface,
+        private readonly cacheQuery: CacheQueryInterface,
     ) {
         this.server = createSocket('udp4');
         this.healthCheckService = new HealthCheckService(
             config.healthCheckIp,
-            config.proxyHealthCheckEndpoint
-        )
+            config.proxyHealthCheckEndpoint,
+        );
         this.initializeServer();
     }
 
@@ -42,25 +44,34 @@ export class Server {
 
     private async resolveRoute(domainName: string): Promise<ResolvedRoute> {
         try {
-            const clientIp = await this.projectQuery.getClientIpByDomain(domainName);
+            if (this.healthCheckService.isProxyHealthy()) {
+                return { targetIp: this.config.proxyServerIp, isValid: true };
+            }
 
-            const targetIp = this.healthCheckService.isProxyHealthy()
-                ? this.config.proxyServerIp
-                : clientIp;
+            let clientIp = await this.cacheQuery.findIpByDomain(domainName);
 
-            return { targetIp, isValid: true };
+            if (!clientIp) {
+                clientIp = await this.projectQuery.getClientIpByDomain(domainName);
+                void this.cacheQuery
+                    .cacheIpByDomain(domainName, clientIp)
+                    .catch((err) =>
+                        logger.error(`Failed to cache IP for domain ${domainName}:`, err),
+                    );
+            }
+
+            return { targetIp: clientIp, isValid: true };
         } catch (error) {
             logger.error('Failed to resolve route:', error);
             return { targetIp: '', isValid: false };
         }
     }
 
-        private async handleMessage(msg: Buffer, remoteInfo: RemoteInfo): Promise<void> {
+    private async handleMessage(msg: Buffer, remoteInfo: RemoteInfo): Promise<void> {
         try {
             const messageType = PacketValidator.validateMessageType(msg);
 
             if (messageType === MESSAGE_TYPE.HEALTH_CHECK) {
-                await this.handleHealthCheck(remoteInfo);
+                await this.handleNginxHealthCheck(remoteInfo);
                 return;
             }
 
@@ -77,7 +88,7 @@ export class Server {
             }
 
             const response = new DNSResponseBuilder(this.config, query)
-                .addAnswer(RESPONSE_CODE.NOERROR, question)
+                .addAnswer(RESPONSE_CODE.NOERROR, question, route.targetIp)
                 .addAuthorities(question)
                 .addAdditionals()
                 .build();
@@ -90,7 +101,7 @@ export class Server {
         }
     }
 
-    private async handleHealthCheck(remoteInfo: RemoteInfo): Promise<void> {
+    private async handleNginxHealthCheck(remoteInfo: RemoteInfo): Promise<void> {
         try {
             const healthCheckResponse = Buffer.from([]);
 

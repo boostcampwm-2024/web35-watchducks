@@ -6,6 +6,7 @@ import { DNS_FLAGS, RESPONSE_CODE } from '../src/server/constant/dns-packet.cons
 describe('DNSResponseBuilder의', () => {
     const mockConfig = {
         proxyServerIp: '127.0.0.1',
+        healthCheckIp: '127.0.0.2',
         nameServerPort: 5353,
         ttl: 86400,
         authoritativeNameServers: ['ns1.test-ns.com', 'ns2.test-ns.com'],

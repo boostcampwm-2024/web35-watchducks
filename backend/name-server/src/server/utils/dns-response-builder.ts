@@ -47,7 +47,7 @@ export class DNSResponseBuilder {
         return flags;
     }
 
-    addAnswer(rcode: ResponseCodeType, question?: Question): this {
+    addAnswer(rcode: ResponseCodeType, question?: Question, targetIp?: string): this {
         this.response.flags = this.createFlags(rcode);
 
         if (rcode !== RESPONSE_CODE.NOERROR || !question) {
@@ -61,7 +61,7 @@ export class DNSResponseBuilder {
                 type: RECORD_TYPE.ADDRESS,
                 class: RECORD_CLASS.INTERNET,
                 ttl: this.config.ttl,
-                data: this.config.proxyServerIp,
+                data: targetIp || this.config.proxyServerIp,
             },
         ];
         return this;

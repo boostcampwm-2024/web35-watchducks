@@ -5,6 +5,7 @@ import { Server } from 'server/server';
 import { db } from 'database/mysql/mysql-database';
 import { logger } from 'common/utils/logger/console.logger';
 import { ProjectQuery } from 'database/query/project.query';
+import { CacheQuery } from 'database/query/cache.query';
 
 config();
 
@@ -16,8 +17,9 @@ export class Application {
 
         const config = await this.initializeConfig();
         const projectQuery = new ProjectQuery();
+        const cacheQuery = new CacheQuery();
 
-        return new Server(config, projectQuery);
+        return new Server(config, projectQuery, cacheQuery);
     }
 
     public async cleanup(): Promise<void> {
