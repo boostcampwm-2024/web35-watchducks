@@ -72,11 +72,18 @@
 
 [Watchducks의 기술에 대해 더 알고 싶다면](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EA%B8%B0%EC%88%A0-%EA%B4%80%EB%A0%A8-%EC%9E%84%EC%8B%9C-%ED%8E%98%EC%9D%B4%EC%A7%80)
 
+<br>
+
 ## 🏆 기술적 도전 및 핵심 경험
 
-
+| 제목 | 바로가기 |
+|------|----------|
+| 부하테스트와 성능 개선에 도전! | [부하테스트와 성능 개선에 도전!](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EB%B6%80%ED%95%98%ED%85%8C%EC%8A%A4%ED%8A%B8%EC%99%80-%EC%84%B1%EB%8A%A5-%EA%B0%9C%EC%84%A0%EC%97%90-%EB%8F%84%EC%A0%84!) |
+<br>
 
 [더 많은 개발 과정을 보고 싶다면...](https://github.com/boostcampwm-2024/web35-watchducks/wiki)
+
+<br>
 
 ## 🙇 팀원소개
 
