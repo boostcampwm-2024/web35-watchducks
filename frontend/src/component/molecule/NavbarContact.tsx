@@ -8,10 +8,10 @@ export default function NavbarContact() {
   return (
     <div className='flex w-[100%] items-center gap-2'>
       <Link to={PATH.GITHUB} target='_blank' className='flex-shrink-0'>
-        <Img src={GithubImg} alt='깃허브 이미지' cssOption='w-[24px] h-[24px] dark:invert' />
+        <Img src={GithubImg} alt='깃허브 이미지' cssOption='w-[20px] h-[20px] dark:invert' />
       </Link>
       <P
-        cssOption='text-[0.6vw] flex items-center whitespace-nowrap truncate text-gray'
+        cssOption='text-[0.7vw] flex items-center whitespace-nowrap truncate text-gray'
         content='Contact us : shson1217@naver.com'
       />
     </div>
