@@ -53,7 +53,7 @@ export default function RegisterForm({ showAlert }: Props) {
         type='text'
         value={formData.domain}
         onChange={handleChange('domain')}
-        placeholder='도메인 (ex. WatchDucks.site)'
+        placeholder='도메인 (ex. www.watchDucks.site)'
         isValid={validation.isValidDomain}
       />
 
