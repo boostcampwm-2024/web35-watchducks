@@ -4,6 +4,7 @@ import DataLayout from '@component/template/DataLayout';
 import { DATE_OPTIONS } from '@constant/Date';
 import useProjectTraffic from '@hook/api/useProjectTraffic';
 import { DateType } from '@type/Date';
+import { Link } from 'lucide-react';
 import { useState } from 'react';
 
 type Props = {
@@ -134,10 +135,15 @@ export default function ProjectTrafficChart({ id }: Props) {
     <DataLayout cssOption='flex flex-col p-[8px] rounded-lg shadow-md w-full h-full'>
       <div className='mb-[8px] flex items-center justify-between'>
         <div className='flex-1 items-center pl-12 pt-2 text-xl text-gray'>Total: {data.total}</div>
-        <div className='text-navy items-center text-center text-xl'>
-          <span className='mr-2 text-2xl font-bold'>{data.projectName}</span>
-          Traffic Chart
-        </div>
+        <a
+          className='mr-2 inline-flex items-center gap-1 text-2xl font-bold hover:text-blue'
+          href={`http://${data.domain}`}
+          target='_blank'
+          rel='noreferrer'>
+          <Link className='h-5 w-5' />
+          {data.projectName}
+        </a>
+        <div className='flex justify-center'>Traffic Chart</div>
         <div className='flex flex-1 justify-end p-4'>
           <Select
             cssOption='p-2 border rounded'
