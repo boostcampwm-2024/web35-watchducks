@@ -28,6 +28,13 @@ export class GetTrafficByProjectResponseDto {
     projectName: string;
 
     @ApiProperty({
+        example: 'www.example.com',
+        description: '도메인 주소',
+    })
+    @Expose()
+    domain: string;
+
+    @ApiProperty({
         example: 'day',
         description: '데이터 범위',
     })
