@@ -11,7 +11,7 @@ export default function Navbar() {
     <aside className='border-3 flex h-screen min-h-0 flex-col rounded-[11px] bg-lightblue p-4 dark:bg-darkblue'>
       <div className='flex min-h-0 flex-1 flex-col'>
         <div className='flex min-h-0 flex-1 flex-col justify-between'>
-          <div className='flex min-h-0 flex-col space-y-4'>
+          <div className='flex min-h-0 flex-col gap-4 space-y-4'>
             <div className='flex-shrink-0 space-y-2'>
               <NavbarTitle />
               <NavbarSelectWrapper />
@@ -19,7 +19,7 @@ export default function Navbar() {
             <div className='flex-shrink-0'>
               <NavbarMenu />
             </div>
-            <div className='scrollbar-hide min-h-0 flex-1 overflow-y-scroll'>
+            <div className='min-h-0 flex-1 overflow-y-scroll scrollbar-hide'>
               <CustomErrorBoundary>
                 <NavbarRanking />
               </CustomErrorBoundary>
