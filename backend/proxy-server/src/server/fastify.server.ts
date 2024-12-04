@@ -17,6 +17,10 @@ interface FastifyServer {
     stop: (server: FastifyInstance, logger: Logger) => Promise<void>;
 }
 
+export interface Locals {
+    originalContentType?: string;
+}
+
 export const fastifyServer: FastifyServer = {
     listen: () => startFastifyServer(),
     stop: (server: FastifyInstance, logger: Logger) => stopFastifyServer(server, logger),
@@ -79,6 +83,13 @@ const initialize = (server: FastifyInstance, logger: Logger) => {
 
 const addPlugins = (server: FastifyInstance) => {
     server.register(replyFrom, replyFromConfig);
+    server.addHook('preHandler', async (request, reply) => {
+        const locals: Locals = {
+            originalContentType: request.headers['content-type'],
+        };
+
+        (request as any).locals = locals;
+    });
 };
 
 const addRouters = (server: FastifyInstance, logger: Logger) => {
