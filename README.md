@@ -83,10 +83,15 @@
 <br>
 
 ## 🏆 기술적 도전 및 핵심 경험
-
-| 제목 | 바로가기 |
-|------|----------|
-| 부하테스트와 성능 개선에 도전! | [부하테스트와 성능 개선에 도전!](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EB%B6%80%ED%95%98%ED%85%8C%EC%8A%A4%ED%8A%B8%EC%99%80-%EC%84%B1%EB%8A%A5-%EA%B0%9C%EC%84%A0%EC%97%90-%EB%8F%84%EC%A0%84!) |
+| 개발 맥락 설명 바로가기 | 태그 |
+|----------|--|
+| [🤔 우리의 로그 시스템은 어떻게 구축해야 할까?](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EC%9A%B0%EB%A6%AC%EC%9D%98-%EB%A1%9C%EA%B7%B8-%EC%8B%9C%EC%8A%A4%ED%85%9C%EC%9D%80-%EC%96%B4%EB%96%BB%EA%B2%8C-%EA%B5%AC%EC%B6%95%ED%95%B4%EC%95%BC%ED%95%A0%EA%B9%8C%3F) | `기획` `프로토타입`|
+| [🛠️ 개발 환경 어떻게 세팅해야 할까?](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EA%B0%9C%EB%B0%9C-%ED%99%98%EA%B2%BD-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%84%B8%ED%8C%85%ED%95%B4%EC%95%BC-%ED%95%A0%EA%B9%8C%3F) | `개발 환경` `CI/CD` |
+| [🎨 프론트 박사님의 개발일지](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%ED%94%84%EB%A1%A0%ED%8A%B8-%EB%B0%95%EC%82%AC%EB%8B%98%EC%9D%98-%EA%B0%9C%EB%B0%9C%EC%9D%BC%EC%A7%80) | `React` `상태관리` `렌더링`|
+| [🏬 데이터베이스와 가까워지기](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%EC%99%80-%EA%B0%80%EA%B9%8C%EC%9B%8C%EC%A7%80%EA%B8%B0) | `ClickHouse`  |
+| [👜 네임서버, 어떻게 만들어야 할까?](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EB%84%A4%EC%9E%84%EC%84%9C%EB%B2%84,-%EC%96%B4%EB%96%BB%EA%B2%8C-%EB%A7%8C%EB%93%A4%EC%96%B4%EC%95%BC-%ED%95%A0%EA%B9%8C%3F) | `Authoritative Name Server` `헬스 체크`|
+| [🪄 프록시 서버, 그거 어떻게 동작해야 하는데?](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%ED%94%84%EB%A1%9D%EC%8B%9C-%EC%84%9C%EB%B2%84,-%EA%B7%B8%EA%B1%B0-%EC%96%B4%EB%96%BB%EA%B2%8C-%EB%8F%99%EC%9E%91%ED%95%B4%EC%95%BC-%ED%95%98%EB%8A%94%EB%8D%B0%3F) | `Fastify` `Bulk Insert` |
+| [💣 부하테스트와 성능 개선에 도전!](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EB%B6%80%ED%95%98%ED%85%8C%EC%8A%A4%ED%8A%B8%EC%99%80-%EC%84%B1%EB%8A%A5-%EA%B0%9C%EC%84%A0%EC%97%90-%EB%8F%84%EC%A0%84!) | `부하테스트` `성능 개선` |
 <br>
 
 [📝 더 많은 개발 과정을 보고 싶다면...](https://github.com/boostcampwm-2024/web35-watchducks/wiki)
