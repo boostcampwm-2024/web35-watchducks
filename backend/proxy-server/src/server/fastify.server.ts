@@ -1,6 +1,6 @@
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import fastify from 'fastify';
 import { fastifyConfig, replyFromConfig } from './config/fastify.config';
-import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import type { Logger } from 'common/logger/createFastifyLogger';
 import { createFastifyLogger } from 'common/logger/createFastifyLogger';
 import { createErrorLog } from 'common/error/system.error';
@@ -15,6 +15,10 @@ import { container, TOKENS } from 'common/container/container';
 interface FastifyServer {
     listen: () => Promise<{ server: FastifyInstance; logger: Logger }>;
     stop: (server: FastifyInstance, logger: Logger) => Promise<void>;
+}
+
+export interface Locals {
+    originalContentType?: string;
 }
 
 export const fastifyServer: FastifyServer = {
@@ -79,6 +83,11 @@ const initialize = (server: FastifyInstance, logger: Logger) => {
 
 const addPlugins = (server: FastifyInstance) => {
     server.register(replyFrom, replyFromConfig);
+    server.addHook('preHandler', async (request) => {
+        (request as any).locals = {
+            originalContentType: request.headers['content-type'],
+        };
+    });
 };
 
 const addRouters = (server: FastifyInstance, logger: Logger) => {
