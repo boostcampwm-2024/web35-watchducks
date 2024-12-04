@@ -9,7 +9,7 @@ export default function NavbarCustomSelect() {
   const { data = [] } = useGroupNames(generation);
   const location = useLocation();
   const prevProjectGroupRef = useRef<string | null>(null);
-  const projectGroup = location.pathname.split('/project/')[1];
+  const projectGroup = decodeURIComponent(location.pathname.split('/project/')[1]);
 
   useEffect(() => {
     if (data.length > 0 && projectGroup !== prevProjectGroupRef.current) {
