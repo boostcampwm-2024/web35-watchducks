@@ -12,7 +12,7 @@ export default function NavbarMenu() {
     return (
       <Link to={item.path}>
         <div
-          className={`flex cursor-pointer items-center gap-4 md:gap-[8px] ${
+          className={`flex cursor-pointer items-center gap-4 ${
             isActive
               ? 'dark:text-white dark:hover:text-white'
               : 'text-gray hover:text-black dark:hover:text-white'
@@ -20,7 +20,7 @@ export default function NavbarMenu() {
           <Img
             src={isActive ? item.activeIcon : item.inactiveIcon}
             alt={`${item.label} 아이콘`}
-            cssOption='w-4 md:w-6'
+            cssOption='w-4'
           />
           <P content={item.label} cssOption='text-[1vw] trunacte' />
         </div>

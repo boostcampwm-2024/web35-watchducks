@@ -8,9 +8,10 @@ import { useNavigate } from 'react-router-dom';
 
 type Props = {
   data: RankingData;
+  unit: string;
 };
 
-export default function RankingItem({ data }: Props) {
+export default function RankingItem({ data, unit }: Props) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const navigate = useNavigate();
   const itemsPerPage = 10;
@@ -44,7 +45,7 @@ export default function RankingItem({ data }: Props) {
           onClick={() => navigate(`/project/${item.projectName}`)}
         />
         <P
-          content={item.value.toString()}
+          content={`${item.value.toLocaleString()} ${unit}`}
           cssOption='w-[140px] mr-[16px]16 text-right text-[clamp(12px,1.5vw,14px)]'
         />
       </div>
@@ -64,7 +65,7 @@ export default function RankingItem({ data }: Props) {
           onClick={() => navigate(`/project/${item.projectName}`)}
         />
         <P
-          content={item.value.toString()}
+          content={`${item.value.toLocaleString()} ${unit}`}
           cssOption='w-[140px] mr-[16px]16 text-right text-[clamp(12px,1.5vw,14px)]'
         />
       </div>
