@@ -14,7 +14,7 @@ export default function DarkModeButton({ animate }: Props) {
   return (
     <motion.button
       onClick={toggleDarkMode}
-      className='pointer-events-auto absolute flex h-[30px] w-[30px] items-center justify-center rounded-full hover:scale-110'
+      className='pointer-events-auto flex h-[50px] w-[50px] items-center justify-center rounded-full hover:scale-150'
       animate={animate}>
       <Img
         src={FaviconImg}
