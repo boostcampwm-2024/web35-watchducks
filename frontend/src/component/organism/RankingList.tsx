@@ -7,18 +7,18 @@ import { RankType } from '@type/Rank';
 import { useState } from 'react';
 
 export default function RankingList() {
-  const [rankType, setRankType] = useState<RankType>('traffic');
+  const [rankType, setRankType] = useState<RankType>({ name: 'traffic', unit: '개' });
   const { generation } = useNavbarStore();
-  const { data } = useRankData(rankType, generation);
+  const { data } = useRankData(rankType.name, generation);
 
   return (
     <DataLayout cssOption='p-[8px] rounded-lg shadow-md w-full justify-center flex-col flex h-full'>
       <div className='flex h-full w-full flex-col'>
         <div className='mb-[16px] ml-[8px]'>
-          <RankingTab rankType={rankType} setRankType={setRankType} />
+          <RankingTab rankName={rankType.name} setRankType={setRankType} />
         </div>
         <div className='flex h-full justify-center'>
-          <RankingItem data={data} />
+          <RankingItem data={data} unit={rankType.unit} />
         </div>
       </div>
     </DataLayout>
