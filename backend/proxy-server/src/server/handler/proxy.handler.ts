@@ -5,6 +5,7 @@ import type { ProjectAdapter } from 'server/adapter/project.adapter';
 import { logHandler } from 'server/handler/log.handler';
 import type { LogAdapter } from 'server/adapter/log.adapter';
 import type { Logger } from 'common/logger/createFastifyLogger';
+import { HOST_HEADER } from 'common/constant/http.constant';
 // import type { Locals } from 'server/fastify.server';
 
 export const proxyHandler = async (
@@ -22,21 +23,22 @@ export const proxyHandler = async (
     // if (locals.originalContentType) {
     //     extraHeaders['content-type'] = locals.originalContentType;
     // }
-
-    return sendProxyRequest(targetUrl, reply, logAdapter, logger);
+    const host = request.headers[HOST_HEADER] as string;
+    return sendProxyRequest(host, targetUrl, reply, logAdapter, logger);
 };
 
 const sendProxyRequest = async (
+    host: string,
     targetUrl: string,
     reply: FastifyReply,
     logAdapter: LogAdapter,
     logger: Logger,
 ): Promise<void> => {
     return reply.from(targetUrl, {
-        // rewriteRequestHeaders: (req, headers) => ({
-        //     ...headers,
-        //     ...extraHeaders,
-        // }),
+        rewriteRequestHeaders: (req, headers) => ({
+            ...headers,
+            host,
+        }),
         onError: (reply, error) => {
             throw new ProxyError('프록시 요청 처리 중 오류가 발생했습니다.', 502, error.error);
         },
