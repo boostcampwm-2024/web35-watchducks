@@ -40,7 +40,7 @@ export default function NavbarRanking() {
             ) : (
               <Fragment>
                 <Span
-                  cssOption='w-5 h-5 flex-shrink-0 font-medium dark:text-white'
+                  cssOption='text-[1vw] flex-shrink-0 font-medium dark:text-white'
                   content={`${rank + 1}th`}
                 />
                 <P cssOption='truncate dark:text-white max-w-[140px]' content={item.projectName} />
