@@ -17,16 +17,20 @@ export default function NavbarLayout() {
   }
 
   return (
-    <div
-      className='relative h-screen w-[20%] rounded-[11px] bg-lightblue dark:bg-darkblue'
+    <motion.div
+      animate={{
+        width: isNavbarOpen ? '20%' : '0%'
+      }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      className='relative h-screen rounded-[11px] bg-lightblue dark:bg-darkblue'
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}>
       <AnimatePresence>
         {isNavbarOpen && (
           <motion.div
-            initial={{ width: 0, opacity: 0, x: -50 }}
-            animate={{ width: '100%', opacity: 1, x: 0 }}
-            exit={{ width: 0, opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}>
             <Navbar />
             {isHovered && (
@@ -57,6 +61,6 @@ export default function NavbarLayout() {
           <ChevronRight size={20} />
         </motion.button>
       )}
-    </div>
+    </motion.div>
   );
 }
