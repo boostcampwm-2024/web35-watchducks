@@ -1,6 +1,6 @@
 # WatchDucks <img width=30px height=30px alt="logo" src="https://github.com/user-attachments/assets/6eaa5168-266f-4b47-bd0b-0d8205a2a4ae">
 
-<img width="1063" alt="image" src="https://github.com/user-attachments/assets/3845c953-5d2a-4c95-9610-14a67ce85d38">
+<img width="922" alt="image" src="https://github.com/user-attachments/assets/a4fd17d7-8a66-4b21-a0a8-f8ec9c7763fb">
 
 <div align="center">
 
