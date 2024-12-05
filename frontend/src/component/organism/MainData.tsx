@@ -36,7 +36,7 @@ export default function MainData({ generation }: Props) {
 
         <div className='flex flex-col items-center text-center'>
           <TextMotionDiv
-            content={`${(totalTraffic / 1000000).toFixed(1)}M`}
+            content={`${(totalTraffic / 1000).toFixed(1)}K`}
             cssOption='text-navy text-2xl font-bold'
           />
           <p className='text-gray-500 mt-2 text-sm'>총 트래픽</p>
