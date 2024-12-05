@@ -6,7 +6,7 @@ import { logHandler } from 'server/handler/log.handler';
 import type { LogAdapter } from 'server/adapter/log.adapter';
 import type { Logger } from 'common/logger/createFastifyLogger';
 import { HOST_HEADER } from 'common/constant/http.constant';
-// import type { Locals } from 'server/fastify.server';
+import type { Locals } from 'server/fastify.server';
 
 export const proxyHandler = async (
     request: FastifyRequest,
@@ -17,14 +17,14 @@ export const proxyHandler = async (
 ) => {
     const targetUrl = await projectAdapter.resolveTargetUrl(request);
 
-    // const locals = (request as any).locals as Locals;
-    // const extraHeaders: { [header: string]: string } = {};
-    //
-    // if (locals.originalContentType) {
-    //     extraHeaders['content-type'] = locals.originalContentType;
-    // }
+    const locals = (request as any).locals as Locals;
+    const extraHeaders: { [header: string]: string } = {};
+
+    if (locals.originalContentType) {
+        extraHeaders['content-type'] = locals.originalContentType;
+    }
     const host = request.headers[HOST_HEADER] as string;
-    return sendProxyRequest(host, targetUrl, reply, logAdapter, logger);
+    return sendProxyRequest(host, targetUrl, reply, logAdapter, logger, extraHeaders);
 };
 
 const sendProxyRequest = async (
@@ -33,10 +33,12 @@ const sendProxyRequest = async (
     reply: FastifyReply,
     logAdapter: LogAdapter,
     logger: Logger,
+    extraHeaders: { [header: string]: string },
 ): Promise<void> => {
     return reply.from(targetUrl, {
         rewriteRequestHeaders: (req, headers) => ({
             ...headers,
+            ...extraHeaders,
             host,
         }),
         onError: (reply, error) => {
