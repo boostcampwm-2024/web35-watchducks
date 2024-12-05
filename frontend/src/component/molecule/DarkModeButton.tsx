@@ -1,26 +1,20 @@
-import FaviconImg from '@asset/image/Favicon.svg';
-import Img from '@component/atom/Img';
-import useDarkMode from '@hook/useDarkMode';
-import { motion } from 'framer-motion';
-import { TargetAndTransition } from 'framer-motion';
+import { Moon, Sun } from 'lucide-react';
 
 type Props = {
-  animate?: TargetAndTransition;
+  isDark: boolean;
+  toggleDarkMode: () => void;
 };
 
-export default function DarkModeButton({ animate }: Props) {
-  const [isDark, toggleDarkMode] = useDarkMode();
-
+export default function DarkModeButton({ isDark, toggleDarkMode }: Props) {
   return (
-    <motion.button
+    <button
       onClick={toggleDarkMode}
-      className='pointer-events-auto flex h-[50px] w-[50px] items-center justify-center rounded-full hover:scale-150'
-      animate={animate}>
-      <Img
-        src={FaviconImg}
-        cssOption={`${isDark ? 'text-white' : 'text-black'}`}
-        alt='다크모드 버튼 이미지'
-      />
-    </motion.button>
+      className='pointer-events-auto flex h-[50px] w-[50px] flex-shrink-0 items-center transition-transform duration-200 hover:scale-150'>
+      {isDark ? (
+        <Moon className='h-[3vw] w-[3vw] stroke-2 text-slate-700' />
+      ) : (
+        <Sun className='h-[3vw] w-[3vw] stroke-2 text-yellow-400' />
+      )}
+    </button>
   );
 }
