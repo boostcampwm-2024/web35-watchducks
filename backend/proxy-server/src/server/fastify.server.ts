@@ -83,11 +83,11 @@ const initialize = (server: FastifyInstance, logger: Logger) => {
 
 const addPlugins = (server: FastifyInstance) => {
     server.register(replyFrom, replyFromConfig);
-    // server.addHook('preHandler', async (request) => {
-    //     (request as any).locals = {
-    //         originalContentType: request.headers['content-type'],
-    //     };
-    // });
+    server.addHook('preHandler', async (request) => {
+        (request as any).locals = {
+            originalContentType: request.headers['content-type'],
+        };
+    });
 };
 
 const addRouters = (server: FastifyInstance, logger: Logger) => {
