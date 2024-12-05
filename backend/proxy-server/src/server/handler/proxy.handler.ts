@@ -8,6 +8,7 @@ import type { Logger } from 'common/logger/createFastifyLogger';
 import { HOST_HEADER } from 'common/constant/http.constant';
 import type { Locals } from 'server/fastify.server';
 
+
 export const proxyHandler = async (
     request: FastifyRequest,
     reply: FastifyReply,
