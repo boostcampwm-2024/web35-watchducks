@@ -10,8 +10,9 @@ type Props = {
 export default function ProjectSuccessRate({ id }: Props) {
   const { data } = useProjectSuccessRate(id);
 
-  const successRate = Number(data.success_rate.toFixed(0));
-  const failRate = Number((100 - data.success_rate).toFixed(0));
+  console.log(data);
+  const successRate = Math.floor(data.success_rate);
+  const failRate = 100 - Math.floor(data.success_rate);
 
   const series = [successRate, failRate];
 
