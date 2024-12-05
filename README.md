@@ -149,4 +149,4 @@
 
 <br>
 
-[🧑‍🧑‍🧒‍🧒 팀 와치덕스가 궁금하다면](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%EC%9A%B0%EB%A6%AC%EB%93%A4%EC%9D%98-%ED%98%91%EC%97%85-%EB%B0%A9%EC%8B%9D)
+[🧑‍🧑‍🧒‍🧒 팀 와치덕스가 궁금하다면](https://github.com/boostcampwm-2024/web35-watchducks/wiki/%08About-Team-Watchducks)
