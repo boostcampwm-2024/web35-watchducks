@@ -1,4 +1,4 @@
-import { getTraffic } from '@api/get';
+import { getTraffic } from '@api/get/ProjectPage';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 export default function useProjectTraffic(project: string, dateType: string) {

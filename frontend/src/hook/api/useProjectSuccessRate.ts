@@ -1,4 +1,4 @@
-import { getSuccessRate } from '@api/get';
+import { getSuccessRate } from '@api/get/ProjectPage';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 export default function useProjectSuccessRate(project: string) {

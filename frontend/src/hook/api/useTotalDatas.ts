@@ -4,7 +4,7 @@ import {
   getTotalResponseRate,
   getDailyDifferenceTraffic,
   getTotalElapsedTime
-} from '@api/get';
+} from '@api/get/MainPage';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 export default function useTotalDatas(generation: string) {
