@@ -1,4 +1,4 @@
-import { getDAU } from '@api/get';
+import { getDAU } from '@api/get/ProjectPage';
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 export default function useProjectDAU(project: string) {

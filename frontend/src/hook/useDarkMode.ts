@@ -8,7 +8,7 @@ function useDarkMode(): [boolean, () => void] {
 
   const [dark, setDark] = useState<boolean>(localStorageChecker());
 
-  const darkSetButton = () => {
+  const toggleDarkMode = () => {
     setDark((state) => {
       const update = !state;
       if (update) {
@@ -31,7 +31,7 @@ function useDarkMode(): [boolean, () => void] {
     }
   }, [dark]);
 
-  return [dark, darkSetButton];
+  return [dark, toggleDarkMode];
 }
 
 export default useDarkMode;

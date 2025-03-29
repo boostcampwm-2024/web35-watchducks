@@ -1,4 +1,4 @@
-import { getIsExistProject } from '@api/get';
+import { getIsExistProject } from '@api/get/ProjectPage';
 import { useQuery } from '@tanstack/react-query';
 
 export default function useIsExistGroup(project: string) {
