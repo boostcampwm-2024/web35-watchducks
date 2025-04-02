@@ -7,9 +7,14 @@ import {
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 export default function useRankData(rankType: string, generation: string) {
+  const now = new Date();
+  const tomorrowMidnight = new Date();
+  tomorrowMidnight.setHours(24, 0, 0, 0);
+  const timeUntilMidnight = tomorrowMidnight.getTime() - now.getTime();
+
   const queryOptions = {
-    staleTime: 3600000,
-    gcTime: 86400000
+    staleTime: tomorrowMidnight.getTime(),
+    gcTime: timeUntilMidnight
   };
 
   switch (rankType) {
