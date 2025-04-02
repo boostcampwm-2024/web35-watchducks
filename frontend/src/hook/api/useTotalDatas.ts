@@ -5,39 +5,40 @@ import {
   getDailyDifferenceTraffic,
   getTotalElapsedTime
 } from '@api/get/MainPage';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useSuspenseQueries } from '@tanstack/react-query';
 
 export default function useTotalDatas(generation: string) {
-  const { data: trafficData } = useSuspenseQuery({
-    queryKey: ['totalTraffic', generation],
-    queryFn: () => getTotalTrafficCount(generation)
-  });
-
-  const { data: projectData } = useSuspenseQuery({
-    queryKey: ['totalProjectCount', generation],
-    queryFn: () => getTotalProjectCount(generation)
-  });
-
-  const { data: responseData } = useSuspenseQuery({
-    queryKey: ['totalResponseRate', generation],
-    queryFn: () => getTotalResponseRate(generation)
-  });
-
-  const { data: dailyDifferenceTraffic } = useSuspenseQuery({
-    queryKey: ['dailyDifferenceTraffic', generation],
-    queryFn: () => getDailyDifferenceTraffic(generation)
-  });
-
-  const { data: elapsedTime } = useSuspenseQuery({
-    queryKey: ['elapsedTime', generation],
-    queryFn: () => getTotalElapsedTime(generation)
-  });
+  const [trafficResult, projectResult, responseResult, dailyDifferenceResult, elapsedTimeResult] =
+    useSuspenseQueries({
+      queries: [
+        {
+          queryKey: ['totalTraffic', generation],
+          queryFn: () => getTotalTrafficCount(generation)
+        },
+        {
+          queryKey: ['totalProjectCount', generation],
+          queryFn: () => getTotalProjectCount(generation)
+        },
+        {
+          queryKey: ['totalResponseRate', generation],
+          queryFn: () => getTotalResponseRate(generation)
+        },
+        {
+          queryKey: ['dailyDifferenceTraffic', generation],
+          queryFn: () => getDailyDifferenceTraffic(generation)
+        },
+        {
+          queryKey: ['elapsedTime', generation],
+          queryFn: () => getTotalElapsedTime(generation)
+        }
+      ]
+    });
 
   return {
-    totalTraffic: trafficData.count,
-    totalProjectCount: projectData.count,
-    totalResponseRate: responseData.success_rate,
-    dailyDifferenceTraffic: dailyDifferenceTraffic.traffic_daily_difference,
-    elapsedTime: elapsedTime.avg_elapsed_time
+    totalTraffic: trafficResult.data.count,
+    totalProjectCount: projectResult.data.count,
+    totalResponseRate: responseResult.data.success_rate,
+    dailyDifferenceTraffic: dailyDifferenceResult.data.traffic_daily_difference,
+    elapsedTime: elapsedTimeResult.data.avg_elapsed_time
   };
 }
