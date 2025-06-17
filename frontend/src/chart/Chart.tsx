@@ -1,7 +1,9 @@
 import { useDefaultOptions } from '@hook/useDefaultOption';
 import { ApexOptions } from 'apexcharts';
 import { merge } from 'lodash-es';
-import ReactApexChart from 'react-apexcharts';
+import { lazy, Suspense } from 'react';
+
+const ReactApexChart = lazy(() => import('react-apexcharts'));
 
 type ApexChartType =
   | 'line'
@@ -32,6 +34,8 @@ export function Chart({ type, options: chartOptions, series }: Props) {
   const options = merge({}, defaultOptions, chartOptions);
 
   return (
-    <ReactApexChart type={type} series={series} options={options} width='100%' height='100%' />
+    <Suspense fallback={<div className="flex items-center justify-center h-full">Loading chart...</div>}>
+      <ReactApexChart type={type} series={series} options={options} width='100%' height='100%' />
+    </Suspense>
   );
 }

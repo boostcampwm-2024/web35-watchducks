@@ -1,8 +1,9 @@
+import basicSsl from '@vitejs/plugin-basic-ssl';
 import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), basicSsl()],
   resolve: {
     alias: [
       { find: '@', replacement: '/src' },
@@ -18,6 +19,21 @@ export default defineConfig({
       { find: '@router', replacement: '/src/router' },
       { find: '@asset', replacement: '/asset' }
     ]
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          query: ['@tanstack/react-query'],
+          charts: ['apexcharts', 'react-apexcharts', '@nivo/calendar'],
+          ui: ['react-error-boundary', 'react-toastify', 'motion'],
+          utils: ['axios', 'lodash-es', 'zustand']
+        }
+      }
+    },
+    chunkSizeWarningLimit: 1000
   },
   server: {
     port: 5173,

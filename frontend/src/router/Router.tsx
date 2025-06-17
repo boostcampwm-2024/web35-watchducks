@@ -1,11 +1,27 @@
 import MainBoundary from '@boundary/MainBoundary';
-import ErrorPage from '@component/page/ErrorPage';
-import MainPage from '@component/page/MainPage';
-import ProjectDetailPage from '@component/page/ProjectDetailPage';
-import ProjectPage from '@component/page/ProjectPage';
-import RankingPage from '@component/page/RankingPage';
-import RegisterPage from '@component/page/RegisterPage';
+import Loading from '@component/atom/Loading';
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
+
+const MainPage = lazy(() => import('@component/page/MainPage'));
+const ProjectPage = lazy(() => import('@component/page/ProjectPage'));
+const ProjectDetailPage = lazy(() => import('@component/page/ProjectDetailPage'));
+const RankingPage = lazy(() => import('@component/page/RankingPage'));
+const RegisterPage = lazy(() => import('@component/page/RegisterPage'));
+const ErrorPage = lazy(() => import('@component/page/ErrorPage'));
+
+function LazyWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense
+      fallback={
+        <div className='flex h-full w-full items-center justify-center'>
+          <Loading />
+        </div>
+      }>
+      {children}
+    </Suspense>
+  );
+}
 
 export default createBrowserRouter([
   {
@@ -13,28 +29,52 @@ export default createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <MainPage />
+        element: (
+          <LazyWrapper>
+            <MainPage />
+          </LazyWrapper>
+        )
       },
       {
         path: '/project',
-        element: <ProjectPage />
+        element: (
+          <LazyWrapper>
+            <ProjectPage />
+          </LazyWrapper>
+        )
       },
       {
         path: '/project/:id',
-        element: <ProjectDetailPage />
+        element: (
+          <LazyWrapper>
+            <ProjectDetailPage />
+          </LazyWrapper>
+        )
       },
       {
         path: '/ranking',
-        element: <RankingPage />
+        element: (
+          <LazyWrapper>
+            <RankingPage />
+          </LazyWrapper>
+        )
       }
     ]
   },
   {
     path: '/register',
-    element: <RegisterPage />
+    element: (
+      <LazyWrapper>
+        <RegisterPage />
+      </LazyWrapper>
+    )
   },
   {
     path: '*',
-    element: <ErrorPage />
+    element: (
+      <LazyWrapper>
+        <ErrorPage />
+      </LazyWrapper>
+    )
   }
 ]);
