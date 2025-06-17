@@ -1,3 +1,5 @@
+import { Fragment } from 'react/jsx-runtime';
+
 type Props = {
   cssOption?: string;
   content: string;
@@ -9,7 +11,7 @@ export default function Alert({ cssOption = '', content = '', isVisible = false 
     'fixed left-1/4 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center whitespace-nowrap';
 
   return (
-    <>
+    <Fragment>
       <div
         className={`absolute inset-0 backdrop-blur-sm ${isVisible ? 'opacity-100' : 'opacity-0'}`}
       />
@@ -19,6 +21,6 @@ export default function Alert({ cssOption = '', content = '', isVisible = false 
         className={`${defaultStyle} ${cssOption} ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
         {content}
       </dialog>
-    </>
+    </Fragment>
   );
 }
